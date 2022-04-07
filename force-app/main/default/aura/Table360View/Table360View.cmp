@@ -1,0 +1,78 @@
+<aura:component controller="DuplicateRecordManagementCntrl" implements="force:hasRecordId"> 
+    
+    <!-- handle event -->
+    <aura:handler name="SearchEvent" event="c:SearchEvent"
+                  action="{!c.handleEvent}"/>
+    
+    <!-- sacng linked record count -->    
+    <aura:attribute name="linkedRecCount" type="Integer" />
+    
+    <!-- saving linked field values of current recrord -->
+    <aura:attribute name="linkedFieldValue" type="String" />
+    
+    <!-- this will store the fields whcih has to be displayed -->
+    <aura:attribute name="displayFieldSet" type="string" description="saving fields name which has to be displayed"/>
+    
+    <!-- to save report folder name -->
+    <aura:attribute name="ConsolidatedReportFolder" type="string"  description="saving Folder Name"/>
+    
+    <!-- this will have the Id of current record -->
+    <aura:attribute name="recordId" type="string"/>
+    
+    <!-- this will store the linked Field API Name -->
+    <aura:attribute name="linkingfield" type="string"/>
+    
+    <!-- this will store the store the value for initialization -->
+    <aura:attribute name="InitalvalueToUse" type="string"/>
+    
+    <!-- attributes for Possible matches -->
+    <aura:attribute name="duplicateRecords" type="ContainerWrapperClass.DuplicateDetailWrapper[]" />
+    <aura:attribute name="headers" type="ContainerWrapperClass.HeaderWrapper[]" />
+    
+    <!-- atribute to show search section on popup component -->
+    <aura:attribute name="searchFieldSetName" type="string" />    
+    
+    <!-- storing list of record ids possible match -->
+    <aura:attribute name="possibleRecs" type="String[]" />    
+       
+    <!-- Search section Component -->
+    <c:SearchSectionCmp aura:Id="searchcmp" recordId="{!v.recordId}" 
+                        searchFieldSetName="{!v.searchFieldSetName}"
+                        displayFieldSet="{!v.displayFieldSet}"
+                        linkingfield = "{!v.linkingfield}"
+                        InitalvalueToUse="{!v.InitalvalueToUse}"
+                        possibleRecs = "{!v.possibleRecs}"/>
+    
+    <!-- Linked section Component -->    
+    <c:LinkedRecordsCmp aura:Id="linkedrecord" 
+                        recordId="{!v.recordId}"                         
+                        displayFieldSet="{!v.displayFieldSet}"
+                        linkingfield = "{!v.linkingfield}"
+                        InitalvalueToUse="{!v.InitalvalueToUse}"/>   
+    
+  
+    <!-- possible matched Section -->   
+    <c:PossibleMatchTable aura:Id="possiblematch" headers="{!v.headers}" 
+                          duplicateRecords="{!v.duplicateRecords}"
+                          recordId="{!v.recordId}"                         
+                          displayFieldSet="{!v.displayFieldSet}"
+                          linkingfield = "{!v.linkingfield}"
+                          InitalvalueToUse="{!v.InitalvalueToUse}"/>
+    
+    <!-- History Linked Section -->   
+    <!--
+    <c:HistoryLinkedCmp recordId="{!v.recordId}"                         
+                        displayFieldSet="{!v.displayFieldSet}"
+                        linkingfield = "{!v.linkingfield}"
+                        InitalvalueToUse="{!v.InitalvalueToUse}"/>
+    -->
+    
+    <!-- Report Section --> 
+    <aura:if isTrue="{!v.linkedRecCount > 0}">        
+        <c:ConsolidatedReportCmp aura:Id="report" 
+                                 recordId="{!v.recordId}" 
+                                 ConsolidatedReportFolder="{!v.ConsolidatedReportFolder}"                             
+                                 linkedFieldValue = "{!v.linkedFieldValue}"/>
+    </aura:if>
+    
+</aura:component>

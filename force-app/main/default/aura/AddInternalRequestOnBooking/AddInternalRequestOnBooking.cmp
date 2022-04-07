@@ -1,0 +1,186 @@
+<aura:component controller="BookingInternalRequestController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global">
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:attribute name="bookingRecord" type="Booking__c"/>
+    <aura:attribute name="debug" type="boolean" default="false"/>
+    <aura:attribute name="isLoading" type="boolean" default="false"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="data" type="Object" default="[]"/>
+    <aura:attribute name="dataToPush" type="Object" default="[]"/>
+    <aura:attribute name="Subject" type="String" default=""/>
+    <aura:attribute name="Category__c" type="String" default=""/>
+    <aura:attribute name="Status" type="String" default="" />
+    <aura:attribute name="Description" type="String" default="" />
+    <aura:handler name="change" value="{!v.Category__c}" action="{!c.onchange}"/>
+    
+    <aura:attribute name="classname" type="String" />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="errors" type="Object" default="[]"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    
+    <aura:attribute name="SearchKeyWord" type="string"/>
+     <aura:attribute name="IconName" type="string" default="standard:user"/>
+    <aura:attribute name="lookupSearchType" type="String[]" default="User,Queue"/>
+    <aura:attribute name="selLookupType" type="String" default="User"/>
+    <aura:attribute name="listOfSearchRecords" type="Object[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="selectedRecord" type="Object" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedUserRecordEvent" action="{!c.handleComponentEvent}"/>
+    
+	<force:recordData aura:id="bookingIdRecord"                       
+                      recordId="{!v.recordId}" 
+                      targetError="{!v.recordError}"                       
+                      fields="Id"
+                      targetFields="{!v.bookingRecord}"                     
+                      />
+    
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    
+    <aura:if isTrue="{!v.isLoading}">
+    		<lightning:spinner alternativeText="Loading" size="large" class="spinnertest" style="z-index:9999;position:fixed"/>
+	</aura:if>
+    <ui:button   
+               class="slds-button slds-button--neutral"                        
+               press="{!c.openModal}">Add Internal Request</ui:button>
+    
+    
+    <aura:if isTrue="{!v.isOpen}">
+			<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium" style="position:fixed!important">
+            	<div class="slds-modal__container">
+                	<div class="slds-modal__header">                    
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Internal Request</h2>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium">                      
+                    <div>
+                        <div class="section">                                                                                                                      
+                             <div class="slds-text-longform">                                                                                        
+                                  <div class="slds-grid slds-wrap" aura:id="" >                                                    
+                                                    <div style="width:-webkit-fill-available">
+                                                    <lightning:recordEditForm objectApiName="Case" recordTypeId="0122X000000oqleQAA" >  
+                                                         <div class="slds-col slds-size_1-of-2" style="display:inline-block"><lightning:inputField aura:id="category" label="Category"
+                                                                                                                name="category"
+                                                                                                                value="{!v.Category__c}"
+                                                                                                                fieldName="Category__c" 
+                                                                                                                required="true"                                    
+                                                                                                                /></div>                                                        
+                                                        <div class="slds-col slds-size_1-of-2" style="display:inline-block"><lightning:inputField aura:id="status" label="Case status"
+                                                                                                                name="status"
+                                                                                                                fieldName="Org_Case_Status__c"
+                                                                                                                value="{!v.Status}" 
+                                                                                                                required="true"                                  
+                                                                                                                /> </div>
+                                                        <div class="slds-col slds-size_1-of-2" style="display:inline-block"><lightning:inputField aura:id="subject" label="Subject"
+                                                                                                                name="subject"
+                                                                                                                value="{!v.Subject}"
+                                                                                                                fieldName="Subject"                                                                                                                                                    
+                                                                                                                required="true"/> </div>
+                                                       
+                                                        <div class="slds-col slds-size_1-of-2" style="display:inline-block">
+                                                        		  <div class="lookuptypeselect">
+                                                                   <ui:inputSelect aura:id="lkptype" label="Assign Owner" change="{!c.onSelectChange}"  required = "true"  >
+                                                                                        <aura:iteration items="{!v.lookupSearchType}" var="ltype">
+                                                                                            <ui:inputSelectOption text="{!ltype}" label="{!ltype}" />
+                                                                                        </aura:iteration>
+                                                                                    </ui:inputSelect>
+                                                                  </div>               
+                                                                  <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single" style="width:74%;display:inline-block;margin-left:1%">
+                                                                    <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+                                                                    
+                                                                    <div class="slds-form-element__control">
+                                                                        
+                                                                        <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/> 
+                                                                            
+                                                                            <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                                                                                <lightning:pill class="pillSize" label="{!v.selectedRecord.rname}" name="{!v.selectedRecord.rname}" onremove="{! c.clear }">
+                                                                                    <aura:set attribute="media">
+                                                                                        <lightning:icon  iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                                                    </aura:set>
+                                                                                </lightning:pill>
+                                                                            </div>
+                                                                            <div aura:id="lookupField" class="slds-show">
+                                                                              <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                                <span class="slds-assistive-text"></span>
+                                                                            </span>
+                                                                                <ui:inputText   aura:id = "caseOwner" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass shrinkinput" value="{!v.SearchKeyWord}" placeholder="search.."/>
+                                                                                <div class="slds-notify slds-notify_toast slds-theme_error"> 
+                                                                                    <div class="slds-notify__content">
+                                                                                        <p class="slds-align_absolute-center">{!v.errorMessage}</p>                
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>   
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                                                        <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                        <center> {!v.Message}</center>
+                                                                        <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                                                            <c:customUserLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                                        </aura:iteration>
+                                                                    </ul>
+                                                                </div>                                                                                              
+                                                        </div>
+                                                        <div class="slds-col slds-size_2-of-2" style="display:inline-block"><lightning:inputField aura:id="description" label="Description"
+                                                                                                                name="description"
+                                                                                                                value="{!v.Description}"
+                                                                                                                fieldName="Description"  
+                                                                                                                                                  
+                                                                                                                required="false"/> </div>
+                                                        
+													</lightning:recordEditForm>
+                                                    </div>
+                                                    <div class="slds-col"></div>
+                                                    <br/>
+                                                    <br/>                                                 
+                                                    <div style="width: -webkit-fill-available; text-align: right;">
+                                                        
+                                                        <div class="slds-col "  style="display:inline-block; ">
+                                                            <button class="slds-button slds-button_brand" onclick="{!c.addInternalRequest}" disabled="{! v.Status == '' || v.Category__c == '' || v.Subject ==  '' || v.selectedRecord.rname ==  null }"  >Add</button></div>
+                                                    </div>
+                                                    <br/>
+                                                    <br/>
+                                                    <div class="slds-col">
+                                                        <div class="slds-col slds-size_11-of-12"><h1><b>Internal Request</b></h1></div>
+                                                        <br/>
+                             
+                                                    
+                                                        <lightning:datatable aura:id="dtTable"
+                                                                             class = "{!v.classname}"
+                                                                             columns="{! v.columns }"
+                                                                             data="{! v.data }"
+                                                                             keyField="Id"
+                                                                             errors="{! v.errors }"
+                                                                             onrowaction="{!c.handleAction}"
+                                                                             draftValues="{! v.draftValues }"
+                                                                             hideCheckboxColumn = "true"
+                                                                             
+                                                                             /> 
+                                                       
+                                                    </div>
+                                                </div>
+                             </div>                                          
+                        </div>                  
+                    </div>                                       
+                </div>
+                <div class="slds-modal__footer slds-modal__footer_directional">
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModal }"/>  
+                    <aura:if isTrue="{!v.debug}">      
+                        Booking Id : {!v.bookingRecord.Id} <br/>
+					</aura:if>                                                                      
+                    <lightning:button variant="brand" 
+                                      label="Finish"
+                                      title="Finish"
+                                      class="finishButton"
+                                      onclick="{! c.finish }"/>  
+                                          
+                </div>                
+            </div>
+        	</section>
+        	<div class="slds-backdrop slds-backdrop_open" style="position:fixed!important"></div>        
+    </aura:if>
+    
+</aura:component>

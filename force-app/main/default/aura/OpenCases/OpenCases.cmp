@@ -1,0 +1,141 @@
+<aura:component controller="AccountAuraExtensionController" implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <!--on component load call doInit javaScript function and fetch records from server-->  
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+     
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="caseList" type="List"/>
+    
+    
+    <lightning:accordion class="slds-accordion" allowMultipleSectionsOpen="true">
+        <aura:iteration items="{!v.caseList}" var="cs" indexVar="iVar">
+          
+           <aura:if isTrue="{!cs.Org_Brand__c == 'trp'}">
+               <lightning:accordionSection name="{!cs.CaseNumber}" label="{!cs.CaseNumber +' - '+cs.Subject }" class="section-title-bg slds-truncate">
+                <aura:set attribute="actions">
+                    <aura:if isTrue="{!cs.Origin == 'Phone'}">
+                        <img src="{!$Resource.Icon_Channel_Phone}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Whatsapp'}">
+                        <img src="{!$Resource.Icon_Channel_Whatsapp}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Email'}">
+                        <img src="{!$Resource.Icon_Channel_Email}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Web'}">
+                        <img src="{!$Resource.Icon_Channel_Web}" style="left:50px!important"/>
+                    </aura:if>
+                    <aura:if isTrue="{!cs.Origin == 'Live Chat'}">
+                        <img src="{!$Resource.Icon_Channel_Chat}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Walk-In'}">
+                        <img src="{!$Resource.Icon_Channel_In_Person}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Twitter'}">
+                        <img src="{!$Resource.Icon_Channel_Twitter}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Facebook'}">
+                        <img src="{!$Resource.Icon_Channel_FB}" style="left:50px!important"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Instagram'}">
+                        <img src="{!$Resource.Icon_Channel_Instagram}" style="left:50px!important"/>
+					</aura:if> 
+                     <aura:if isTrue="{!cs.Record_Type_Name__c == 'Travel Republic - Service Request'}">
+                        <img src="{!$Resource.icon_trp_servicerequest}" style="height:30px!important;position:absolute;right:20px!important;"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Record_Type_Name__c == 'Travel Republic - Internal Request'}">
+                        <img src="{!$Resource.icon_trp_internalrequest}" style="height:30px!important;position:absolute;right:20px!important;"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+                        <img src="{!$Resource.icon_trp_bookingenquiry}" style="height:30px!important;position:absolute;right:20px!important;"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Record_Type_Name__c == 'Travel Republic - Complaint'}">
+                        <img src="{!$Resource.trp_complaint}" style="height:27px!important;position:absolute;right:20px!important;width:63.5px!important"/>
+                    </aura:if>
+				</aura:set>
+               
+                <aura:set attribute="body">
+                    <div class="slds-grid slds-wrap">
+                        
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Status :</div>
+                        <div class="slds-size_2-of-3">{!cs.Org_Case_Status__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Owner :</div>
+                        <div class="slds-size_2-of-3">{!cs.Owner.Name}</div>                        
+                        
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Opened Date :</div>
+                        <div class="slds-size_2-of-3">{!cs.Opened_Date__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Details :</div>
+                        <div class="slds-size_2-of-3" 
+                                onclick="{!c.openTabWithSubtab}" 
+                                data-value="{!cs.Id}"><a href="#" >View Record</a></div>
+
+                </div>
+                </aura:set>
+            </lightning:accordionSection>
+            </aura:if>
+		   <aura:if isTrue="{!cs.Org_Brand__c != 'trp'}">
+            <lightning:accordionSection name="{!cs.CaseNumber}" label="{!cs.CaseNumber +' - '+cs.Display_Text__c}" class="section-title-bg slds-truncate">
+                <aura:set attribute="actions">
+                    <aura:if isTrue="{!cs.Origin == 'Phone'}">
+                        <img src="{!$Resource.Icon_Channel_Phone}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Whatsapp'}">
+                        <img src="{!$Resource.Icon_Channel_Whatsapp}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Email'}">
+                        <img src="{!$Resource.Icon_Channel_Email}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Web'}">
+                        <img src="{!$Resource.Icon_Channel_Web}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!cs.Origin == 'Live Chat'}">
+                        <img src="{!$Resource.Icon_Channel_Chat}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Walk-In'}">
+                        <img src="{!$Resource.Icon_Channel_In_Person}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Twitter'}">
+                        <img src="{!$Resource.Icon_Channel_Twitter}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Facebook'}">
+                        <img src="{!$Resource.Icon_Channel_FB}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Origin == 'Instagram'}">
+                        <img src="{!$Resource.Icon_Channel_Instagram}"/>
+					</aura:if> 
+				</aura:set>
+                <aura:set attribute="body">
+                    <div class="slds-grid slds-wrap">
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Status :</div>
+                        <div class="slds-size_2-of-3">{!cs.Org_Case_Status__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Owner :</div>
+                        <div class="slds-size_2-of-3">{!cs.Owner.Name}</div>                        
+                        
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Opened Date :</div>
+                        <div class="slds-size_2-of-3">{!cs.Opened_Date__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Details :</div>
+                        <div class="slds-size_2-of-3" 
+                                onclick="{!c.openTabWithSubtab}" 
+                                data-value="{!cs.Id}"><a href="#" >View Record</a></div>
+
+                </div>
+                </aura:set>
+            </lightning:accordionSection>
+            </aura:if>
+        </aura:iteration>
+    </lightning:accordion>
+    <aura:if isTrue="{!empty(v.caseList)}">
+        <div style="padding-left:10px"><i>No Records</i></div>
+         <aura:set attribute="else">   
+            <div class="slds-card__footer" data-aura-rendered-by="4400:0">
+                <span class="view-all-label" data-aura-rendered-by="4401:0">
+                    <div onclick="{!c.gotoRelatedList}" ><a href="#" >View All Cases</a></div> 
+                </span>
+            </div>
+         </aura:set>
+    </aura:if>
+</aura:component>

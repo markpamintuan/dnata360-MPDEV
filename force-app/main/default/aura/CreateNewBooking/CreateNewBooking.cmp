@@ -1,0 +1,17 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+				access="global" controller="AccountButtonsController">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:attribute name="record" type="Object" 
+  	description="The record object to be displayed"/>
+	<aura:attribute name="simpleRecord" type="Object" 
+  	description="A simplified view record object to be displayed"/>
+	<aura:attribute name="recordError" type="String" 
+  	description="An error message bound to force:recordData"/>
+    
+    <aura:attribute name="recordId" type="id" />
+    <aura:attribute name="caseId" type="id" />
+
+    Loading...
+    
+</aura:component>

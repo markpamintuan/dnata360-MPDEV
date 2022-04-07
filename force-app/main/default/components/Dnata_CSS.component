@@ -1,0 +1,222 @@
+<apex:component >
+       <style>
+         .overflowscrollx{
+           overflow:auto;
+           }
+        .demo-only{
+                position:absolute;
+        }
+       
+        .bookingpage span.header-text{
+            font-size:20px !important;
+            color:white;
+           
+           }
+        .bookingpage span.header-sub-text{
+            font-size:15px !important;
+            color:white;
+           
+           }
+        
+        .bookingpage .header-button{
+            position:relative;
+           left:22%;
+           }
+        .bookingpage .white{
+           background-color:white;
+           }
+       .bookingpage .initial-tab{
+            padding-top:1.8% !important;
+            border-top:32px solid #fafaf9;
+           }
+       .bookingpage .padding-3{
+           padding:0px 3% 0% 3%;
+           }
+           
+      .bookingpage  table{
+           border:1px solid #dddbda;
+           }
+        .bookingpage.container {
+           // width : 95% !important;
+            margin : auto !important;
+           //margin-top : 0.5em !important;        
+        }
+
+      .bookingpage .dateFormat, .demo-only .dateFormat {
+            display: block !important;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+        }
+
+        .bookingpage .left-cell,.demo-only .left-cell {
+            width:95%;
+            padding-bottom:0.5rem;
+        }
+        
+        .bookingpage .right-cell,.demo-only .right-cell {
+            width:95%; 
+            float: right;
+        }
+        
+        .bookingpage .right-cell-label, {
+           //padding-left: 5%;
+        }
+
+       .bookingpage .menu-panel {
+            width: 90% !important;        
+        }
+        
+        .bookingpage .slds-modal__footer {
+           //  margin-top: 1em !important;
+        }
+
+       .bookingpage .selected-option{
+            background-color: #008FCB !important;
+            color: white !important;
+        }
+        
+       .bookingpage .unselected-option {
+            background: rgb(243, 242, 242) !important;
+            color: black !important;
+        }
+
+       .bookingpage .selected-option-lineitem{
+            background-color: #008FCB !important;
+            color: white !important;
+        }
+        
+       .bookingpage .side-bar-grey{
+                background: #fafaf9;
+        }
+
+       .bookingpage .button-container{
+            position:relative;
+            top:20px;
+        }
+        
+       .bookingpage .button-position-container{
+            position:absolute !important;
+            right:-5%;
+        }
+        
+        .bookingpage .first-button{
+            position:relative !important;
+           
+        }
+           
+        .quotes.container {
+        width : 95% !important;
+        margin : auto !important;
+        margin-top : 0.5em !important;
+        
+        }
+        
+        .quotes .left-cell {
+        width:95%;
+        }
+        
+        .quotes .right-cell {
+        width:95%
+        float: right;
+        }
+        
+        .quotes .right-cell-label {
+        padding-left: 5%;
+        }
+        
+        .quotes .slds-modal__footer,.quotes .slds-page-header {
+        margin-top: 1em !important;
+        text-align: right !important;
+        }
+        
+        .quotes .slds-page-header,.quotes .slds-modal__footer {
+        padding: 1rem;
+        border-bottom: 1px solid rgb(221, 219, 218);
+        border-radius: .25rem;
+        background: rgb(243, 242, 242);
+        background-clip: padding-box;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+        border: 1px solid rgb(221, 219, 218);
+        }
+        
+        .quotes .menu-panel {
+        width: 90% !important;
+        
+        }
+        
+        .quotes .left-panel {
+        <!-- padding-right: 1em !important;*/ -->
+        }
+        
+        <!-- /** css for navigation items */ -->
+        
+        .quotes .selected-option{
+        background-color: #008FCB !important;
+        color: white !important;
+        }
+        
+        .quotes .selected-option-lineitem{
+        background-color: #008FCB !important;
+        color: white !important;
+        }
+        
+        .quotes .unselected-option {
+        background: rgb(243, 242, 242) !important;
+        color: black !important;
+        }
+        
+        .quotes .completed-option {
+        }
+        <!-- ends page navigation -->
+        
+        .quotes .slds-form-element__control{
+        <!-- width: 95%; -->
+        }
+        
+        .quotes .slds-form-element {
+        padding-bottom: 0.5rem;
+        }
+           
+        .quotes body  {
+        /*background: #f6f6f6 !important;*/
+        }
+        
+        .quotes .dateFormat {
+        display: block !important;
+        }
+        
+        .quotes .date-icon-align {
+        display: table-cell; 
+        vertical-align: middle; 
+        width: 90%; 
+        margin: 0 5px 0 0;
+        position: relative; top: 2px;
+        }
+        
+        .quotes input[type=date]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        display: none;
+        }
+        
+        .quotes hr {
+        
+        .quotes margin: 01rem 0 !important;
+        }
+        
+        .quotes .message {
+      
+        margin: 0px 0px !important;
+        }
+        
+        .quotes .bolded-asterisk{
+                font-size: 20px;
+                top: -4px;
+                position: absolute;
+                }
+           
+        .quotes .slds-truncate{
+           		white-space:normal !important;
+           }
+    </style>
+</apex:component>

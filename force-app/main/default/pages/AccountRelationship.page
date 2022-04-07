@@ -1,0 +1,183 @@
+<apex:page standardController="Account" extensions="AccountExtension" >
+    
+    <style>
+        a:link {
+        text-decoration: none;
+        }
+        
+        .labelCol {
+        color: #54698d !important;
+        font-weight: normal !important;
+        }
+        
+        .tdVal {
+        font-family: SalesforceSans-Regular,Arial,sans-serif !important;
+        color: #16325c !important;
+        }
+        
+        .ui-state-default {
+        background: #f6f6f6 !important;
+        }
+        
+        .ui-state-active {
+        background: #0070d2 !important;
+        }
+        
+        .button {
+        background-color: #e7e7e7; color: black;
+        border: none;
+        
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        }
+        
+        .slds-button {
+        position: relative;
+        display: inline-block;
+        padding: 0;
+        background: transparent;
+        background-clip: border-box;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        line-height: 1.875rem;
+        text-decoration: none;
+        color: #0070d2;
+        -webkit-appearance: none;
+        white-space: normal;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        }
+        
+        .slds-button_neutral, .slds-button--neutral {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        text-align: center;
+        vertical-align: middle;
+        border: 1px solid #dddbda;
+        -webkit-transition: border 0.15s linear;
+        transition: border 0.15s linear;
+        border-color: #dddbda;
+        background-color: white;
+        }
+        .btn {
+        padding: 4px 3px !important;
+        color: #333;
+        margin: 1px;
+        padding: 2px 3px;
+        border: 1px solid #b5b5b5;
+        border-bottom-color: #7f7f7f;
+        background: #e8e8e9 url(/img/alohaSkin/btn_sprite.png) repeat-x right top;
+        font-weight: bold;
+        font-size: .9em;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        font-family: Arial,Helvetica,sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $( function() {
+        $( "#accordion" ).accordion({collapsible: true,  active: false});
+        
+        //$('#accordion h3.ui-accordion-header').next().slideDown();/*style="margin-top: 20px;"*/
+        
+    } );
+    </script>
+    
+    <div id="accordion" >
+        
+        <apex:repeat value="{!lstRelations}" var="r"> 
+            
+            <h3 class="accordion-header">{!r.Org_Name__r.Name} ({!r.Org_Relationship__c})</h3>
+            <div>
+                <table>
+                    <tr>
+                        <td class="labelCol">Relation:
+                        </td>
+                        <td class="tdVal">
+                            {!r.Org_Relationship__c}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Age:
+                        </td>
+                        <td class="tdVal">
+                            {!r.Org_Age__c}
+                        </td>
+                    </tr>
+                    <tr>
+                        <apex:outputPanel rendered="{!NOT(CONTAINS($Profile.Name, 'EKUK'))}">
+                            <td class="labelCol">Gender:
+                            </td>
+                            <td class="tdVal">
+                                {!r.Org_Gender__c}
+                            </td>
+                        </apex:outputPanel>
+                    </tr>
+                    
+                    <tr>
+                        <td class="labelCol">Details: </td>
+                        <td class="tdVal"><a href="#" onClick="openPrimaryTab('{!r.Id}', '{!r.Org_Name__r.Name}');return false">View Record</a></td> 
+                    </tr>
+                </table>
+            </div>
+        </apex:repeat> 
+        
+    </div>
+    <p>
+        <a href="#" class="labelCol" style="float: left;margin-top:1px;margin-bottom:10px;    padding-left: 5px;" onclick="openNewRelationShipRecord()">+ Add New</a> 
+    </p>   
+    
+    <!-- <br/><br/>
+<button type="button" class="button">Add New Relationship</button> -->
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    
+    <script type="text/javascript">
+    function openPrimaryTab(recId, recName) {
+        sforce.console.openPrimaryTab(undefined, '/'+recId, true, recName);
+    }
+    
+    //The callback function that openSubtab will call once it has the ID for its primary tab
+    var callOpenSubtab = function callOpenSubtab(result) {
+        debugger;
+        //sforce.console.openSubtab(result.id, '/'+, true, 'example');
+    };
+    
+    function openSubtab(recId, recName) {
+        sforce.console.getEnclosingPrimaryTabId(function(result, recId){
+            sforce.console.openSubtab(result.id, '/'+recId, true, recName);          
+        });
+    }
+    
+    //Sets the title of the current tab to "Example"
+    function setTitle() {
+        sforce.console.setTabTitle('Example');
+    }
+    
+    //The callback function that closeTab will call once it has the ID for its tab
+    var callCloseTab= function callCloseTab(result) {
+        sforce.console.closeTab(result.id);
+    }
+    
+    function closeTab() {
+        sforce.console.getEnclosingTabId(callCloseTab);
+    }
+    
+    function openNewRelationShipRecord() {
+        //alert("adding new relationship");
+        sforce.console.openPrimaryTab(undefined, '/a0A/e?CF00N0E000001K1E3_lkid={!record.Id}&CF00N0E000001K1E3={!record.Name}', true, 'New Relationship');
+    }
+    
+    </script>
+    
+    
+</apex:page>

@@ -1,0 +1,54 @@
+.THIS {
+    font-size: 0.8125rem !important;
+}
+
+.THIS .slds-scope .slds-truncate {
+    white-space: normal !important;
+}
+.THIS h3 {
+    font-size: 0.9rem !important;
+}
+.THIS .slds-form-element__label {
+    width : 22% !important;
+}
+
+.THIS .slds-accordion__summary {
+    background: #f3f2f2 !important;
+    padding: 0.5rem;
+    /*border: 1px solid transparent;*/
+    /*border: none;*/
+    border-radius: .25rem;
+    text-decoration: none;
+    white-space: normal;
+    text-shadow: none;
+}
+
+/* This is the one that truncates the heading of the accordion */
+.THIS .slds-accordion__summary-heading{
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-width: 100%;	
+}
+
+.THIS .slds-accordion__section{
+ 	padding-left: 2px;
+    padding-right: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    white-space: nowrap;
+    max-width: 100%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.THIS .slds-accordion__list-item{
+	border-top:none;
+}
+.THIS.slds-accordion__summary-action{
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}

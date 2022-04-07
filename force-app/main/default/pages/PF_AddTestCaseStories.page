@@ -1,0 +1,21 @@
+<apex:page standardController="PF_Stories__c">
+
+            <apex:includeLightning />
+            <script>
+            var recordId = "{!$CurrentPage.parameters.parentId}";
+            var recordName = "{!$CurrentPage.parameters.parentName}"
+            console.log('----- recordId:  ' + recordId);
+            $Lightning.use("c:PF_AddEndtoEndTestCaseApp", function() {
+                $Lightning.createComponent(
+                    "c:PF_AddEndtoEndTestCase",
+                    {"recordId" : recordId,
+                    "recordName" : recordName,
+                     "invoked"     :"story"
+                    },
+                    "lightning"
+                );
+                
+            });
+            </script>
+           <div class="slds-box"  id="lightning" />                        
+</apex:page>

@@ -1,0 +1,5 @@
+<apex:page standardController="Booking__c">
+	<apex:pageMessage title="Warning!"
+    summary="You do not have access to create a new booking."
+    severity="warning" strength="1" />
+</apex:page>

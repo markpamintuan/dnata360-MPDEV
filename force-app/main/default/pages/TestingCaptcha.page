@@ -1,0 +1,356 @@
+<apex:page showHeader="false" standardStylesheets="false" language="en-US" title="Emirates Holidays: Support " showChat="false" sidebar="false" controller="TestingCaptchaController"
+           docType="html-5.0" expires="86500" cache="false" applyHtmlTag="false" applyBodyTag="false">
+<html>
+<head>
+    <title>Emirates Holidays: Support</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/png" href="{!URLFor($Resource.Live_Chat_Resources,'Images/EKHfavicon-32x32.png')}" sizes="32x32"/>
+    <apex:stylesheet value="{!URLFor($Resource.Live_Chat_Resources,'Css/main.css')}"/>
+    <apex:stylesheet value="{!URLFor($Resource.Live_Chat_Resources,'Css/captcha/visualcaptcha.css')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.Live_Chat_Resources, 'Js/jquery.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Live_Chat_Resources, 'Js/modernizr-2.8.3.min.js')}"/>
+    <!--<apex:includeScript value="{!URLFOR($Resource.Live_Chat_Resources, 'Js/visualcaptcha.jquery.src.js')}"/>-->
+    <!--<apex:includeScript value="{!URLFOR($Resource.Live_Chat_Resources, 'Js/Live_Chat_Resources.js')}" loadOnReady="true"/>-->
+    <style>
+        @font-face {
+            font-family: 'EKHB';
+            src: url({!URLFOR($Resource.Live_Chat_Resources,'Fonts/EKBFont.woff2')}) format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'HelveticaNeue';
+            src: url({!URLFOR($Resource.Live_Chat_Resources,'Fonts/HelveticaNeue.woff2')}) format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'HelveticaNeue-Bold';
+            src: url({!URLFOR($Resource.Live_Chat_Resources,'Fonts/HelveticaNeue-Bold.woff2')}) format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        textarea{
+            width: 230px !important;
+            display: inline-block !important;
+        }
+        .form-block h1 {
+            padding: 0 !important;
+            line-height: 1;
+            font-weight: normal;
+        }
+        body{
+            font-family: "HelveticaNeue",Helvetica,Arial,sans-serif;
+            /*background: url({!URLFor($Resource.Live_Chat_Resources,'Images/EKH_Unavailable.jpg')}) no-repeat top center;*/
+        }
+        .btn-arrow-right:before{
+            border-left: 8px solid #fff;
+            right: 7px;
+        }
+        .form-block h2{
+            margin-left: 17px;
+                margin-bottom: 10px;
+        }
+        .button-primary{
+            display: block !important;
+        }
+        .centerCustom{
+            top: 4%;
+            left: 8%;
+            right: 8%;
+            bottom: auto;
+            /*height: 680px;*/
+        }
+
+        .form-control {
+            height: 2.75em;
+            color: #333;
+            padding: 10px 11px;
+            font-size: 16px;
+
+            max-width: 360px;
+            clear: both;
+        }
+
+
+        input.error.email + div.errorMsg {
+            margin-left: 105px;
+        }
+        .errorMsg,
+        .captchaError {
+            color: #C33;
+            font-weight: 700;
+            font-size: 12px;
+            margin:0;
+            <!--display: inline-block;-->
+        }
+
+        @media only screen and (max-width: 400px) {
+            input.error.email + div.errorMsg{
+                margin: 0;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <apex:message />
+
+            
+        <apex:form id="reCaptchaForm" styleclass="form-block centerCustom" rendered="{!isShowCaptcha}">
+
+        <!--<apex:pageMessages ></apex:pageMessages>-->
+        <apex:message />
+            <apex:actionFunction action="{!CreateCaseForOffline}" name="createcase"/>
+
+            <div class="form-row">
+
+                <apex:outputPanel id="visualCaptchaContainer" styleClass="form-group">
+                    <div id="captchaContainer">
+                        <label>
+                            <span>Choose a verification method *</span>
+                        </label>
+
+                        <apex:inputHidden id="captchaVisualAnswer" value="{!userVisualCaptchaAnswer}"/>
+
+                        <apex:outputpanel id="captchaError" style="display:{!IF(NOT(IsValidCaptcha)== true, 'block', 'none')}" title="Captcha Error" styleClass="captchaError">
+                            Invalid captcha: Please enter valid captcha.
+                        </apex:outputpanel>
+
+                        <div id="captcha" class="visualCaptchaContainer visualCaptcha">
+                            <span id="inactive-tab" class="sr-only" aria-hidden="true">Not selected</span>
+                            <span id="audio-tab-AA" class="sr-only" aria-hidden="true">selecting this will announce the audio question to answer</span>
+
+                            <div id="audioTab" tabindex="0" role="tab" class="vc-tabs tab-audio {!IF(defaultCaptchaView == 'visual', 'InactiveTab-Audio', '')}" aria-label="Audio captcha" aria-describedby="inactive-tab audio-tab-AA" aria-selected="false">
+                                <apex:outputText value="Audio"></apex:outputText>
+                            </div>
+
+                            <div class="visualCaptcha-accessibility-wrapper {!IF(defaultCaptchaView == 'visual', 'visualCaptcha-hide', '')}" data-answer="{!audioOption.value}">
+                                <div class="accessibility-description">
+                                    Enter the answer to the question you hear.
+                                </div>
+                                <label for="audioTextInput" class="sr-only">Audio Text</label>
+                                <apex:outputPanel layout="none" rendered="{!defaultCaptchaView != 'visual'}" >
+                                    
+                                    <apex:inputText value="{!userAudioCaptchaAnswer}" id="audioTextInput" styleClass="form-control audioField blue-outline" html-autocomplete="off"/>
+
+                                    <audio id="audioPlayer" preload="auto" autoplay="autoplay" src="{!URLFor($Resource.Live_Chat_Resources,'captcha_assets/audios/' + audioOption.path)}">
+                                    </audio>
+                                </apex:outputPanel>
+                            </div>
+
+
+                            <div id="visualTab" role="tab" aria-selected="true" aria-label="visual captcha" class="vc-tabs tab-visual {!IF(defaultCaptchaView != 'visual', 'InactiveTab-Audio', '')}" tabindex="0">
+                                <apex:outputText value="Visual"></apex:outputText>
+                            </div>
+
+                            <div class="visualCaptcha-explanation {!IF(defaultCaptchaView != 'visual', 'visualCaptcha-hide', '')}" tabindex="0">
+                                Select the <strong>{!validChoice.value}</strong>
+                            </div>
+
+                            <div class="visualCaptcha-possibilities {!IF(defaultCaptchaView != 'visual', 'visualCaptcha-hide', '')}">
+                                <table role="presentation">
+                                    <tbody>
+                                    <tr>
+                                        <apex:repeat value="{!frontendData.choices}" var="choice">
+                                            <td class="captcha-cell" data-answer="{!choice.value}">
+                                                <div class="img">
+                                                    <a href="javascript:void(0);" aria-label="Visual captcha image">
+                                                        <img src="{!URLFor($Resource.Live_Chat_Resources,'captcha_assets/images/' + choice.path)}" id="visualCaptcha-img" alt="" title="" />
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </apex:repeat>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="visualCaptcha-button-group">
+                                <table role="presentation">
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="visualCaptcha-audiorefresh-button">
+                                                <a class="btnAudRefresh" role="button" href="javascript:void(0);" onclick="reloadCaptcha('audio');" title="Reload the Audio Captcha">
+                                                    <img role="presentation" src="{!URLFor($Resource.Live_Chat_Resources,'Images/refresh@2x.png')}" alt="Reload Audio" />
+                                                </a>
+                                            </div>
+                                        </td>
+
+                                        <td></td>
+
+                                        <td>
+                                            <div class="visualCaptcha-refresh-button">
+                                                <a class="btnRefresh" role="button" href="javascript:void(0);" onclick="reloadCaptcha('visual');" title=" Reload a different CAPTCHA.">
+                                                    <img role="presentation" src="{!URLFor($Resource.Live_Chat_Resources,'Images/refresh@2x.png')}" alt="" />
+                                                </a>
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="visualCaptcha-accessibility-button">
+                                                <a class="btnAudio" role="button" href="#" onclick="playAudio();" title="Play the audio CAPTCHA. ">
+                                                    <img role="presentation" src="{!URLFor($Resource.Live_Chat_Resources,'Images/accessibility@2x.png')}" alt="" />
+                                                </a>
+                                            </div>
+                                        </td>
+
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+            <div class="spacer-top full-span">
+                <p>You can also email us at emiratesholidays@emirates.com
+                    or call us 24 hrs on 1234567<br/>
+                    Open 7 days per week
+                </p>
+            </div>
+            <div class="form-row float-right">  
+                <!--<apex:commandButton action="{!CreateCaseForOfflineEn}" styleClass="btn-arrow-right-image button-primary btn-arrow-right" value="Request call-back"/> <span id="btn-arrow-right-spl"></span>  -->
+               <button type="button" onclick="callcreateCase();" Class="button-primary btn-arrow-right">Proceed</button>
+                <input type='button' class='button-secondary' onclick="window.close()" value='No thanks, I’m fine'/>
+            </div>
+
+            <apex:actionFunction name="switchCaptchaAudio" action="{!switchCaptcha}" onComplete="registerEvents(); playAudio();" immediate="true" reRender="visualCaptchaContainer">
+                <apex:param name="captchaView_audio" value="audio" assignTo="{!defaultCaptchaView}"></apex:param>
+            </apex:actionFunction>
+            <apex:actionFunction name="switchCaptchaVisual" action="{!switchCaptcha}" onComplete="registerEvents();" immediate="true" reRender="visualCaptchaContainer">
+                <apex:param name="captchaView_visual" value="visual" assignTo="{!defaultCaptchaView}"></apex:param>
+            </apex:actionFunction>
+
+        </apex:form>
+
+    </div>
+
+
+    <script type="text/javascript">
+        function callcreateCase(){
+            createcase();
+        }
+        
+        function onlynumber(evt) {
+          var theEvent = evt || window.event;
+          var key = theEvent.keyCode || theEvent.which;
+          key = String.fromCharCode( key );
+          var regex = /[0-9]|\./;
+          if( !regex.test(key) ) {
+            theEvent.returnValue = false;
+            if(theEvent.preventDefault) theEvent.preventDefault();
+          }
+        }
+
+
+        $(function(){
+            if($('form[id$="reCaptchaForm"]').length>0){
+                registerEvents(); 
+            }
+            
+        })
+
+        function playAudio(){
+            if($('#audioPlayer').length > 0){
+                $('#audioPlayer').get(0).play();
+            }
+        }
+
+        function registerEvents(){
+
+            $('form[id$="reCaptchaForm"]').on('submit', function(){
+                var captchaAnswer = $("input[id$='captchaVisualAnswer']").val();
+
+                if(captchaAnswer.trim().length == 0)
+                    $('span[id$="captchaError"]').style.display = 'block';
+            })
+
+            $("td.captcha-cell a").on('click', function(e){
+                var that = $(this).parents('td.captcha-cell');
+                $("td.captcha-cell").each(function(){
+                    if( $(that).get(0) !== $(this).get(0) ){
+                        $(this).removeClass('visualCaptcha-selected');
+                    }
+                })
+
+                $(this).parent('.img').parent().addClass('visualCaptcha-selected');
+                
+                $("input[id$='captchaVisualAnswer']").val($(this).parents('td.captcha-cell').data('answer'));
+            })
+
+
+            $(".vc-tabs").on('click', switchCaptchaView);
+        }
+
+        function reloadCaptcha(){
+            if($('#audioTab').hasClass('InactiveTab-Audio')){
+                switchCaptchaVisual('visual');
+                console.log('switching to visual captcha...');
+                
+            }else{
+                switchCaptchaAudio('audio');
+                console.log('switching to audio captcha...');
+            }
+            
+        }
+
+
+        function  switchCaptchaView(e){
+
+                e.preventDefault();
+                //e.stopImmediatePropagation();
+
+                if($(this).get(0) === $('#audioTab').get(0)){
+                
+                    switchCaptchaAudio('audio');
+                    console.log('switching to audio captcha...');
+                    /*
+                    $('#visualTab').addClass('InactiveTab-Audio');
+                    $('#audioTab').removeClass('InactiveTab-Audio');
+
+                    $('.visualCaptcha-explanation').addClass('visualCaptcha-hide');
+                    $('.visualCaptcha-possibilities').addClass('visualCaptcha-hide')
+
+                    $('.visualCaptcha-accessibility-wrapper').removeClass('visualCaptcha-hide');
+                    */
+                }else{
+
+                    switchCaptchaVisual('visual');
+                    console.log('switching to visual captcha...');
+                    /*
+                    $('#audioTab').addClass('InactiveTab-Audio');
+                    $('#visualTab').removeClass('InactiveTab-Audio');
+
+
+                    $('.visualCaptcha-explanation').removeClass('visualCaptcha-hide');
+                    $('.visualCaptcha-possibilities').removeClass('visualCaptcha-hide')
+
+                    $('.visualCaptcha-accessibility-wrapper').addClass('visualCaptcha-hide');
+                    */
+                }
+                
+                
+                
+                
+              
+
+                //return false;
+
+
+        }
+
+    </script>
+    
+   
+    
+    
+</body>
+</html> 
+</apex:page>

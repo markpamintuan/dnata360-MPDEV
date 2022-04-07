@@ -1,0 +1,27 @@
+.THIS .buttoncontainer button {	
+    margin: 2px;
+}
+
+.THIS .allowoverflow{
+    overflow: visible;
+}
+
+.THIS .myCheckbox{
+  display: inline-block;
+  float: left;
+}
+
+.THIS .uiInput--default .form-element__label {
+    margin-left: 5px;
+}
+
+.THIS .uiInputCheckbox{
+    margin-top: 15px;
+}
+
+.THIS .notiftextarea{
+        width: -webkit-fill-available;
+    height: 150px;
+    overflow: hidden;
+    resize: none;
+}

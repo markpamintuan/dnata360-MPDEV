@@ -1,0 +1,29 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <aura:attribute type="String" name="hiddenAttrib" default="{!$Label.c.dTME_Case_General_Enquiry_RecordTypeId}" />
+
+    <aura:attribute name="recordInfo" type="Object" access="private"/>
+	<aura:attribute type="Boolean" name="showAccount" default="false"/>
+    <aura:attribute type="Boolean" name="showBooking" default="false"/>
+     
+    <aura:if isTrue="{!v.showAccount}">
+         <force:recordData aura:id="recordHandler"  
+                          recordId="{!v.recordId}"  
+                          layoutType="FULL" 
+                          targetFields="{!v.recordInfo}" 
+                          targetError="{!v.recordError}" 
+                          recordUpdated="{!c.handleRecordUpdated}"/>
+    </aura:if>
+    
+        <aura:if isTrue="{!v.showBooking}">
+         <force:recordData aura:id="recordHandlerBooking"  
+                          recordId="{!v.recordId}"  
+                          layoutType="FULL" 
+                          targetFields="{!v.recordInfo}" 
+                          fields = "Org_Person_Account_Contact_Id__c"
+                          targetError="{!v.recordError}" 
+                          recordUpdated="{!c.handleRecordUpdated}"/>
+    </aura:if>
+		  
+</aura:component>

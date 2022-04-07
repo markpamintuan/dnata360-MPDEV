@@ -1,0 +1,211 @@
+<apex:page standardController="Account" extensions="AccountExtension" >
+    
+    <style>
+    html body.sfdcBody ui-accordion ui-widget ui-helper-reset {
+            font-family: 'Salesforce Sans',Arial,sans-serif !important;
+            background: none transparent;
+            padding: 0px 0px 0px 0px !important;
+        }
+        
+        .sfdcBody {
+        	padding: 0px 0px 0px 0px !important;
+        }
+        .ui-state-active {
+        background: #f3f2f2 !important;
+        color: rgb(0, 0, 0) !important;
+        }
+        .substyle{
+        font-family: verdana !important;
+        }
+        
+        .labelCol {
+        font-family: verdana !important;
+        color: #706E6B !important;
+        font-weight: normal !important;
+        }
+        
+        .tdVal {
+        font-family: verdana !important;
+        color: black !important;
+        }
+        
+        
+        .ui-state-default {
+        background: #f6f6f6 !important;
+        }
+       
+       .ui-state-active {
+            background: #53698D !important;
+       }
+        .ui-state-active {
+        background: #f3f2f2 !important;
+        color: rgb(0, 0, 0) !important;
+        }
+        
+        .ui-icon
+       {
+       background-image: url(http://download.jqueryui.com/themeroller/images/ui-icons_black_256x240.png) !important;
+       }
+        
+    </style>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $( function() {
+        $( "#accordion" ).accordion({collapsible: true});
+    } );
+    </script>
+    
+    <div id="accordion">
+        
+       <apex:repeat value="{!lstActiveBookings}" var="r"> 
+            
+            <h3 class="substyle">{!r.Org_Booking_Ref__c}</h3>
+            <div>
+                <table>
+                    <tr>
+                        <td class="labelCol">Booking Name:
+                        </td>
+                        <td class="tdVal">
+                           {!r.Name}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Booking Type:
+                        </td>
+                        <td class="tdVal">
+                            {!r.Org_Booking_Type__c}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Status:
+                        </td>
+                        <td class="tdVal">
+                            {!r.Booking_Status__c}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Date From:
+                        </td>
+                        <td class="tdVal"> 
+                           <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!r.Org_Date_From__c}" /> </apex:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="labelCol">Details: </td>
+                        <td class="tdVal"><a href="#" onClick="openPrimaryTab('{!r.Id}', '{!r.Name}');return false">View Record</a></td> 
+                    </tr>
+                </table>
+            </div>
+            
+            
+            
+            
+        </apex:repeat> 
+    </div>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    
+    <script type="text/javascript">
+    function openPrimaryTab(recId, recName) {
+        sforce.console.openPrimaryTab(undefined, '/'+recId, true, recName);
+    }
+    
+    //The callback function that openSubtab will call once it has the ID for its primary tab
+    var callOpenSubtab = function callOpenSubtab(result) {
+        debugger;
+        //sforce.console.openSubtab(result.id, '/'+, true, 'example');
+    };
+    
+    function openSubtab(recId, recName) {
+        sforce.console.getEnclosingPrimaryTabId(function(result, recId){
+            sforce.console.openSubtab(result.id, '/'+recId, true, recName);          
+        });
+    }
+    
+    //Sets the title of the current tab to "Example"
+    function setTitle() {
+        sforce.console.setTabTitle('Example');
+    }
+    
+    //The callback function that closeTab will call once it has the ID for its tab
+    var callCloseTab= function callCloseTab(result) {
+        sforce.console.closeTab(result.id);
+    }
+    
+    function closeTab() {
+        sforce.console.getEnclosingTabId(callCloseTab);
+    }
+    </script>
+    
+    
+</apex:page>
+
+
+
+<!-- <apex:page standardController="Account" extensions="AccountExtension" >
+<apex:slds />
+<apex:repeat value="{!lstActiveBookings}" var="r"> 
+<div class="demo-only" style="width: 30rem;">
+<article class="slds-tile slds-media">
+<div class="slds-media__figure">
+<span class="slds-icon_container" >
+<svg class="slds-icon slds-icon-standard-groups" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+</svg>
+</span>
+</div>
+<div class="slds-media__body">
+<h3 class="slds-tile__title slds-truncate" title="{!r.Name}"><a href="/{!r.Id}">{!r.Name}</a></h3>
+<div class="slds-tile__detail">
+<dl class="slds-list_horizontal slds-wrap">
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Booking Ref">Booking Ref:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Booking_Ref__c}">{!r.Booking_Ref__c}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Status">Status:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Booking_Status__c}">{!r.Booking_Status__c}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Product Type">Product Type</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Product_Type__c}">{!r.Product_Type__c}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Booked Date">Booked Date:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Booked_Date__c}">{!r.Booked_Date__c}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Owner">Owner:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Owner.Name}">{!r.Owner.Name}</dd>
+</dl>
+</div>
+</div>
+</article>
+</div>
+<br/>
+</apex:repeat>
+<!-- <apex:repeat value="{!lstActiveOpps}" var="r"> 
+<div class="demo-only" style="width: 30rem;">
+<article class="slds-tile slds-media">
+<div class="slds-media__figure">
+<span class="slds-icon_container" title="description of icon when needed">
+<svg class="slds-icon slds-icon-standard-groups" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+</svg>
+</span>
+</div>
+<div class="slds-media__body">
+<h3 class="slds-tile__title slds-truncate" title="{!r.Name}"><a href="/{!r.Id}">{!r.Name}</a></h3>
+<div class="slds-tile__detail">
+<dl class="slds-list_horizontal slds-wrap">
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Status">Status:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.StageName}">{!r.StageName}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Product Type">Product Type</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Product_Type__c}">{!r.Product_Type__c}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Date Created">Date Created:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.CreatedDate}">{!r.CreatedDate}</dd>
+<dt class="slds-item_label slds-text-color_weak slds-truncate" title="Owner">Owner:</dt>
+<dd class="slds-item_detail slds-truncate" title="{!r.Owner.Name}">{!r.Owner.Name}</dd>
+</dl>
+</div>
+</div>
+</article>
+</div>
+<br/>
+</apex:repeat> -
+
+
+</apex:page> -->

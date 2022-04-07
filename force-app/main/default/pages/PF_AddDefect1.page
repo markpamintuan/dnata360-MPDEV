@@ -1,0 +1,26 @@
+<apex:page standardController="PF_TestCaseExecution__c" extensions="PF_AddDefectExtension">
+    <apex:sectionHeader title="Defect Edit" subtitle="New Defect" />
+    <apex:form >
+        <apex:pageBlock title="Defect Edit" mode="edit"> 
+            
+            <apex:pageBlockSection columns="2" showHeader="true" title="Information"> 
+                <apex:inputField id="txtName" value="{!defect.Name}" required="true"/>
+                <apex:inputField id="txtType" value="{!defect.PF_Type__c}"  required="true"/>
+                <apex:inputField id="txtSeverity" value="{!defect.PF_Severity__c}"  required="true"/>
+                <apex:inputField id="txtStatus" value="{!defect.PF_Status__c}"  required="true"/>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" showHeader="true" title="Defect Details">
+                <apex:inputField id="txtDescription" value="{!defect.PF_Description__c}"  required="true"/>
+                <apex:inputField id="txtSteps" value="{!defect.PF_Steps_to_Reproduce__c}"  required="true"/>
+                <apex:inputField id="txtLink" value="{!defect.PF_Record_Link__c}" />
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton title="Save" value="Save" action="{!saveDefect}" id="btnSave"/>
+                <apex:commandButton value="Cancel" onclick="window.top.location='/{!PF_TestCaseExecution__c.id}'; return false" id="btnCancel"/>
+            </apex:pageBlockButtons>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

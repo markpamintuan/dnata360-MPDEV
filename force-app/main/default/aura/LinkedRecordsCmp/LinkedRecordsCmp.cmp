@@ -1,0 +1,49 @@
+<aura:component controller="DuplicateRecordManagementCntrl">
+	
+    <!-- field set which will be used to display the table headers -->
+    <aura:attribute name="displayFieldSet" type="string"/>
+	
+	<!-- this will store the id of current record -->
+    <aura:attribute name="recordId" type="string"/>    
+    
+    <!-- this will store the linked Field API Name -->
+    <aura:attribute name="linkingfield" type="string"/>    
+        
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <!-- Below handler will be used to call method when cmp loads -->
+    <aura:handler name="init" value="{!this}" action="{!c.initializeMethod}"/> 
+    
+    <!-- attributes de search result -->
+    <aura:attribute name="SearchedRecords" type="ContainerWrapperClass.SearchResultWrapper" />
+    
+    <!-- this will store the store the value for initialization -->
+    <aura:attribute name="InitalvalueToUse" type="string"/>
+    
+    <!-- Aura Method -->
+    <aura:method name="refresh" action="{!c.handleParentCall}">
+        <aura:attribute type="String" name="eventtype" />
+    </aura:method>
+    
+    <div class="slds-p-around_medium">         
+        <div class="slds-card__header" style="position:relative">
+            
+            <div class="slds-form--compound">                
+                <div>
+                    <!-- Linked table Section--> 
+                        <c:LinkedResultTableCmp records="{!v.SearchedRecords.lstRecs}" 
+                                             	headers="{!v.SearchedRecords.lstHeaders}"
+                                                displayFieldSet = "{!v.displayFieldSet}"
+                                                linkingfield = "{!v.linkingfield}"
+                                                recordId = "{!v.recordId}"
+                                                Spinner = "{!v.Spinner}"
+                                                InitalvalueToUse = "{!v.InitalvalueToUse}"
+                                                hasRecords = "{!v.SearchedRecords.hasRecords}"/>                                      
+                </div>
+                <c:SpinnerCmp displaySpinner="{!v.Spinner}"></c:SpinnerCmp>
+            </div>
+        </div>
+    </div>
+    
+</aura:component>

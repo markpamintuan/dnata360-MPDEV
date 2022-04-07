@@ -1,0 +1,48 @@
+<aura:component >
+    <aura:registerEvent name="removeAssigne" type="c:PF_RemoveTestStepsEvent"/>
+    <aura:attribute name="test" type="PF_Test_Case_Step__c" />
+    <aura:attribute name="index" type="Integer" />
+    <aura:attribute name="checkBoxB" type="Boolean" default="false" />
+    <aura:attribute name="checkBox2" type="Boolean" default="false" />
+    <div class="slds-grid slds-wrap slds-m-top_large">
+    	<div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">             
+            <ui:inputCheckbox value="{!v.checkBoxB}" change="{!c.checkboxSelect}" updateOn="click" />
+        </div>
+        <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">        	
+             	<ui:outputText value="{!v.index+1}"/>
+        </div>
+        <div class="slds-large-size_3-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+            <div class="slds-form-element slds-is-relative assigned_to_date">            	
+                <div class="slds-form-element__control">                    
+                    <ui:inputTextArea class="slds-input" maxlength="80" value="{!v.test.PF_Step_Description__c}"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-large-size_3-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+            <div class="slds-form-element slds-is-relative assigned_to_date">            	
+                <div class="slds-form-element__control">                	
+                    <ui:inputTextArea class="slds-input" maxlength="80" value="{!v.test.PF_Expected_Result__c}"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-large-size_3-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+            <div class="slds-form-element slds-is-relative assigned_to_date">            	
+                <div class="slds-form-element__control">                    
+                    <ui:inputTextArea class="slds-input"  value="{!v.test.PF_Actual_Result__c}"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+            <div class="slds-form-element slds-is-relative assigned_to_date">            	
+                <div class="slds-form-element__control">
+                	<ui:button label="Delete" press="{!c.removeTestStep}"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	
+</aura:component>

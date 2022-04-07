@@ -1,0 +1,9 @@
+<apex:page standardController="case">
+
+  	<apex:outputPanel rendered="{!IF(case.recordtype.name == 'marhaba - Email',IF(Case.AccountId == null,true,false),false)}"> 
+	    <script>    
+	    	alert("{!$Label.Marhaba_CreateContactText}");
+	    </script>
+  	</apex:outputPanel>
+    	
+</apex:page>

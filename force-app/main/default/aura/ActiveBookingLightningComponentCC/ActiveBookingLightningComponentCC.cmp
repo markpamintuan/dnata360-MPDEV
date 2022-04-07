@@ -1,0 +1,78 @@
+<aura:component controller="AccountAuraExtensionControllerCC" implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" >   
+    
+    <!--on component load call doInit javaScript function and fetch records from server-->  
+    <lightning:workspaceAPI aura:id="workspace" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="caseList" type="List"/>
+    
+    <aura:attribute name="end" type="integer" default="5"/>
+
+    <aura:attribute name="case" type="Object" description="The record object to be displayed"/>
+    <aura:attribute name="caseRecord" type="Object" description="A simplified view record object to be displayed"/>
+    <aura:attribute name="recordError" type="String" description="An error message bound to force:recordData"/>
+    
+	<aura:attribute name="objInfo" type="case" default="{sobjectType : 'Case'}" />
+    <force:recordData aura:id="caseidrecord" 
+                      layoutType="FULL" 
+                      recordId="{!v.recordId}" 
+                      targetError="{!v.recordError}" 
+                      targetRecord="{!v.case}" 
+                     
+                      targetFields="{!v.caseRecord}" 
+                      
+                      mode="EDIT"
+                      recordUpdated="{!c.recordUpdated}"/>
+
+    
+    <lightning:accordion class="slds-accordion" aura:id="ActiveBookingsCmp">
+        <aura:iteration items="{!v.caseList}" var="cs" indexVar="iVar" end="{!v.end}">
+            <lightning:accordionSection name="{!cs.Case__c.Name}" label="{!'Order Number' + ' - '+ if(cs.SFCC_Order_Number__c == null,cs.OrderNumber,cs.SFCC_Order_Number__c)}" class="section-title-bg">
+                
+                <aura:set attribute="body">
+                    <div class="slds-grid slds-wrap">
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Order Number : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">{!if(cs.SFCC_Order_Number__c == null,cs.OrderNumber,cs.SFCC_Order_Number__c)}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Brand : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">{!cs.SFCC_Brand__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Order Status : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">{!cs.Status__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Order Date : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.EffectiveDate}" />
+                        </div>
+						
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Service Start Date : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.Service_Start_Date__c}" />
+                        </div>
+                        
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Details :</div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3" 
+                                onclick="{!c.openTabWithSubtab}" 
+                                data-value="{!cs.Id}"><a href="#" >View Record</a></div>
+                </div>
+                </aura:set>
+            </lightning:accordionSection>
+
+        </aura:iteration>
+        
+    </lightning:accordion>
+    <aura:if isTrue="{!empty(v.caseList)}">
+        <div style="padding-left:10px"><i>No Records</i></div>
+    
+    <!-- <aura:if isTrue="{!v.caseList.length > 5}">    -->  
+	  	<aura:set attribute="else">
+          <div id="bookings22" class="slds-card__footer" data-aura-rendered-by="4400:0">
+              <span class="view-all-label" data-aura-rendered-by="4401:0">
+                  <div onclick="{!c.gotoAllBooking}" ><a>View All Bookings</a></div> 
+              </span>
+          </div> 
+        </aura:set>
+    </aura:if> 
+    
+</aura:component>

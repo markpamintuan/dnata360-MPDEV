@@ -1,0 +1,32 @@
+.THIS .buttoncontainer button {	
+    margin: 2px;
+}
+
+.THIS .allowoverflow{
+    overflow: visible;
+}
+
+.THIS .myCheckbox{
+  display: inline-block;
+  float: left;
+}
+
+.THIS .uiInput--default .form-element__label {
+    margin-left: 5px;
+}
+
+.THIS .uiInputCheckbox{
+    margin-top: 15px;
+}
+
+.THIS.modal {
+    display: none;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+.THIS.modal.open {
+   display: block;
+}

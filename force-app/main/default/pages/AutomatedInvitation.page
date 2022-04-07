@@ -1,0 +1,45 @@
+<apex:page showHeader="false" sidebar="false">
+<!-- This section creates the div with the UI for chat invitation whose id is 573D01234567890 -->
+<!-- For this usage, the "Animation" type of this invitation should be set to "Custom",
+otherwise two invitations will appear (the Salesforce-provided one and this custom one). -->
+<div id="liveagent_invite_button_5730E00000000Nk" style="display: none; position: fixed; border: 2px solid darkblue; border-radius: 5px; background-color: lightblue; height: 100px; width: 200px;">
+   
+    <div style="cursor: pointer; padding: 5px; right: 0px; position: absolute; color: darkred; font-weight: bold;" onclick="liveagent.rejectChat('5730E00000000Nk')">X</div>
+
+<div style="cursor: pointer; top: 42px; left: 65px; position: absolute;font-weight: bold; font-size: 16px;" onclick="liveagent.startChat('5730E00000000Nk')">Start Chat</div>
+</div>
+
+<!-- Live Agent Deployment Code that makes chat available -->
+<script type='text/javascript' src='https://c.la.gus.salesforce.com/content/g/js/36.0/deployment.js'></script>
+
+<script type='text/javascript'>
+  
+    function buttonCallback(e) {
+    
+        if (e == liveagent.BUTTON_EVENT.BUTTON_AVAILABLE) {
+        document.getElementById('liveagent_invite_button_5730E00000000Nk').style.display = '';
+        document.getElementById('liveagent_invite_button_5730E00000000Nk').style.left = '300px';
+        document.getElementById('liveagent_invite_button_5730E00000000Nk').style.top = '200px';
+        }
+        
+        
+        if (e == liveagent.BUTTON_EVENT.BUTTON_UNAVAILABLE) {
+        document.getElementById('liveagent_invite_button_5730E00000000Nk').style.display = 'none';
+        }
+        
+        if (e == liveagent.BUTTON_EVENT.BUTTON_ACCEPTED) {
+        document.getElementById('liveagent_invite_button_5730E00000000Nk').style.display = 'none';
+        }
+        
+        if (e == liveagent.BUTTON_EVENT.BUTTON_REJECTED) {
+        document.getElementById('liveagent_invite_button_5730E00000000Nk').style.display = 'none';
+        }
+    }
+    
+    liveagent.addButtonEventHandler('5730E00000000Nk', buttonCallback);
+  
+    liveagent.init('https://d.la1s1.salesforceliveagent.com/chat', '5720E00000000E8', '00D0E0000004pp6');
+    
+    liveagent.enableLogging();
+</script>
+</apex:page>

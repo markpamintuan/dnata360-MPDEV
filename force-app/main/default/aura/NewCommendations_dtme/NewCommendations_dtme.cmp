@@ -1,0 +1,9 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+				access="global">
+    
+
+    <aura:attribute name="recordInfo" type="Object" access="private"/>
+    <force:recordData aura:id="recordHandler"  recordId="{!v.recordId}"  layoutType="FULL" 
+                      targetFields="{!v.recordInfo}" targetError="{!v.recordError}" recordUpdated="{!c.handleRecordUpdated}"/>
+    
+</aura:component>

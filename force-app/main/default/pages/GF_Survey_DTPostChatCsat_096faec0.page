@@ -1,0 +1,36 @@
+<apex:page showHeader="false">
+        <script type='text/javascript'>
+          var chatDetails = JSON.parse('{!SUBSTITUTE($CurrentPage.parameters.chatDetails, "'", "\'")}');
+          var mergeFieldObject = {
+            chat_key: '{!$CurrentPage.parameters.chatKey}',
+            chat_start_time: '{!$CurrentPage.parameters.startTime}',
+            chat_request_time: '{!$CurrentPage.parameters.requestTime}',
+            chat_agent_id: typeof chatDetails.agent !== 'undefined' ? chatDetails.agent.userId : '',
+            chat_agent_name: typeof chatDetails.agent !== 'undefined' ? chatDetails.agent.agentName : '',
+            chat_last_visited_page: '{!SUBSTITUTE($CurrentPage.parameters.lastVisitedPage, "'", "\'")}',
+            chat_disconnected_by: '{!SUBSTITUTE($CurrentPage.parameters.disconnectedBy, "'", "\'")}'
+          };
+
+          var customDetails = {}
+
+          if (typeof chatDetails.customDetails !== 'undefined') {
+            customDetails = chatDetails.customDetails.reduce(function(memo, detail) {
+              memo['chat_custom_' + toSnakeCase(detail.label)] = detail.value;
+              return memo;
+            }, {});
+          }
+
+          Object.assign(mergeFieldObject, customDetails, JSON.parse('{!$CurrentPage.parameters.attachedRecords}'))
+
+          var mergeFields = [];
+          for (var prop in mergeFieldObject) {
+            mergeFields.push(prop + '=' + mergeFieldObject[prop])
+          }
+
+          window.location = 'https://www.getfeedback.com/r/3ag6NNSK?' + mergeFields.join('&')
+
+          function toSnakeCase(str) {
+            return str.trim().toLowerCase().replace(/\W/g, '_').replace(/(^_|_$)/g, '')
+          }
+        </script>
+      </apex:page>

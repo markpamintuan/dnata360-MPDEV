@@ -1,0 +1,116 @@
+/*.THIS table {
+  border-collapse: collapse;
+}
+.THIS table td {
+  border: 0; 
+}
+.THIS table tr:first-child td {
+  border-top: 0;
+}
+.THIS table tr td:first-child {
+  border-left: 0;
+}
+.THIS table tr:last-child td {
+  border-bottom: 0;
+}
+.THIS table tr td:last-child {
+  border-right: 0;
+}*/
+
+.THIS.slds-modal{
+    position:fixed !important;
+}
+
+.THIS .slds-modal__content{
+    min-height:fit-content;
+}
+
+.THIS.slds-backdrop{
+    position:fixed !important;
+}
+
+.THIS .greenadd{
+    height:30px !important;
+   
+}
+.THIS .slds-icon{
+    height:18px!important;
+    fill:blue;
+}
+
+.THIS .tabelTR tr{
+    color:blue;
+}
+.THIS  th:nth-child(1){ display:none !important; }
+.THIS  td:nth-child(1){ display:none !important; }
+
+
+.THIS .checkbox{
+    display:inline-block;
+}
+
+.THIS .setSelected{
+    background-color: #EEE;
+}
+
+.THIS .childitems{
+    padding-right: 23px;
+    padding-left: 14px;
+}
+
+.THIS .lookuptypeselect{
+   width: 25%;
+    display: inline-block;
+    padding-left: 2px;
+}
+
+.THIS .leftPaddingClass{
+   	padding-left:30px;
+}
+
+.THIS .slds-notify_toast{
+    position:absolute!important;
+    left:0px!important;
+    top:calc(0.25rem + 30px);
+    background:none!important;
+    padding : 0px!important;
+    font-size:12px!important;
+    font-family:Salesforce Sans !important;
+    font-weight:500;
+}
+
+.THIS .slds-theme_error{
+    color : #C23934!important;
+}
+
+.THIS .allowoverflow{
+    overflow: visible;
+}
+
+.THIS .slds-text-longform ul {
+    margin-left: 0px;
+}
+
+.THIS select{
+    height:32px !important;
+}
+
+.THIS .checkbox{
+    margin-top:0px !important;
+}
+
+.THIS .cIssuePillContainer p{
+    margin-bottom:0px;
+}
+
+.THIS .cIssuePillContainer ul{
+    margin-bottom:0px;
+}
+
+.THIS .cIssuePillContainer{
+    padding-left:2%;
+}
+
+.THIS .lookuptypeselect{
+    font-size:12px;
+}

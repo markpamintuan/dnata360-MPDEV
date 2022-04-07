@@ -1,0 +1,656 @@
+<apex:page showHeader="true" sidebar="false"  standardController="Booking__c" extensions="NewBookingPagePreviewController" >
+   <apex:slds />
+   <c:Dnata_CSS /> 
+
+    <style>
+        span.dateFormat{
+        	visibility:hidden;
+        }
+        html{
+        	overflow-x:hidden;
+        }
+        .liItem:hover{
+            cursor:pointer !important;
+            background-color: #d4d4d4 !important;
+        }
+        
+        li{
+            padding-left:12px !important;
+        }
+    select::-ms-expand{
+        background-color:transparent;
+        border-color:transparent;
+        }
+    </style>
+   <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+   
+   <script>
+    
+      $('body').css('background-color','#fafaf9');
+      
+      function openModal(modalId){
+          window.scrollTo(0,18);
+         $('#' + modalId).addClass('slds-slide-up-saving');
+            $('.slds-backdrop').addClass('slds-backdrop_open');
+          noscroll();
+         }      
+      
+      function removeModal(){
+         $('.slds-modal').removeClass('slds-slide-up-saving');
+         $('.slds-backdrop').removeClass('slds-backdrop_open');
+          noscroll();
+      }
+   
+      
+   </script>
+   <div class="container bookingpage">
+      <div class="slds">
+         <apex:form >         
+            <!-- Booking Information form -->
+            <div class="slds-modal__header" style="background-color:#008FCB ">
+               <div style="position:relative;left:19%;text-align:left;">
+                   <!-- <span class="header-text"><b>Booking for {!Case.Contact.Name}</b></span><br/>
+                  <span class="header-sub-text">Case Number: {!Case.CaseNumber}</span>-->
+               </div>
+            </div>
+            <div class="slds-grid">
+               <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+               <div class="slds-col slds-size--4-of-6 padding-3 initial-tab white">
+                  <div style="text-align:right">
+                   <!-- <apex:pageMessages />
+                     <apex:commandButton value="Cancel" action="{!cancel}" styleClass="slds-button slds-button_destructive" />
+                     <apex:commandButton value="Save" action="{!saveAll}" styleClass="slds-button slds-button_success" style="color:white" /> -->
+                  </div>
+                  <div id="bookingInfoSection">
+                     <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                           <button  id="bookingPageSection" type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                           <span title="Section Title">Booking Information</span>
+                           </button>
+                        </h3>
+                     </div>
+                     <div class="slds-grid slds-wrap">
+                        <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                           <div class="slds-form-element left-cell">
+                              <label class="slds-form-element__label">dnata Reference #</label>
+                              <div class="slds-form-element__control">
+                                 <apex:inputField value="{!bookingItem.Name}" id="firstdnatano" styleClass="slds-input" required="false" html-disabled="true"/>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                           <div class="slds-form-element right-cell right-cell-label">
+                              <label class="slds-form-element__label" for="input-id-01">Booked Date</label>
+                              <div class="slds-form-element__control">
+                                 <apex:inputField value="{!bookingItem.Org_Booked_Date__c}" styleClass="slds-input" required="false" html-disabled="true"/>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                           <div class="slds-form-element left-cell" >
+                              <label class="slds-form-element__label" for="">Booking System</label> 
+                              <!-- <div class="slds-form-element__control"><span class="dateInput dateOnlyInput"><input class="slds-input"  size="12" type="text"/><span class="dateFormat">[&nbsp;<a href="javascript:DatePicker.insertDate('27/05/2018', 'j_id0:j_id99:j_id109', true);">27/05/2018</a>&nbsp;]</span></span></div> -->
+                               <apex:inputField value="{!bookingItem.Booking_System__c}" styleClass="slds-input" required="false" html-disabled="true"/>
+                           </div>
+                        </div>
+                        <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                           <div class="slds-form-element  left-cell button-container" style="text-align:right">
+                              <apex:outputPanel id="bookingbuttons"> 
+                              </apex:outputPanel>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+            </div>
+         </apex:form>
+          <!-- ************************************* Hotel Itinerary Section ***********************************************-->
+          
+         <apex:form >
+         
+                        <apex:outputPanel id="outerItineraryFlightSection">
+             
+               <apex:outputPanel id="innerItineraryFlightSection" rendered="{!bookingItem.Org_Booking_Type__c == 'Accommodation'}"  >
+                  <div class="slds-grid">
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                     <div class="slds-col slds-size--4-of-6 padding-3 white">
+                          
+                        <div id="itineraryFlightSection">
+                           <div class="slds-section slds-is-open">
+                              <h3 class="slds-section__title">
+                                 <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                 <span title="Section Title">Hotel Itinerary</span>
+                                 </button>
+                              </h3>
+                           </div>
+                          
+                           
+                        </div>
+                        <apex:outputPanel id="flightItineraryDetailsTableOuter">
+                           <apex:outputPanel id="flightItineraryDetailstableInner" >
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                              <table name="hotelTable" Id="hotelTable" class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout:fixed">
+                                <!-- <span style="color:#008FCB !important;font-size:18px; "><b>Itinerary</b> </span> -->                        
+                                 <thead>
+                                    <tr>
+                                      <!-- <th scope="col">
+                                          <div class="slds-truncate">Action</div>
+                                       </th>-->
+                                        <th scope="col">
+                                          <div class="slds-truncate" title="Hotel Name">Hotel Name</div>
+                                       </th>
+										<th scope="col">
+                                          <div class="slds-truncate" title="Destination Name">Destination Name</div>
+                                       </th>
+                                       <th scope="col">
+                                          <div class="slds-truncate" title="Check In">Check In</div>
+                                       </th>
+                                       <th scope="col">
+                                          <div class="slds-truncate" title="Check Out">Check Out</div>
+                                       </th>
+                                        <th scope="col">
+                                          <div class="slds-truncate" title="Description">Description</div>
+                                       </th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <apex:repeat value="{!mapItinDetailKeyToItineray}" var="key">
+                                       <tr>
+                                        <!--  <td data-label="Action">
+                                             <div class="slds-truncate" >
+                                                <a href="#" onclick="editFlightItinerary('{!key}')">Edit</a> 
+                                              <!--  <a href="#" onclick="deleteItineraryDetailConfirm('{!key}'); return false;">Del</a> -->
+                                            <!-- </div>
+                                          </td>-->
+                                           <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItineray[key].org_hotel_name__c}">
+                                                <apex:outputField value="{!mapItinDetailKeyToItineray[key].org_hotel_name__c}"/>
+                                             </div>
+                                          </td>
+                                          
+                                          <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItineray[key].org_destination_name__c}">{!mapItinDetailKeyToItineray[key].org_destination_name__c}</div>
+                                          </td>
+                                          <td scope="col" width="10%">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItineray[key].org_check_in__c}">
+                                                 <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                   <apex:param value="{!mapItinDetailKeyToItineray[key].org_check_in__c}" />
+                                                </apex:outputText>
+                                             </div>
+                                          </td>
+                                          <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItineray[key].org_check_out__c}">
+                                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                   <apex:param value="{!mapItinDetailKeyToItineray[key].org_check_out__c}" />
+                                                </apex:outputText>
+                                             </div>
+                                          </td>
+                                          
+                                           <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItineray[key].description__c}">{!mapItinDetailKeyToItineray[key].description__c}</div>
+                                          </td>
+                                       </tr>
+                                    </apex:repeat>
+                                 </tbody>
+                              </table>
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                           </apex:outputPanel>
+                        </apex:outputPanel>
+                     </div>
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                  </div>
+               </apex:outputPanel>
+            </apex:outputPanel>
+         </apex:form>
+         <!-- ************************************* Flight Itinerary Section ***********************************************-->
+          
+         <apex:form >
+         
+                        <apex:outputPanel id="outerItineraryFlightSection">
+             
+               <apex:outputPanel id="innerItineraryFlightSection" rendered="{!bookingItem.Org_Booking_Type__c == 'Flight'}"  >
+                  <div class="slds-grid">
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                     <div class="slds-col slds-size--4-of-6 padding-3 white">
+                          
+                        <div id="itineraryFlightSection">
+                           <div class="slds-section slds-is-open">
+                              <h3 class="slds-section__title">
+                                 <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                 <span title="Section Title">Flight Itinerary Information</span>
+                                 </button>
+                              </h3>
+                           </div>
+                          
+                           
+                        </div>
+                        <apex:outputPanel id="flightItineraryDetailsTableOuter">
+                           <apex:outputPanel id="flightItineraryDetailstableInner" rendered="{!showItineraryDetail}" >
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                              <table name="flightTable" Id="flightTable" class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout:fixed">
+                                <!-- <span style="color:#008FCB !important;font-size:18px; "><b>Itinerary</b> </span> -->                        
+                                 <thead>
+                                    <tr>
+                                      <!-- <th scope="col">
+                                          <div class="slds-truncate">Action</div>
+                                       </th>-->
+                                       <th scope="col">
+                                          <div class="slds-truncate" title="Departure Airport">Departure Airport</div>
+                                       </th>
+                                       <th scope="col">
+                                          <div class="slds-truncate" title="Departure Date">Departure Date</div>
+                                       </th>
+                                       <th scope="col">
+                                          <div class="slds-truncate" title=">Arrival Airport">Arrival Airport</div>
+                                       </th>
+                                       <th scope="col">
+                                          <div class="slds-truncate" title="Arrival Date">Arrival Date</div>
+                                       </th>
+                                       <th scope="col">
+                                          <div class="slds-truncate" title="Flight Number">Flight Number</div>
+                                       </th>
+                                        <th scope="col">
+                                          <div class="slds-truncate" title="Flight Number">Airline PNR Reference #</div>
+                                       </th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <apex:repeat value="{!mapItinDetailKeyToItinerayRecord}" var="key">
+                                       <tr>
+                                        <!--  <td data-label="Action">
+                                             <div class="slds-truncate" >
+                                                <a href="#" onclick="editFlightItinerary('{!key}')">Edit</a> 
+                                              <!--  <a href="#" onclick="deleteItineraryDetailConfirm('{!key}'); return false;">Del</a> -->
+                                            <!-- </div>
+                                          </td>-->
+                                          <td scope="col" width="10%">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItinerayRecord[key].Departure_Airport__c}">
+                                                {!mapItinDetailKeyToItinerayRecord[key].Departure_Airport__c}
+                                             </div>
+                                          </td>
+                                          <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItinerayRecord[key].Org_Departure_Date__c}">
+                                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                   <apex:param value="{!mapItinDetailKeyToItinerayRecord[key].Org_Departure_Date__c}" />
+                                                </apex:outputText>
+                                             </div>
+                                          </td>
+                                          <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItinerayRecord[key].Arrival_Airport__c}">
+                                                <apex:outputField value="{!mapItinDetailKeyToItinerayRecord[key].Arrival_Airport__c}"/>
+                                             </div>
+                                          </td>
+                                          <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItinerayRecord[key].Org_Arrival_Date__c}">
+                                                <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                   <apex:param value="{!mapItinDetailKeyToItinerayRecord[key].Org_Arrival_Date__c}" />
+                                                </apex:outputText>
+                                             </div>
+                                          </td>
+                                          <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItinerayRecord[key].Org_Flight_Number__c}">{!mapItinDetailKeyToItinerayRecord[key].Org_Flight_Number__c}</div>
+                                          </td>
+                                           <td scope="col">
+                                             <div class="slds-truncate" title="{!mapItinDetailKeyToItinerayRecord[key].Org_Airline_Locator__c}">{!mapItinDetailKeyToItinerayRecord[key].Org_Airline_Locator__c}</div>
+                                          </td>
+                                       </tr>
+                                    </apex:repeat>
+                                 </tbody>
+                              </table>
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                           </apex:outputPanel>
+                        </apex:outputPanel>
+                     </div>
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                  </div>
+               </apex:outputPanel>
+            </apex:outputPanel>
+         </apex:form>
+         <!-- ************************************* Traveller Section ***********************************************-->
+         <apex:form >
+         <apex:pageMessages rendered="false"/>
+            
+            <apex:outputPanel id="outerTravellersSection">
+               <apex:outputPanel id="innerTravellersSection">
+                  <div class="slds-grid">
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                     <div class="slds-col slds-size--4-of-6 padding-3 white">
+                        <div id="travellerSection">
+                           <div class="slds-section slds-is-open">
+                              <h3 class="slds-section__title">
+                                 <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                 <span title="Section Title">Travellers</span>
+                                 </button>
+                              </h3>
+                           </div>
+                    
+                        </div>
+                        <apex:outputPanel id="travellerTableOuter">
+                           <apex:outputPanel id="travellerTableInner" rendered="{!showtravellerTable}">
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                             <!-- <span style="color:#008FCB !important;font-size: 18px; ;" ><b> Current Travellers</b> </span> -->
+                              <div class="overflowscrollx">
+                                 <table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout:fixed">
+                                    <thead>
+                                       <tr>
+                                         <!-- <th scope="col">
+                                             <div class="slds-truncate">Action</div>
+                                          </th> -->
+                                          <th scope="col">
+                                             <div class="slds-truncate" title="First Name">First Name</div>
+                                          </th>
+                                          <th scope="col">
+                                             <div class="slds-truncate" title="Last Name">Last Name</div>
+                                          </th>
+                                          <th scope="col">
+                                             <div class="slds-truncate" title="Date Of Birth">Date of Birth</div>
+                                          </th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                       <apex:repeat value="{!mapTravellerKeyToTravellerRecord}" var="key">
+                                          <tr >
+                                            <!-- <td data-label="Action">
+                                                <div class="slds-truncate" title="Edit">
+                                                   <a onclick="editTraveller('{!key}')" >Edit </a> | 
+                                                   <a href="#" onclick="deleteTravellerConfirm('{!key}')">Del</a>
+                                                </div>
+                                             </td> -->
+                                             <td scope="col">
+                                                <div class="slds-truncate" title="{!mapTravellerKeyToTravellerRecord[key].Org_First_Name__c}">{!mapTravellerKeyToTravellerRecord[key].Org_First_Name__c}</div>
+                                             </td>
+                                             <td scope="col">
+                                                <div class="slds-truncate" title="{!mapTravellerKeyToTravellerRecord[key].Org_Last_Name__c}">{!mapTravellerKeyToTravellerRecord[key].Org_Last_Name__c}</div>
+                                             </td>
+                                             <td scope="col">
+                                                <div class="slds-truncate" title="{!mapTravellerKeyToTravellerRecord[key].Org_Date_Of_Birth__c}">
+                                                   <apex:outputText value="{0,date,dd/MM/yyyy}">
+                                                      <apex:param value="{!mapTravellerKeyToTravellerRecord[key].Org_Date_Of_Birth__c}" />
+                                                   </apex:outputText>
+                                                </div>
+                                             </td>
+                                          </tr>
+                                       </apex:repeat>
+                                    </tbody>
+                                 </table>
+                              </div>
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                           </apex:outputPanel>
+                        </apex:outputPanel>
+                     </div>
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                  </div>
+               </apex:outputPanel>
+            </apex:outputPanel>
+         </apex:form>
+         <!-- ************************************* Booked Line Items ***********************************************-->
+         <apex:form >
+         <apex:pageMessages rendered="false"/>
+            
+            <apex:outputPanel id="bookingPriceItemSection">
+               <apex:outputPanel id="innerbookingPriceItemSection">
+                  <div class="slds-grid">
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                     <div class="slds-col slds-size--4-of-6 padding-3 white">
+                        <div id="travellerSection">
+                           <div class="slds-section slds-is-open">
+                              <h3 class="slds-section__title">
+                                 <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                 <span title="Section Title">Pricing Details</span>
+                                 </button>
+                              </h3>
+                           </div>
+                          
+                        </div>
+                        <apex:outputPanel id="bookingPriceItemTableOuter">
+                           <apex:outputPanel id="bookingPriceItemTableInner" rendered="{!showBookingPriceTable}">
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                              <!--<span style="color:#008FCB !important;font-size: 18px; ;"><b> Current Pricing Details</b> </span>-->
+                              <div class="overflowscrollx">
+                                 <table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout:fixed">
+                                    <thead>
+                                       <tr>
+                                         <!-- <th scope="col">
+                                             <div class="slds-truncate">Action</div>
+                                          </th>-->
+                                          <th scope="col">
+                                             <div class="slds-truncate" title="Client Gross">Client Gross</div>
+                                          </th>
+                                          <th scope="col">
+                                             <div class="slds-truncate" title="Supplier Gross">Supplier Gross</div>
+                                          </th>
+                                          <th scope="col">
+                                             <div class="slds-truncate" title="Org Title">Title</div>
+                                          </th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                       <apex:repeat value="{!mapBookingPriceKeyToBookingPriceBreakdown}" var="key">
+                                          <tr >
+                                             <!--<td data-label="Action">
+                                                <div class="slds-truncate" title="Edit">
+                                                   <a onclick="editLineItems('{!key}')" >Edit </a>| 
+                                                   <a href="#" onclick="deleteLineItemsConfirm('{!key}')">Del</a>
+                                                </div>
+                                             </td>-->
+                                             <td scope="col">
+                                                <div class="slds-truncate" title="{!mapBookingPriceKeyToBookingPriceBreakdown[key].Org_Client_Gross__c}">{!mapBookingPriceKeyToBookingPriceBreakdown[key].Org_Client_Gross__c}</div>
+                                             </td>
+
+                                             <td scope="col">
+                                                <div class="slds-truncate" title="{!mapBookingPriceKeyToBookingPriceBreakdown[key].Org_Supplier_Gross__c}">{!mapBookingPriceKeyToBookingPriceBreakdown[key].Org_Supplier_Gross__c}</div>
+                                             </td>
+                                             <td scope="col">
+                                                <div class="slds-truncate" title="{!mapBookingPriceKeyToBookingPriceBreakdown[key].Name}">{!mapBookingPriceKeyToBookingPriceBreakdown[key].Name}</div>
+                                             </td>
+                                          </tr>
+                                       </apex:repeat>
+                                    </tbody>
+                                 </table>
+                              </div>
+                              <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/></div>
+                           </apex:outputPanel>
+                        </apex:outputPanel>
+                         <hr style="margin:20px 0px;background-color:white;border-color:white" />
+                        <!--<div style="text-align:right">
+                           <apex:inputField value="{!bookingItem.Name}" styleClass="slds-input" id="seconddnatano" required="false" style="position:absolute;visibility:hidden" />
+                           <apex:commandButton value="Cancel" action="{!cancel}" styleClass="slds-button slds-button_destructive" />
+                           <apex:commandButton value="Save" onclick="movednatavalue()" action="{!saveAll}" styleClass="slds-button slds-button_success" style="color:white" />
+                        </div>-->
+                         
+                     </div>
+                     <div class="slds-col slds-size--1-of-6 side-bar-grey"></div>
+                  </div>
+               </apex:outputPanel>
+            </apex:outputPanel>
+         </apex:form>
+      </div>
+      <!-- ************************************* Edit Traveller Modal  *****************************************-->
+      <apex:form >
+      <apex:pageMessages rendered="false"/>
+         <div class="demo-only" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" id="travellerModal" class="slds-modal ">
+               <div class="slds-modal__container">
+                  <header class="slds-modal__header">
+                     <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit Traveller</h2>
+                  </header>
+                  <apex:outputPanel id="travellerModalFields">
+                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <!--<div class="slds-grid slds-wrap">
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label">First Name</label>
+                                 <div class="slds-form-element__control">
+                                     <apex:inputField value="{!traveller.Org_First_Name__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element right-cell right-cell-label">
+                                 <label class="slds-form-element__label">Last Name</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!traveller.Org_Last_Name__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label" for="input-id-01">Date of Birth</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!traveller.Org_Date_Of_Birth__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>-->
+                     </div>
+                  </apex:outputPanel>
+                  
+               </div>
+            </section>
+            <div class="slds-backdrop "></div>
+         </div>
+      </apex:form>
+      <!-- ************************************* Edit Line Item Modal*****************************************-->
+      <apex:form >
+      <apex:pageMessages rendered="false"/>
+         <div class="demo-only" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" id="lineItemModal" class="slds-modal ">
+               <div class="slds-modal__container">
+                  <header class="slds-modal__header">
+                     <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit Pricing Detail</h2>
+                  </header>
+                  <apex:outputPanel id="lineItemModalFields">
+                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <!--<div class="slds-grid slds-wrap">
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label">Client Gross</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!bookingPriceBreakDown.Org_Client_Gross__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element right-cell right-cell-label">
+                                 <label class="slds-form-element__label">Quantity</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!bookingPriceBreakDown.Org_Quantity__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label" for="input-id-01">Supplier Gross</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!bookingPriceBreakDown.Org_Supplier_Gross__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element right-cell right-cell-label">
+                                 <label class="slds-form-element__label">Title</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!bookingPriceBreakDown.Name}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>-->
+                     </div>
+                  </apex:outputPanel>
+                 <!-- <footer class="slds-modal__footer slds-modal__footer_directional">
+                     <apex:commandButton styleClass="slds-button slds-button_neutral" 
+                        value="Cancel" action="{!addBookingPriceBreakDown}" rerender="bookingPriceItemTableOuter"
+                        onClick="removeModal();"/>
+                     <apex:commandButton styleClass="slds-button slds-button_brand" 
+                        value="Save" action="{!addBookingPriceBreakDown}" rerender="bookingPriceItemTableOuter"
+                        onClick="removeModal();"/>
+                  </footer>-->
+               </div>
+            </section>
+            <div class="slds-backdrop "></div>
+         </div>
+      </apex:form>
+      <!-- ************************************* Edit Flight Itinerary Modal*****************************************-->
+      <apex:form >
+      <apex:pageMessages rendered="false"/>
+         <div class="demo-only" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" id="flightItineraryModal" class="slds-modal ">
+               <div class="slds-modal__container">
+                  <header class="slds-modal__header">
+                     <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit Itinerary</h2>
+                  </header>
+                  <apex:outputPanel id="flightItineraryModalFields">
+                     <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                       <!--<div class="slds-grid slds-wrap">
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label">Departure Airport</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!itineraryDetail.Departure_Airport__c}" styleClass="slds-input" id="departureairportmodal" onkeyup="getRemoteAccountFromModal('remoteFromModal')" />
+                                     <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" id="remoteFromModal" >
+                                                             
+                                        </ul>
+                                        <div id="responseErrorsFromModal">
+                                                            
+                                        </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element right-cell right-cell-label">
+                                 <label class="slds-form-element__label">Departure Date</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!itineraryDetail.Org_Departure_Date__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label" for="input-id-01">Arrival Airport</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!itineraryDetail.Arrival_Airport__c}" styleClass="slds-input" id="arrivalairportmodal" onkeyup="getRemoteAccountToModal('remoteToModal')" />
+                                     <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" id="remoteToModal">
+                                                             
+                                        </ul> 
+                                        <div id="responseErrorsToModal">
+                                                            
+                                        </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  right-cell right-cell-label">
+                                 <label class="slds-form-element__label" for="input-id-01">Arrival Date</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!itineraryDetail.Org_Arrival_Date__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                              <div class="slds-form-element  left-cell">
+                                 <label class="slds-form-element__label" for="input-id-01">Flight Number</label>
+                                 <div class="slds-form-element__control">
+                                    <apex:inputField value="{!itineraryDetail.Org_Flight_Number__c}" styleClass="slds-input"/>
+                                 </div>
+                              </div>
+                           </div>
+                        </div> -->
+                     </div>
+                  </apex:outputPanel>
+                  <!--<footer class="slds-modal__footer slds-modal__footer_directional">
+                     <apex:commandButton styleClass="slds-button slds-button_neutral" 
+                        value="Cancel" action="{!addItineraryDetail}" rerender="flightItineraryDetailsTableOuter"
+                        onClick="removeModal();"/>
+                     <apex:commandButton styleClass="slds-button slds-button_brand" 
+                        value="Save" action="{!addItineraryDetail}" rerender="flightItineraryDetailsTableOuter"
+                        onClick="removeModal();"/>
+                  </footer>-->
+               </div>
+            </section>
+            <div class="slds-backdrop "></div>
+         </div>
+      </apex:form>
+   </div>
+</apex:page>

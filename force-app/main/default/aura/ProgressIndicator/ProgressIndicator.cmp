@@ -1,0 +1,21 @@
+<aura:component>
+    
+    <!-- this will be used to store the step number -->
+    <aura:attribute name="stepNumber" type="Integer" />
+    
+    <!-- this will be used to set the next step in path as it takes only string -->
+    <aura:attribute name="currentNumber" type="String" default="1"  />
+    
+    <!-- step number is changed then call method -->
+    <aura:handler name="change" value="{!v.stepNumber}" action="{!c.itemsChange}"/>
+    
+    
+    <div style="width:100%;margin:1%;">
+        <lightning:progressIndicator currentStep="{!v.currentNumber}" type="base" hasError="false" variant="base">
+            <lightning:progressStep label="Search" value="1"/>
+            <lightning:progressStep label="Result" value="2"/>
+            <lightning:progressStep label="Review" value="3"/>
+            <lightning:progressStep label="Confirmation" value="4"/>
+        </lightning:progressIndicator>
+    </div>
+</aura:component>

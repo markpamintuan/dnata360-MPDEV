@@ -1,0 +1,90 @@
+<aura:component controller="AccountAuraExtensionController" 
+				implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+				access="global" >
+ 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="bookingList" type="List"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+
+        <lightning:accordion class="slds-accordion" allowMultipleSectionsOpen="true">
+        <aura:iteration items="{!v.bookingList}" var="cs" indexVar="iVar">
+            <lightning:accordionSection name="{!cs.Name}" label="{!cs.Name}" class="section-title-bg">
+                <aura:set attribute="body">
+                    <div class="slds-grid slds-wrap">
+                        <aura:if isTrue="{!cs.Org_Brand__c != 'trp'}">
+                            <div style="padding-left: 9px" class="slds-size_1-of-3">Title :</div>
+                            <div class="slds-size_2-of-3">{!cs.Org_Title__c}</div>
+						</aura:if>
+                       <!-- <div style="padding-left: 9px" class="slds-size_1-of-3">Booking Type :</div>
+                        <div class="slds-size_2-of-3">{!cs.Org_Booking_Type__c}</div> -->
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Booked Status :</div>
+                        <div class="slds-size_2-of-3">{!cs.Booking_Status__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Booked Date :</div>
+                        <div class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.Org_Booked_Date__c}" />
+                        </div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Departure Date :</div>
+                        <div class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.Org_Travel_Start_Date__c}" />
+                        </div>
+                       <aura:if isTrue="{!cs.Org_Brand__c != 'trp'}">
+                            <div style="padding-left: 9px" class="slds-size_1-of-3">Details :</div>
+                            <div class="slds-size_2-of-3" 
+                                    data-value="{!cs.Id}"
+                                    onclick="{!c.openTabWithSubtab}">
+                                    <a href="#" >View Record</a>
+                            </div>
+						</aura:if>
+                   <!--  <p><span class="slds-form-element__label slds-size_1-of-2">Status :</span> <span class="slds-form-element__control slds-size_1-of-2">{!cs.Status}</span></p>
+                    <p><span class="slds-form-element__label slds-size_1-of-2">Type :</span> <span class="slds-form-element__control slds-size_1-of-2">{!cs.Org_Type__c}</span></p>
+                    <p><span class="slds-form-element__label slds-size_1-of-2">Owner :</span> <span class="slds-form-element__control slds-size_1-of-2">{!cs.Owner.Name}</span></p>
+                    <p><span class="slds-form-element__label slds-size_1-of-2">Created Date :</span> <span class="slds-form-element__control slds-size_1-of-2"><ui:outputDate value="{!cs.CreatedDate}"/></span></p>
+                    <div class="slds-size_1-of-2"> <p>Details :</p></div>                
+
+                    <div class="slds-size_1-of-2" onclick="{!c.openTabWithSubtab}" data-value="{!cs.Id}">
+                            View Record
+                            <p>
+                                 <a href="#" >View Record</a>
+                            </p> 
+                    </div>                          
+                    -->
+                </div>
+                    <c:BookedItems bookedItems="{!cs.Bookings__r}"/>
+                </aura:set>
+            </lightning:accordionSection>
+
+        </aura:iteration>
+    </lightning:accordion>
+        <!-- <lightning:accordion class="slds-accordion">
+            <aura:iteration items="{!v.bookingList}" var="bookHeader" indexVar="iVar" >              
+                <div class="accordionSection">
+                    <lightning:accordionSection name="{!bookHeader.Org_Booking_Ref__c}" 
+                                                label="{!bookHeader.Org_Booking_Ref__c}" 
+                                                class="section-title-bg" >
+                            <aura:set attribute="body" >
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-2">Title :</div><div class="slds-size_1-of-2">{!bookHeader.Booking_Status__c}</div>
+                                    <div class="slds-size_1-of-2">Booking Type :</div><div class="slds-size_1-of-2">{!bookHeader.Org_Booking_Type__c}</div>
+                                    <div class="slds-size_1-of-2">Booking Status :</div><div class="slds-size_1-of-2">{!bookHeader.Booking_Status__c}</div>
+                                    <div class="slds-size_1-of-2">Booked Date :</div><div class="slds-size_1-of-2"><lightning:formattedDateTime value="{!bookHeader.CreatedDate}" /></div>
+                                    <div class="slds-size_1-of-2">Details :</div>
+
+                                    <div class="slds-size_1-of-2" onclick="{!c.openTabWithSubtab}" data-value="{!bookHeader.Id}">
+                                     <a href="#" id="{!bookHeader.Id}" onclick="{!c.openTabWithSubtab}">View Record</a></div> 
+                                        <p title="{!bookHeader.Org_Title__c}">
+                                            <a href="#" >View Record </a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <c:BookedItems bookedItems="{!bookHeader.Bookings__r}"/>
+                            </aura:set>
+                    </lightning:accordionSection> 
+                </div>
+            </aura:iteration>
+        </lightning:accordion> 
+        -->   
+</aura:component>

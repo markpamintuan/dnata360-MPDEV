@@ -1,0 +1,194 @@
+<apex:page controller="SurveysPageController" lightningStylesheets="true" showHeader="false" sidebar="false" standardStylesheets="false" title="dnata" applyBodyTag="false" applyHtmlTag="false" cache="false" id="pageId">
+
+    <apex:form style="background-color: white;" id="frmId"> 
+        
+        <html lang="en">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width,initial-scale=1"/>
+                <script src= "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"/> 
+                <script src="https://files.codepedia.info/files/uploads/iScripts/html2canvas.js"/> 
+                    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+                        <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+                <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+                <script>var $ = jQuery.noConflict();</script>
+                <apex:stylesheet value="{!URLFOR($Resource.TravelSurvey, 'style.css')}"/>
+                <apex:slds />
+
+                <apex:stylesheet value="{!dynamicStyleSheet}"/>
+               
+            </head>
+            <body>
+
+                <script type="text/javascript">
+                
+                    $(document).ready(function() { 
+                        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        var headerClass = document.getElementsByClassName("header-text");
+                        var headerLogo = document.getElementsByClassName("header-logo");
+                        var textTable = document.getElementsByClassName("table-text");
+                        var footerBorder = document.getElementsByClassName("footer-border");
+                        var footerTable = document.getElementsByClassName("footer-table");
+                        var footerText = document.getElementsByClassName("footer-text");
+                        var buttonText = document.getElementsByClassName("theme-button");
+                        if (isMobile) {
+                            headerLogo[0].style.maxWidth = "60%";
+                            textTable[0].style.maxWidth = "85%";
+                            headerClass[0].style.fontSize = "4vw";
+                            footerBorder[0].style.maxWidth = "90%";
+                            footerTable[0].style.width = "100%";
+                            footerText[0].style.fontSize = "2vw";
+                            buttonText[0].style.fontSize = "3vw";
+                            
+                        }else{
+                            headerLogo[0].style.width = "400px";
+                            headerLogo[0].style.minWidth = "600px";
+                            headerClass[0].style.fontSize = "30px"; 
+                            textTable[0].style.maxWidth = "50%";
+                            footerText[0].style.fontSize = "font-size: 14px !important";
+                            
+                        } 
+                    });
+                
+                </script>
+                
+                <apex:actionStatus id="pageStatus" >
+                    <apex:facet name="start">
+                        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; z-index: 1000; background-color: black;">
+                            &nbsp;
+                        </div>
+                        <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 15% 45%">
+                            <div class="sk-circle">
+                                <div class="sk-circle1 sk-child"></div>
+                                <div class="sk-circle2 sk-child"></div>
+                                <div class="sk-circle3 sk-child"></div>
+                                <div class="sk-circle4 sk-child"></div>
+                                <div class="sk-circle5 sk-child"></div>
+                                <div class="sk-circle6 sk-child"></div>
+                                <div class="sk-circle7 sk-child"></div>
+                                <div class="sk-circle8 sk-child"></div>
+                                <div class="sk-circle9 sk-child"></div>
+                                <div class="sk-circle10 sk-child"></div>
+                                <div class="sk-circle11 sk-child"></div>
+                                <div class="sk-circle12 sk-child"></div>
+                            </div>                            
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus> 
+
+                <table style="width: 100%;" id="headerTableId">
+                    <center>
+                        <div>
+                            <img  class="header-logo" src="{!logoURL}" style="height: auto;"/>
+                        </div>
+                        
+                    </center>    
+                </table>
+                                
+                <section>
+
+                    <!--div align="center" class="custom-global"> <apex:pagemessages /> <br/><br/></div-->       
+                    
+                    <apex:outputPanel rendered="{!IsValidPage}" id="txtPanel">
+                        <center>
+                            <table class="table-text" >  
+                                <tr >
+                                    <td>
+                                        <h1 class="header-text" > 
+                                            <apex:outputText value="{!DisplayText}"/> 
+                                        </h1>
+                                    </td>
+                                </tr> 
+                                <tr>
+                                    <td>
+                                        <apex:inputTextarea value="{!SR.Org_Comments__c}" rows="10" cols="50" style="height: 80px;"/> 
+                                    </td>
+                                </tr>                                
+                                <tr class="slds-align_absolute-center">
+                                    <td class="slds-align_absolute-center">                                                                          
+                                        <center>
+                                            <div class="container slds-text-align_center"> 
+                                                <br/><br/><br/>
+                                                 <apex:outputPanel >  
+                                                <apex:commandLink styleclass="slds-button slds-button_success slds-align_absolute-center theme-button" action="{!save}" reRender="frmId"  value="{!submitButtonText}"  status="pageStatus"/>
+                                                     <!--button class="slds-button slds-button_success slds-align_absolute-center theme-button"  reRender="frmId"  value="Submit"  status="pageStatus">Submit</button--> 
+
+                                                </apex:outputPanel>
+                                                     <br/><br/><br/>
+                                            </div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </apex:outputPanel>
+
+                    <apex:outputPanel rendered="{!IsSubmitted}">
+                        <center>
+                            <table class="table-text" >  
+                                <tr >
+                                    <td>
+                                        <h1 class="header-text" > 
+                                            <apex:outputText value="{!thankYouText}"/> 
+                                        </h1>
+                                    </td>
+                                </tr>                                 
+                                <tr class="slds-align_absolute-center">
+                                    <td class="slds-align_absolute-center">                                                                          
+                                        <center>
+                                            <div class="container slds-text-align_center">
+                                                <br/><br/>
+                                                <apex:outputLink styleclass="slds-button slds-button_success slds-align_absolute-center theme-button" value="{!websiteLink}">{!visitWebsiteButtonText}</apex:outputLink>
+                                                <!--button class="slds-button slds-button_success slds-align_absolute-center theme-button">Submit</button-->
+                                                <br/><br/><br/>
+                                            </div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </apex:outputPanel>          
+                    
+                    <apex:outputPanel rendered="{!IsError}">
+                        <center>
+                            <table class="table-text" >  
+                                <tr >
+                                    <td>
+                                        <h1 class="header-text" style="text-align: center;"> 
+                                            <apex:outputText value="{!duplicateResponseText}"/>  
+                                        </h1>
+                                    </td>
+                                </tr>                                 
+                            </table>
+                        </center>
+                    </apex:outputPanel>
+
+                </section>
+                
+                <section>
+                    <apex:outputPanel id="footerId"> 
+                        <center> 
+                            <table class="footer-table" style="width: 50%;">  
+                                <tr>
+                                    <td>
+                                        <hr class="footer-border "/>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td>
+                                        <p class="footer-text" align="center">{!footerText} {!year(today())}  |&nbsp; 
+                                            <apex:outputLink styleClass="theme-link" value="{!policyLink}"  target="_blank">{!policyText}</apex:outputLink> 
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </center>
+                    </apex:outputPanel>
+                </section>
+                
+            </body>  
+        </html>     
+        
+    </apex:form>
+
+</apex:page>

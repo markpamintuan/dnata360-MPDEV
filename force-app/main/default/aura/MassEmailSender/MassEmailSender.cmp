@@ -1,0 +1,550 @@
+<aura:component access="global" controller="MassEmailSenderController" implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:attribute name="bookingRecords" type="String[]" default=""/>
+    <aura:attribute name="reportResponse" type="Object"/>
+    <aura:attribute name="reportName" type="string" default=""/>
+    <aura:attribute name="reportList" type="List" default=""/>
+     <aura:attribute name="options" type="List" default=""/>
+    <aura:attribute name="templateoptions" type="List" default=""/>
+    <aura:attribute name="optionsvalue" type="String" default=""/>
+    <aura:attribute name="templateoptionsvalue" type="String" default=""/>
+    <aura:attribute name="CSRFolder" type="String" default=""/>
+    <aura:attribute name="CSRTemplate" type="String" default=""/>
+    <aura:attribute name="SupplierList" type="String" default=""/>
+    <aura:attribute name="manualentry" type="String" default=""/>
+    <aura:attribute name="displayReport" type="Boolean" default="false"/>
+    <aura:attribute name="filters" type="List" default="[]"/>
+    <aura:attribute name="hasFilters" type="Boolean" default="false"/>
+    <aura:attribute name="reportSet" type="Boolean" default='false'/>
+    <aura:attribute name="filterVisibility" type="Boolean" default='false'/>
+    <aura:attribute name="recordCount" type="Integer" default='0'/>
+    <aura:attribute name="validBookings" type="Boolean" default='false'/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="IconName" type="string" default="standard:user"/>
+    <aura:attribute name="lookupSearchType" type="String[]" default="Queue,User"/>
+    <aura:attribute name="selLookupType" type="String" default="Queue"/>
+    <aura:attribute name="listOfSearchRecords" type="Object[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="selectedRecord" type="Object" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedUserRecordEvent" action="{!c.handleComponentEvent}"/>
+    <aura:attribute name="option" type="string" default="" />
+    <aura:attribute name="lstOfRecordType" type="String[]" />
+    <aura:attribute name="recordtypeset" type="Boolean" default="false" />
+    <aura:attribute name="recordtypeset_m" type="Boolean" default="false" />
+    <aura:attribute name="recordtypename" type="String" default=""/>
+    <aura:attribute name="instanceid" type="String" default="" />
+    <aura:attribute name="displayDescription" type="Boolean" default='false'/>
+    <aura:attribute name="displayDescription__r" type="Boolean" default='false'/>
+    <aura:attribute name="isReportOpen" type="Boolean" default='false'/>
+    <aura:attribute name="isManualOpen" type="Boolean" default='false'/>
+    <aura:attribute name="textMessage_r" type="String" />
+    <aura:attribute name="currentStep_r" type="String" default='0' />
+    <aura:attribute name="textMessage_m" type="String" />
+    <aura:attribute name="currentStep_m" type="String" default='0' />
+    <aura:attribute name="lstObj_r" type="Object[]" />
+    <aura:attribute name="lstObj_m" type="Object[]" />
+    <aura:attribute name="TempText_r" type="String" default=""/>
+    <aura:attribute name="TempText_m" type="String" default=""/>
+    <aura:attribute name="parentObject" type="String" default=""/>
+    <aura:handler name="change" value="{!v.newCase.Category__c}" action="{!c.setSubject}" />
+    <aura:attribute name="recordtypeid" type="string"/>
+    
+    
+    <aura:attribute name="base64Data" Type="String" />
+    <aura:attribute name="blobData" Type="Blob" />
+    <aura:attribute name="fileType" Type="String" />
+    <aura:attribute name="fileName" Type="String" />
+    <aura:handler name="change" value="{!v.base64Data}" action="{!c.sendFileToController}"/>
+    
+     <aura:attribute name="SendSMS" type="Boolean" default='false'/> 
+    
+    <aura:attribute name="statusList" type="List" default="[
+    {'label': 'New', 'value': 'New'},
+    {'label': 'In Progress', 'value': 'In Progress'},
+    {'label': 'Pending Response', 'value': 'Pending Response'},
+    {'label': 'Closed', 'value': 'Closed'},                                                       
+    ]"/>
+    
+    <aura:attribute name="newCaseSubject" type="String" default=""/>
+    <aura:handler name="oSelectedStringEvent" event="c:selectedStringEvent" action="{!c.handleComponentEvent2}"/>
+<aura:attribute name="selectedRecord2" type="String" default="" description="Use,for store SELECTED sObject Record"/>
+<aura:attribute name="listOfSearchRecords2" type="String[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="userInfo" type="String"/> 
+    
+	 <aura:attribute name="newCase" type="Case"
+         default="{ 'sobjectType': 'Case'}"/>
+	<aura:attribute name="IsSpinner" type="Boolean"/>
+      <aura:if isTrue="{!v.IsSpinner}">
+       <lightning:spinner variant="brand"  size="large" />
+      </aura:if>
+    <div>
+        <div>
+            <center><b><h1 style="font-size:30px">Bulk Creation Tool</h1></b></center>
+        </div>
+        <br/>
+        
+        <center><div class="buttonholder">           
+            <lightning:button label="Upload a CSV File" accesskey="reports_1" aura:id="reports_11" onclick="{! c.setReports }"/>
+            <lightning:button label="Search using Booking Ids only" accesskey="entry_2" aura:id="entry_22" onclick="{! c.setManual }"/>
+        </div></center>
+     	<div class='bookingList'>  
+            <p style="display:inline-block;padding-left:43%;text-align:center">
+				<lightning:input aura:id="fuploader" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload File" accept=".csv" multiple="false"/>
+                </p>
+                 <aura:renderIf isTrue="{!v.reportSet}">
+                <div style="width: 80%;padding-left:20%;padding-bottom:10px;">
+                    <ui:inputSelect aura:id="selectid_r" change ="{!c.handleRecordTypeChange}" label="Record Type">
+                                        <aura:iteration items="{!v.lstOfRecordType}" var="rectype">                            
+                                            <ui:inputSelectOption text="{!rectype}" label="{!rectype}"  />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                </div>
+            </aura:renderIf>
+          		 <aura:renderif isTrue="{!v.reportSet &amp;&amp; v.recordtypeset == 'true'}">
+       		<div class="container" style="padding-left:20%;padding-right:20%">
+   
+        <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+        <br/>
+          <div >
+		<div class="slds-form-element">
+                         <div class="slds-form-element__control">     
+                          <div onmouseleave="{!c.onblur2_r}"  aura:id="searchRes2_r" class=" slds-form-element slds-lookup slds-is-close" data-select="single">
+                                    <div aura:id="lookupField2_r" class="slds-show">
+                                		<ui:inputText label="Subject" updateOn="keyup" class="field" value="{!v.newCaseSubject}" keyup="{!c.keyPressController2_r}" required="true"/>
+                                    </div>
+                                    <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important;" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                        <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner2" alternativeText="test"/>
+                                        <center> {!v.Message2}</center>
+                                        <aura:iteration items="{!v.listOfSearchRecords2}" var="singleRec">
+                                            <c:customStringResult StringName="{!singleRec}" />
+                                        </aura:iteration>
+                                    </ul>
+                                </div>
+                           </div>
+                          </div>
+              <br></br>
+          <div class="slds-form-element">
+             <div class="slds-form-element__control slds-form-element_stacked">  
+                <!-- <span class="slds-form-element__label categoryRequired">Category </span>--> 
+                   <lightning:recordeditform recordTypeId = "{!v.recordtypeid}" objectApiName = "Case">
+                               <lightning:inputField 
+                                            	 fieldName="Category__c"
+                                                 aura:id="category_r" 
+                                    
+                                value="{!v.newCase.Category__c}"
+                                     required='true'
+                                                 />
+                                 </lightning:recordeditform>
+
+              </div>
+          </div>
+              <div class="slds-form-element">
+             <div class="slds-form-element__control">  
+                 <lightning:combobox aura:id="status_r" name="status" label="Status" value="New" placeholder="New" required="true" options="{! v.statusList }"/>
+              </div>
+          </div>
+              
+        <div style="{!if(v.displayDescription__r == true,'display:block','display:none')}">
+             
+    
+       
+              
+          <div class="slds-form-element">
+             <div class="slds-form-element__control">
+                  <lightning:helptext class="helptextclass"
+                        content="Do not add any salutations here as it will be automatically added when you send the message."
+                    />
+                  <ui:inputTextArea aura:id="description_r" label="Message To Customer"
+                                class="slds-input"
+                                labelClass="slds-form-element__label"
+                                
+                                
+                                required = 'true'
+                                />
+                 <ui:button   
+                                   class="slds-button slds-button--neutral"
+                                    
+                                    press="{!c.openModal_r}" >Use Template</ui:button>
+                 <p class="sendSMS"><ui:inputCheckbox aura:id="taskCheckBox" label="Send SMS " change="{!c.handleCheckTask}" class="checkbox" /> </p>
+             </div> 
+         </div>
+            
+              </div>	 
+              <div style="{!if(v.displayDescription__r == false,'display:block','display:none')}">
+             
+    
+       
+              
+          <div class="slds-form-element">
+             <div class="slds-form-element__control">
+                  
+                  <ui:inputTextArea aura:id="description_internal_r" label="Description"
+                                class="slds-input"
+                                labelClass="slds-form-element__label"
+                                
+                                
+                                required = 'true'
+                                />
+                 
+                 
+             </div> 
+         </div>
+            
+</div>	 
+
+        </div>
+   
+  </div>
+        </aura:renderif>    
+        	
+        </div>   
+        <div class='supplierList'> 
+			<div style="position:relative">            
+             <ui:inputTextArea aura:id="suppliers" label="Booking Ids" class="bookingIdTextArea" value="{!v.SupplierList}" rows="1" placeholder="Place Booking Id's here, each on a seperate line."/>
+             <lightning:helptext content="Place Booking Id's here, each on a seperate line." class="helptext" />
+                </div>
+            <br/>
+            <lightning:button label="Search" accesskey="usebookings_1" aura:id="usebookings_1" onclick="{! c.checkbookings }" class="usebookings"/>
+             <aura:renderIf isTrue="{!v.validBookings}">
+                <div style="padding-bottom:10px;">
+                    <ui:inputSelect aura:id="selectid_m" change ="{!c.handleRecordTypeChange_m}" label="Record Type">
+                                        <aura:iteration items="{!v.lstOfRecordType}" var="rectype">                            
+                                            <ui:inputSelectOption text="{!rectype}" label="{!rectype}"  />
+                                        </aura:iteration>
+                                    </ui:inputSelect>
+                </div>
+            </aura:renderIf>
+            <aura:renderif isTrue="{!v.validBookings &amp;&amp; v.recordtypeset_m == 'true'}">
+                   <div>
+               
+                    <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+                    <br/>
+                      <div >
+            
+                       <div class="slds-form-element">
+                         <div class="slds-form-element__control">     
+                          <div onmouseleave="{!c.onblur2_m}"  aura:id="searchRes2_m" class=" slds-form-element slds-lookup slds-is-close" data-select="single">
+                                    <div aura:id="lookupField2_m" class="slds-show">
+                                		<ui:inputText label="Subject" updateOn="keyup" class="field" value="{!v.newCaseSubject}" keyup="{!c.keyPressController2_m}" required="true"/>
+                                    </div>
+                                    <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important;" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                        <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner2" alternativeText="test"/>
+                                        <center> {!v.Message2}</center>
+                                        <aura:iteration items="{!v.listOfSearchRecords2}" var="singleRec">
+                                            <c:customStringResult StringName="{!singleRec}" />
+                                        </aura:iteration>
+                                    </ul>
+                                </div>
+                           </div>
+                          </div>
+                          <br></br>
+                      <div class="slds-form-element">
+                         <div class="slds-form-element__control slds-form-element_stacked">  
+                             <!--<span class="slds-form-element__label categoryRequired"> </span>-->
+                            
+                             <lightning:recordeditform objectApiName = "Case"  recordTypeId = "{!v.recordtypeid}">
+                               <lightning:inputField 
+                                            	 fieldName="Category__c"
+                                                 aura:id="category_m" 
+                                    
+                                value="{!v.newCase.Category__c}"
+                                     required='true'
+                                                 />
+                                 </lightning:recordeditform>
+                          </div>
+                      </div>
+                               <div class="slds-form-element">
+             <div class="slds-form-element__control">  
+                 
+                 <lightning:combobox aura:id="status_m" name="status" label="Status" value="New" placeholder="New" required="true" options="{! v.statusList }"/>
+                   <!--<lightning:select aura:id="status_m" name="status" label="" required="true" class="slds-input">
+                        <aura:iteration items="{!v.statusList}" var="color">
+                                <option text="{!color}"></option>
+                            </aura:iteration>
+                   </lightning:select>-->
+                   <!--<force:inputField aura:id="status_m" 
+                                     class="slds-input"
+                                value="{!v.newCase.Status}"
+                                     required='true'
+                                     /> -->
+              </div>
+          </div>
+                          
+                          <div style="{!if(v.displayDescription == true,'display:block','display:none')}">
+                           
+                
+                    
+                          
+                      <div class="slds-form-element">
+                         <div class="slds-form-element__control">
+                             <lightning:helptext class="helptextclass"
+                        content="Do not add any salutations here as it will be automatically added when you send the message."
+                    />
+                              <ui:inputTextArea aura:id="description_m" label="Message To Customer"
+                                            class="slds-input"
+                                            labelClass="slds-form-element__label"
+                                            
+                                            
+                                            required = 'true'
+                                            />
+                             <ui:button   
+                                   class="slds-button slds-button--neutral"
+                                    
+                                    press="{!c.openModal_m}" >Use Template</ui:button>
+                             <p class="sendSMS"><ui:inputCheckbox aura:id="taskCheckBox" label="Send SMS " change="{!c.handleCheckTask}" class="checkbox" /> </p>
+                         </div> 
+                            
+                       </div>
+                     </div>
+                          <div style="{!if(v.displayDescription == false,'display:block','display:none')}">
+             
+    
+       
+              
+          <div class="slds-form-element">
+             <div class="slds-form-element__control">
+                  
+                  <ui:inputTextArea aura:id="description_internal_m" label="Description"
+                                class="slds-input"
+                                labelClass="slds-form-element__label"
+                                
+                                
+                                required = 'true'
+                                />
+                 
+                 
+             </div> 
+         </div>
+            
+</div>	 
+
+                          
+                          <br/>
+                       
+                    </div>
+               
+              </div>
+        </aura:renderif>
+            
+        </div>
+        <br/>
+        <br/>
+        <aura:renderIf isTrue="{!(v.reportSet &amp;&amp; v.option == '0' &amp;&amp; v.recordtypeset == 'true') || (v.validBookings &amp;&amp; v.option == '1' &amp;&amp; v.recordtypeset_m == 'true')}">
+        <div style="width:80%;padding-left:20%">
+        	 <div class="lookuptypeselect">
+               <ui:inputSelect aura:id="lkptype" label="Assign Owner" change="{!c.onSelectChange}" >
+                                    <aura:iteration items="{!v.lookupSearchType}" var="ltype">
+                                        <ui:inputSelectOption text="{!ltype}" label="{!ltype}"/>
+                                    </aura:iteration>
+                                </ui:inputSelect>
+              </div>               
+               <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single" style="width:78%;display:inline-block;margin-left:2%">
+                                    <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+                                  
+                                    <div class="slds-form-element__control">
+                                        
+                                        <div class="slds-input-has-icon slds-input-has-icon--right">
+                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/> 
+                                            
+                                            <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                                                <lightning:pill class="pillSize" label="{!v.selectedRecord.rname}" name="{!v.selectedRecord.rname}" onremove="{! c.clear }">
+                                                    <aura:set attribute="media">
+                                                        <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                    </aura:set>
+                                                </lightning:pill>
+                                            </div>
+                                            <div aura:id="lookupField" class="slds-show">
+                                              <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                <span class="slds-assistive-text"></span>
+                                            </span>
+                                                <ui:inputText updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord}" placeholder="search.."/>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                    
+                                    <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                        <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                        <center> {!v.Message}</center>
+                                        <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                            <c:customUserLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                        </aura:iteration>
+                                    </ul>
+                                </div>
+               
+              <br/>
+            <br/>
+              <div style="text-align:right;">
+              <div class="slds-form-element" style="text-align:right;display:inline-block">
+                        <ui:button label="Reset" 
+                                   class="slds-button slds-button--neutral errorRed"
+                                   labelClass="label"
+                                   press="{!c.reset}"
+                                   />
+                       </div>
+          <div class="slds-form-element" style="text-align:right;display:inline-block">
+            <ui:button label="Create Service Request" 
+                       class="slds-button slds-button--neutral successGreen"
+                       labelClass="label"
+                       press="{!c.createCase}"
+                       />
+              </div>
+           </div>
+            </div>
+        </aura:renderIf>
+        
+        
+        <aura:if isTrue="{!v.isReportOpen}">
+        <div style="height:640px">
+          <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Template</h2>
+              </header>
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                  <aura:if isTrue="{!v.currentStep_r == '0'}">
+                    <lightning:combobox aura:id="folder_r" name="CSRFolder" label="Folder" value="" placeholder="Select Folder" 
+                        options="{! v.options }" onchange="{! c.handlefolderChange_r }"/>
+              
+              <lightning:combobox aura:id="template_r" name="CSRTemplate" label="Template" value="" placeholder="Select Template" 
+                        options="{! v.templateoptions }" onchange="{! c.handletemplatechange_r }" disabled = "true"/>
+                  
+                  <lightning:textarea  aura:id="tempText_r" value="{!v.TempText_r}" class="tempText" style="height:200px" disabled='true' /> 
+                  </aura:if>
+                   <aura:if isTrue="{!v.currentStep_r == '1'}">
+                                	Add Merging Fields
+                                <br/><br/>
+                            		<aura:if isTrue="{!v.lstObj_r.length > 0}">
+                                        <table class="mergetable">
+                                        <aura:iteration items="{!v.lstObj_r}" var="item">
+                                        <tr>
+                                            <td style="width:25%"></td>
+                                            <td><label lightning-input_input="" for="input-346" class="slds-form-element__label slds-no-flex" style="position: relative; bottom: 8px; left: 8px;"><abbr lightning-input_input="" title="required" class="slds-required">*</abbr></label>{!item.Label}</td>
+                                            <td><lightning:input aura:id="valField_r" value="{!item.Value}" /></td>
+                                            <td style="width:25%"></td>
+                                        </tr>
+                                        </aura:iteration>
+                                    </table>
+                                        <aura:set attribute="else">
+                                            No Merging Fields Found.
+                                        </aura:set>
+                                    </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!v.currentStep_r == '2'}">
+                            	<div class="slds-form-element">
+                                     <div class="slds-form-element__control">
+                                          <ui:inputTextArea aura:id="description" label="Message To Customer"
+                                                        class="slds-input"
+                                                        labelClass="slds-form-element__label"
+                                                        value="{!v.textMessage_r}"
+                        								
+                                                        />
+                                     </div> 
+                                 </div>
+                            </aura:if>
+              </div>
+              <div class="slds-modal__footer" style="padding-bottom:0px">
+                            <button class="slds-button slds-button--neutral" onclick="{!c.closeModal_r}" style="float:left" >Cancel</button>
+                            <lightning:progressIndicator currentStep="{!v.currentStep_r}" type="base" variant="base">
+                                <lightning:progressStep label="Step 1" value="0"/>
+                                <lightning:progressStep label="Step 2" value="1"/>
+                                <lightning:progressStep label="Step 3" value="2"/>
+                                
+                            </lightning:progressIndicator>
+                            <div style="display: inline-block; position: relative; bottom: 24px;">
+                                <aura:if isTrue="{! v.currentStep_r != '0'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveBack_r}" >Back</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep_r != '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveNext_r}" >Next</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep_r == '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.saveText_r}" style="color:white;background:#1b5297" >Save</button>
+                                </aura:if>
+                            </div>
+                        </div>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+        <aura:if isTrue="{!v.isManualOpen}">
+        <div style="height:640px">
+          <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Template</h2>
+              </header>
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                  <aura:if isTrue="{!v.currentStep_m == '0'}">
+                  <lightning:combobox aura:id="folder_m" name="CSRFolder" label="Folder" placeholder="Select Folder" 
+                                    options="{! v.options }" onchange="{! c.handlefolderChange_m }"/>
+                          
+                          <lightning:combobox aura:id="template_m" name="CSRTemplate" label="Template" value="{!v.templateoptionsvalue}" placeholder="Select Template" 
+                                    options="{! v.templateoptions }" onchange="{! c.handletemplatechange_m }" disabled = "true"/>
+                  
+                  <lightning:textarea  aura:id="tempText_m" value="{!v.TempText_m}" class="tempText" style="height:200px" disabled='true' /> 
+                  </aura:if>
+                   <aura:if isTrue="{!v.currentStep_m == '1'}">
+                                	Add Merging Fields
+                                <br/><br/>
+                            		<aura:if isTrue="{!v.lstObj_m.length > 0}">
+                                        <table class="mergetable">
+                                        <aura:iteration items="{!v.lstObj_m}" var="item">
+                                        <tr>
+                                            <td style="width:25%"></td>
+                                            <td><label lightning-input_input="" for="input-346" class="slds-form-element__label slds-no-flex" style="position: relative; bottom: 8px; left: 8px;"><abbr lightning-input_input="" title="required" class="slds-required">*</abbr></label>{!item.Label}</td>
+                                            <td><lightning:input aura:id="valField_m" value="{!item.Value}" /></td>
+                                            <td style="width:25%"></td>
+                                        </tr>
+                                        </aura:iteration>
+                                    </table>
+                                        <aura:set attribute="else">
+                                            No Merging Fields Found.
+                                        </aura:set>
+                                    </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!v.currentStep_m == '2'}">
+                            	<div class="slds-form-element">
+                                     <div class="slds-form-element__control">
+                                          <ui:inputTextArea aura:id="description" label="Message To Customer"
+                                                        class="slds-input"
+                                                        labelClass="slds-form-element__label"
+                                                        value="{!v.textMessage_m}"
+                        								
+                                                        />
+                                     </div> 
+                                 </div>
+                            </aura:if>
+              </div>
+              <div class="slds-modal__footer" style="padding-bottom:0px">
+                            <button class="slds-button slds-button--neutral" onclick="{!c.closeModal_m}" style="float:left" >Cancel</button>
+                            <lightning:progressIndicator currentStep="{!v.currentStep_m}" type="base" variant="base">
+                                <lightning:progressStep label="Step 1" value="0"/>
+                                <lightning:progressStep label="Step 2" value="1"/>
+                                <lightning:progressStep label="Step 3" value="2"/>
+                                
+                            </lightning:progressIndicator>
+                            <div style="display: inline-block; position: relative; bottom: 24px;">
+                                <aura:if isTrue="{! v.currentStep_m != '0'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveBack_m}" >Back</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep_m != '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveNext_m}" >Next</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep_m == '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.saveText_m}" style="color:white;background:#1b5297" >Save</button>
+                                </aura:if>
+                            </div>
+                        </div>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+      
+       
+     </div>
+</aura:component>

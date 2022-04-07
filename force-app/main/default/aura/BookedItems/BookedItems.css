@@ -1,0 +1,13 @@
+/* visited link */
+.THIS a:visited {
+    color: black;
+}
+
+/* mouse over link */
+.THIS a:hover {
+    color: black;
+}
+
+.THIS a{
+    color: black;
+}

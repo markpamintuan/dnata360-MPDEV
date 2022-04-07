@@ -1,0 +1,570 @@
+<aura:component controller="Create_Internal_Req_And_Issues" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global">
+    <aura:attribute name="debug" type="boolean" default="false"/>
+    <aura:attribute name="savepoint" type="string" default=''/>
+    <aura:attribute name="caseRecord" type="Case"/>
+    <aura:attribute name="currentStep" type="string" default="1"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="dataToPush" type="Object" default="[]"/>
+    <aura:attribute name="bookingHeaderId" type="string" default=""/>
+    <aura:attribute name="show" type="boolean" default="true"/>
+    <aura:attribute name="steps" type="List"/>
+   	<aura:attribute name="data" type="Object" default="[]"/>
+    <aura:attribute name="currentBooking" type="Integer" default="1"/>
+    <aura:attribute name="issueList" type="Object" default="[]"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="issueColumns" type="List"/>
+    <aura:attribute name="errors" type="Object" default="[]"/>
+    <aura:attribute name="issueErrors" type="Object" default="[]"/>
+    <aura:attribute name="draftValues" type="Object" default="[]"/>
+    <aura:attribute name="issueDraftValues" type="Object" default="[]"/>
+    <aura:attribute name="casebookingList" type="List"/>
+    <aura:attribute name="casebookingHeaderList" type="List"/>
+    <aura:attribute name="cases" type="List" default="[]"/>
+    <aura:attribute name="backgroundColor" type="String" default=""/>
+ 	<aura:attribute name="selectedBookings" type="List" default="[]" />
+    <aura:attribute name="bookings" type="List" default="[]"/>
+    <aura:attribute name="checkBoxName" type="List" default="[]"/>
+    <aura:attribute name="classname" type="String" />
+    <aura:attribute name="issueClassname" type="String" />
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:attribute name="bookingValue" type="Object" />
+    <aura:handler name="change" value="{!v.currentBooking}" action="{!c.accessArray}" />
+    <aura:attribute name="noBookingHeader" type="Boolean" default="false"/>
+    
+        <aura:attribute name="isLoading" type="boolean" default="false"/>
+    <aura:attribute name="tempInternalList" type="List" default='[]'/>
+    <aura:attribute name="tempIssueList" type="List" default='[]'/>
+    
+     <aura:attribute name="SearchKeyWord" type="string"/>
+     <aura:attribute name="IconName" type="string" default="standard:user"/>
+    <aura:attribute name="lookupSearchType" type="String[]" default="User,Queue"/>
+    <aura:attribute name="selLookupType" type="String" default="User"/>
+    <aura:attribute name="listOfSearchRecords" type="Object[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="selectedRecord" type="Object" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedUserRecordEvent" action="{!c.handleComponentEvent}"/>
+    
+    <aura:attribute name="Org_Type__c" type="String" default="" />
+    <aura:attribute name="Subject" type="String" default="" />
+    <aura:attribute name="Status" type="String" default="" />
+    <aura:attribute name="Issue__c" type="String" default="" />
+    <aura:attribute name="Issue_Type__c" type="String" />
+    
+    <aura:attribute name="Description__c" type="String" default=""/>
+    <aura:attribute name="End_Provider_Name__c" type="String" default=""/>
+    <aura:attribute name="supplierlist" type="List" default=""/>
+    <aura:attribute name="supplierlistissues" type="List" default=""/>
+    <aura:handler name="change" value="{!v.Org_Type__c}" action="{!c.onchange}"/>
+    
+    
+    
+    <aura:attribute name="showIssues" type="String" default='false'/>
+    <aura:attribute name="IssueSupplierName" type="String" default=''/>
+    <aura:attribute name="internalRecordId" type="String" default=''/>
+    
+    <aura:attribute name="internalSubject" type="String" default=''/>
+     <aura:attribute name="internalStatus" type="String" default=''/>
+     <aura:attribute name="internalEndProviderName" type="String" default=''/>
+    
+    
+    <lightning:workspaceAPI aura:id="workspace" />
+     <force:recordData aura:id="caseidrecord"                       
+                      recordId="{!v.recordId}" 
+                      targetError="{!v.recordError}"                       
+                      fields="Id,Org_Booking__c"
+                      targetFields="{!v.caseRecord}" 
+                     
+                      />
+    
+    
+	<aura:if isTrue="{!v.isLoading}">
+    		<lightning:spinner alternativeText="Loading" size="large" class="spinnertest" style="z-index:9999;position:fixed"/>
+	</aura:if>
+    <ui:button   
+               class="slds-button slds-button--neutral"                        
+               press="{!c.openModal}" disabled="{!v.caseRecord.Status == 'Closed' }">Add Issues</ui:button>
+    <aura:if isTrue="{!v.isOpen}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <!--lightning progressIndicator start-->
+            <div class="slds-modal__container">
+                
+                <div class="slds-modal__header">
+                    
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Complaint </h2>
+                </div>
+                
+                
+                <!--###### MODAL BOX BODY Part Start From Here ######-->
+                <div class="slds-modal__content slds-p-around_medium">  
+                    <div class="{!v.currentStep == '0' ? 'slds-show' : 'slds-hide'}">
+                        <h1 class="slds-card__header-title"><b>Please select the Booking.</b></h1>
+                        <br/>
+                        
+                        <aura:iteration items="{!v.casebookingHeaderList}" var="cs" indexVar="iVar" end="{!v.end}">
+                         
+                        <article class="slds-card" style="background-color:#f3f2f2;padding-bottom:10px" aura:id="article">
+                            
+                            <div class="slds-card__header slds-grid">
+                                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                     <ui:inputRadio  aura:id="radiobox" class="radiobox" name="radiobuttongroup" label="" text="{!cs.Name}"  change="{!c.onCheckHeader}"/>&nbsp;&nbsp;
+                                   
+                                    
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Flight'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Flight}"/>
+                                    </aura:if> 
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Accommodation'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Hotel}"/>
+                                    </aura:if> 
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Transfer'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Transfer}"/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Travel Insurance'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Insurance}"/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Marhaba'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Marhaba}"/>
+                                    </aura:if>
+                                     <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Airport Parking'}">
+                                        <img src="{!$Resource.Icon_Parking	}" height="20px"/>
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                           <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                    </aura:if>
+                                    </aura:if>
+                                    <div class="slds-media__body">
+                                        
+                                        <h2 class="slds-card__header-title">
+                                           
+                                            <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Accounts">
+                                                <span>&nbsp;Booking made on the <lightning:formattedDateTime value="{!cs.Org_Booked_Date__c}" /></span>
+                                            </a>
+                                        </h2>
+                                    </div>
+                                    
+                                </header>
+                            </div>
+                           
+                            <!--<div class="slds-card__body slds-card__body_inner">
+                                <div class="slds-grid slds-wrap">
+                                    
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Title :
+                                    {!cs.Org_Title__c}
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Booking Type :
+                                    {!cs.Org_Booking_Type__c}
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Booked Status :
+                                    {!cs.Booking_Status__c}
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Booked Date :
+                                      <lightning:formattedDateTime value="{!cs.Org_Booked_Date__c}" />
+                                   
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Travel Start Date :
+                                        <lightning:formattedDateTime value="{!cs.Org_Travel_Start_Date__c}" />
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Travel End Date :
+                                    
+                                        <lightning:formattedDateTime value="{!cs.Org_Travel_End_Date__c}" />
+                                    
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>-->
+                            <div class="childitems">
+                            	<c:BookedItems bookedItems="{!cs.Bookings__r}"/>
+                            </div>
+                            
+                            
+                        </article>
+                        </aura:iteration>
+                        
+                         </div>                  
+                    <div class="{!v.currentStep == '1' ? 'slds-show' : 'slds-hide'}">
+                        <h1 class="slds-card__header-title"><b>Please select the bookings you want to send this complaint to.</b></h1>
+                        <br/>
+                         <h2 class="slds-card__header-title">You will go through the steps of one booking first before proceeding to the next booking.</h2>
+                        <br/>
+                        <aura:iteration items="{!v.casebookingList}" var="cs" indexVar="iVar" end="{!v.end}">
+                        <article class="slds-card" style="background-color:#f3f2f2;padding-bottom:10px" aura:id="article">
+                            <div class="slds-card__header slds-grid">
+                                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                     <ui:inputCheckBox aura:id="checkbox" class="checkbox" name="{!'checkbox-' + (iVar+1)}" label="" text="{!cs.Name}"  change="{!c.onCheck}"/>&nbsp;&nbsp;
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Flight'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Flight}"/>
+                                    </aura:if> 
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Accommodation'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Hotel}"/>
+                                    </aura:if> 
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Transfer'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Transfer}"/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Travel Insurance'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Insurance}"/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Marhaba'}">
+                                        <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                            <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        <img src="{!$Resource.Icon_Marhaba}"/>
+                                    </aura:if> 
+                                     <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Airport Parking'}">
+                                            <img src="{!$Resource.Icon_Parking	}" height="20px" style="height:24px"/>
+                                            <aura:if isTrue="{!cs.Id == v.caseRecord.Org_Booking__c}">
+                                               <span class="slds-badge currentBadge" data-aura-rendered-by="12960:0">current</span>
+                                        </aura:if>
+                                        </aura:if>
+                                    <div class="slds-media__body">
+                                        
+                                        <h2 class="slds-card__header-title">
+                                           
+                                            <a href="javascript:void(0);" class="slds-card__header-link slds-truncate" title="Accounts">
+                                                <span>&nbsp;{!cs.Name}</span>
+                                            </a>
+                                        </h2>
+                                    </div>
+                                    
+                                </header>
+                            </div>
+                            <div class="slds-card__body slds-card__body_inner">
+                                <div class="slds-grid slds-wrap">
+                                    
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Title :
+                                    {!cs.Org_Title__c}
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Booking Type :
+                                    {!cs.Org_Booking_Type__c}
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Booked Status :
+                                    {!cs.Booking_Status__c}
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Booked Date :
+                                      <lightning:formattedDateTime value="{!cs.Org_Booked_Date__c}" />
+                                   
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Travel Start Date :
+                                        <lightning:formattedDateTime value="{!cs.Org_Travel_Start_Date__c}" />
+                                    </div>
+                                    <div style="padding-left: 9px" class="slds-size_1-of-2">Travel End Date :
+                                    
+                                        <lightning:formattedDateTime value="{!cs.Org_Travel_End_Date__c}" />
+                                    
+                                    </div>
+                                    
+                                </div>
+                                
+                            </div>
+                            
+                        </article>
+                        </aura:iteration>
+                         </div>                  
+                    
+                    <div class="{!v.currentStep == '3' ? 'slds-show' : 'slds-hide'}">
+                        <div class="section">
+                            <div class="slds-grid slds-gutters">
+                                
+                                   <div class="slds-vertical-tabs">
+                                    <ul class="slds-vertical-tabs__nav" role="tablist" aria-orientation="vertical">
+                                        <aura:iteration items="{!v.bookings}" var="step" indexVar="index">
+                                        <li class="{! step.selected ? 'slds-vertical-tabs__nav-item slds-is-active':'slds-vertical-tabs__nav-item'}" title="Tab 1" role="presentation">
+                                            <a class="slds-vertical-tabs__link" data-index="{!index}" aura:id="menuItem" role="tab" tabindex="0" aria-selected="true" aria-controls="slds-vertical-tabs-0" id="slds-vertical-tabs-0__nav">
+                                                <!-- onclick="{!c.setIndex}" -->
+                                                
+                                                <span class="slds-vertical-tabs__left-icon"></span>
+                                                <span class="slds-truncate" title="Tab 1"><aura:if isTrue="{!step.Org_Booking_Type__c == 'Flight'}">
+                                       
+                                                        <img src="{!$Resource.Icon_Flight}"/>
+                                                    </aura:if> 
+                                                    <aura:if isTrue="{!step.Org_Booking_Type__c == 'Accommodation'}">
+                                                        
+                                                        <img src="{!$Resource.Icon_Hotel}"/>
+                                                    </aura:if> 
+                                                    <aura:if isTrue="{!step.Org_Booking_Type__c == 'Transfer'}">
+                                                        
+                                                        <img src="{!$Resource.Icon_Transfer}"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!step.Org_Booking_Type__c == 'Travel Insurance'}">
+                                                        
+                                                        <img src="{!$Resource.Icon_Insurance}"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!step.Org_Booking_Type__c == 'Marhaba'}">
+                                                        
+                                                        <img src="{!$Resource.Icon_Marhaba}"/>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!step.Org_Booking_Type__c == 'Airport Parking'}">
+                                                        
+                                                        <img src="{!$Resource.Icon_Parking}" height="24px !important" style="height:24px"/>
+                                                    </aura:if> 
+                                                    &nbsp;{!step.Name}</span>
+                                                <span class="slds-vertical-tabs__right-icon"></span>
+                                            </a>
+                                        </li>
+                                        </aura:iteration>
+                                    </ul>
+                                    <div class="slds-vertical-tabs__content slds-show" id="slds-vertical-tabs-0" role="tabpanel" aria-labelledby="slds-vertical-tabs-0__nav">
+                                        <div class="slds-text-longform">
+                                            
+                                            <aura:if isTrue="{!v.show}">
+                                                <div class="slds-col slds-size_11-of-12"><h3 style="font-size:18px"><b>Add Internal Request for {!v.bookingValue.Name}</b></h3></div>
+                                                <br/>
+                                                <div style="width:-webkit-fill-available">
+                                                    <lightning:recordEditForm objectApiName="Case" >
+                                                         
+                                                              <div class="slds-col slds-size_1-of-2" style="display:inline-block" ><lightning:inputField aura:id="subject" label="Subject"
+                                                                                                                                                       name="Subject"
+                                                                                                                                                       value="{!v.Subject}"
+                                                                                                                                                       fieldName="Subject"                          
+                                                                                                                                                       required="true"/> </div>
+                                                             <div class="slds-col slds-size_1-of-2" style="display:inline-block" ><span class="required ">*</span>
+                                                             
+                                                             		<lightning:combobox aura:id="endprovidername" name="EndProviderName" label="Responsible" placeholder="Select Provider Name" 
+                        																options="{! v.supplierlist }" disabled="{!empty(v.supplierlist)}" />
+                                                             </div>
+                                                             <div class="slds-col slds-size_1-of-2" style="display:inline-block" ><lightning:inputField aura:id="status" label="Status"
+                                                                                                                                                       name="Status"
+                                                                                                                                                       value="{!v.internalStatus}"
+                                                                                                                                                       fieldName="Org_Case_Status__c"                                                                                                                           
+                                                                                                                                                       required="true"/> </div>
+                                                        <div class="slds-col slds-size_1-of-2" style="display:inline-block">
+                                                        		  <div class="lookuptypeselect">
+                                                                   <ui:inputSelect aura:id="lkptype" label="Assign Owner" change="{!c.onSelectChange}"  required = "true"  >
+                                                                                        <aura:iteration items="{!v.lookupSearchType}" var="ltype">
+                                                                                            <ui:inputSelectOption text="{!ltype}" label="{!ltype}" />
+                                                                                        </aura:iteration>
+                                                                                    </ui:inputSelect>
+                                                                  </div>               
+                                                                  <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single" style="width:74%;display:inline-block;margin-left:1%">
+                                                                    <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+                                                                    
+                                                                    <div class="slds-form-element__control">
+                                                                        
+                                                                        <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/> 
+                                                                            
+                                                                            <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                                                                                <lightning:pill class="pillSize" label="{!v.selectedRecord.rname}" name="{!v.selectedRecord.rname}" onremove="{! c.clear }">
+                                                                                    <aura:set attribute="media">
+                                                                                        <lightning:icon  iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                                                    </aura:set>
+                                                                                </lightning:pill>
+                                                                            </div>
+                                                                            <div aura:id="lookupField" class="slds-show">
+                                                                              <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                                <span class="slds-assistive-text"></span>
+                                                                            </span>
+                                                                                <ui:inputText   aura:id = "caseOwner" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord}" placeholder="search.."/>
+                                                                                <div class="slds-notify slds-notify_toast slds-theme_error"> 
+                                                                                    <div class="slds-notify__content">
+                                                                                        <p class="slds-align_absolute-center">{!v.errorMessage}</p>                
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>   
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                                                        <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                        <center> {!v.Message}</center>
+                                                                        <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                                                            <c:customUserLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                                        </aura:iteration>
+                                                                    </ul>
+                                                                </div>                                                                                              
+                                                        </div>
+                                                             
+                                                             
+                                                             
+                                                        
+													</lightning:recordEditForm> 
+                                                </div>
+                                                
+                                                
+                                                <aura:if isTrue="{! v.showIssues == 'false' &amp;&amp; v.Subject !=  '' &amp;&amp; v.selectedRecord.rid !=  null}">
+                                                    <a onclick="{!c.toggleIssues}">
+                                                        <div style="float:right;position:relative;right:2%; ">
+                                                            <img src="{!$Resource.GreenAdd}" class="greenadd" height="30px !important"/>
+                                                            <span style="position:relative;bottom:5px;left:5px">Add Issues</span>
+                                                        </div>
+                                                    </a>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showIssues}">
+                                                    <br></br>
+                                                    <br></br>
+                                                    
+                                                    <div class="slds-col slds-size_11-of-12"><h3 style="font-size:16px"><b>Add Issues for {!v.bookingValue.Name}</b></h3></div>
+                                                    <div style="width:-webkit-fill-available">
+                                                        <lightning:recordEditForm objectApiName="Issues__c" >
+                                                             
+                                                                  <div class="slds-col slds-size_1-of-4" style="display:inline-block" ><lightning:inputField aura:id="issue" label="Issue"
+                                                                                                                                                           name="Issue"
+                                                                                                                                                           value="{!v.Issue__c}"
+                                                                                                                                                           fieldName="Issue__c"                          
+                                                                                                                                                           required="true"/> </div>
+                                                                 <div class="slds-col slds-size_1-of-4" style="display:inline-block" ><lightning:inputField aura:id="issuetype" label="Issue Type"
+                                                                                                                                                           name="IssueType"
+                                                                                                                                                           value="{!v.Issue_Type__c}"
+                                                                                                                                                           fieldName="Issue_Type__c"                                                                                                                           
+                                                                                                                                                           required="true"/> </div>
+                                                                 
+                                                                 <div class="slds-col slds-size_1-of-4" style="display:inline-block" ><span class="required ">*</span>
+                                                                 
+                                                                        <lightning:combobox  name="EndProviderName" label="End Provider Name" value="{!v.IssueSupplierName}" placeholder="Select Provider Name" 
+                                                                                            options="{! v.supplierlistissues }" disabled="{!empty(v.supplierlistissues)}" />
+                                                                 </div>
+                                                            	 <div class="slds-col slds-size_1-of-4" style="display:inline-block" >
+                                                                 		<div class="slds-col slds-size_1-of-3" style="display:inline-block" >
+                                                                 			<lightning:button variant="brand" 
+                                                                                  label="Add"
+                                                                                  title="Add"
+                                                                                  onclick="{!c.addIssue}" disabled="{!v.Issue__c == '' || v.Issue_Type__c == '' || v.IssueSupplierName ==''}" />
+                                                                 		</div>
+                                                                     	<div class="slds-col slds-size_1-of-3" style="display:inline-block" >
+                                                                 			<lightning:button variant="brand" 
+                                                                                  label="Cancel"
+                                                                                  title="Cancel"
+                                                                                  onclick="{!c.unToggleIssues}" disabled="" />
+                                                                 		</div>
+                                                                       
+                                                                 </div>
+                                                                 
+                                                            
+                                                        </lightning:recordEditForm>
+                                                    </div>
+                                                </aura:if>
+                                                <br/>
+                                                <aura:if isTrue="{!v.internalRecordId != ''}">
+                                                    <h3 style="font-size:14px;padding-left:1%"><b>Current Issues</b></h3>
+                                                	<c:IssuePillContainer recordId="{!v.internalRecordId}" aura:id="cComp"/>
+                                                </aura:if>
+                                                <div class="slds-col"></div>
+                                                <br/>
+                                                <br/>
+                                                <h1 style="font-size: 14px;
+    padding-left: 1%;"><b>Internal Request</b></h1>
+                                                <div class="slds-col">
+              
+                                                        
+                                                    
+                                                        <lightning:datatable aura:id="dtTable"
+                                                                             class = "{!v.classname}"
+                                                                             columns="{! v.columns }"
+                                                                             data="{! v.data }"
+                                                                             keyField="Id"
+                                                                             errors="{! v.errors }"
+                                                                             onrowaction="{!c.handleAction}"
+                                                                             draftValues="{! v.draftValues }"
+                                                                             onsave="{! c.handleSaveEdition }"
+                                                                             hideCheckboxColumn = "false"
+                                                                             
+                                                                             />
+                                                       
+                                                    </div>
+                                            </aura:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            	
+                                   
+                         
+                            </div>
+                    
+                   
+                          </div>                                  
+                </div>
+                
+                <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+                <div class="slds-modal__footer slds-modal__footer_directional">
+                    <lightning:button 
+                                      variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModal }"/>
+                    <aura:if isTrue="{!v.debug}">
+                    Debug:
+						 			
+                        {!v.tempInternalList} <br></br>
+                        {!v.tempIssueList}
+					</aura:if>
+                    <!--<lightning:button disabled="{!((v.currentStep == '1' &amp;&amp; v.noBookingHeader == 'false') || (v.noBookingHeader == 'true' &amp;&amp; v.currentStep == '0'))}"
+                                      variant="neutral" 
+                                      label="Back"
+                                      title="Back"
+                                      onclick="{! c.moveBack }"/>-->
+                    
+                    
+                    <aura:if isTrue="{!v.currentStep != '3'}">
+                    	<lightning:button variant="brand" 
+                                              label="Next"
+                                              title="Next"
+                                              onclick="{! c.moveNext }" disabled="{!(empty(v.bookings)&amp;&amp; v.noBookingHeader == 'false') || (v.noBookingHeader == 'true' &amp;&amp; empty(v.bookingHeaderId) &amp;&amp; v.currentStep == '0') || (v.noBookingHeader == 'true' &amp;&amp; !empty(v.bookingHeaderId) &amp;&amp; v.currentStep != '0' &amp;&amp; empty(v.bookings) )}" />
+                      
+                    </aura:if>
+                   
+                    <aura:if isTrue="{!v.currentStep == '3' &amp;&amp; v.showIssues == 'false'}">
+                            <lightning:button variant="brand"
+                                              label = "Save &amp; New"
+                                              title = "Save &amp; New"
+                                              onclick="{!c.saveAndNew}"
+                                              disabled="{! v.Subject ==  '' || v.selectedRecord.rid ==  null }"
+                                              />
+                        <aura:if isTrue="{!v.bookings.length == v.currentBooking}">
+                                <lightning:button variant="brand" 
+                                              label="Finish"
+                                              title="Finish"
+                                                  onclick="{! c.finish }" />  
+                        	<aura:set attribute="else">
+                                <lightning:button variant="brand" 
+                                              label="Submit &amp; Go To Next Booking"
+                                              title="Submit &amp; Go To Next Booking"
+                                              onclick="{! c.moveNext }" disabled="{!empty(v.bookings)}" />
+                        	</aura:set>
+                       </aura:if> 
+                            
+                    </aura:if>
+                    
+                   
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning:progressIndicator currentStep="{!v.currentStep}" type="base">              
+                        <lightning:progressStep label="Select Booking Package" value="0" />
+                        <lightning:progressStep label="Select Booking Items" value="1" />                       
+                        <lightning:progressStep label="Add Issues" value="3"/>
+                        
+                    </lightning:progressIndicator>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+    </aura:if>
+    
+</aura:component>

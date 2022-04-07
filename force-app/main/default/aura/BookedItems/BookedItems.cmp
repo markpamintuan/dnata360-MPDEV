@@ -1,0 +1,29 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+				access="global">
+	<lightning:workspaceAPI aura:id="workspace" />	 
+			
+	<aura:attribute name="bookedItems" type="List"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+		<div style="padding-left: 9px">
+      <hr style="margin: 0px 0px;"></hr>
+          <h1 class="slds-page-header__title slds-truncate slds-align-middle" style="font-style: Lato; font-size: 14px; margin-top: 5px; margin-bottom: 10px" title="Booked Items">Booked Items:</h1>
+
+          <aura:iteration items="{!v.bookedItems}" var="li" indexVar="indx">
+              <div class="slds-size_1-of-1">
+                  <h1 style="color:#2699FB"  class="slds-truncate" title="{!li.Org_Booking_Type__c}"> 
+                  	<b>{!li.bookingtype}</b></h1>                                    
+              </div>
+              
+              <aura:iteration items="{!li.records}" var="innerLi" indexVar="indxvv">
+                 	<div class="slds-size_1-of-1">               		                	
+                      
+                     	<div onclick="{!c.openTabWithSubtab}" data-value="{!innerLi.Id}">
+                     		<p class="slds-truncate" title="{!innerLi.Org_Title__c}">
+                     			 <a href="#" ><b style="font-size:14px">{!innerLi.Name}</b> - {!innerLi.Org_Title__c} - StartDate - {!innerLi.Org_Travel_Start_Date__c} - EndDate - {!innerLi.Org_Travel_End_Date__c} </a>
+                     		</p>
+                      </div>                               
+                  </div> 
+              </aura:iteration>
+          </aura:iteration> 
+      </div>
+</aura:component>

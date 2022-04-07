@@ -1,0 +1,18 @@
+.THIS {
+}
+
+.THIS .slds-form-element__label{
+    display:none !important;
+}
+
+.THIS .width{
+    width:130% !important;
+}
+
+.THIS .padding{
+    padding-left:2%;
+}
+
+.THIS .bottonpadding{
+    padding-botton:1% !important;
+}

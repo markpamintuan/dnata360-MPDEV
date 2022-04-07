@@ -1,0 +1,10 @@
+<apex:page sidebar="false" showHeader="false" controller="PostChatFeedbackController" action="{!redirectToSurvey}">
+<!--
+Button Id: <apex:outputText value="{!$CurrentPage.parameters.buttonId}" /><br/>
+Chat Details: <apex:outputText value="{!$CurrentPage.parameters.chatDetails}" /><br />
+Attached Records : <apex:outputText value="{!$CurrentPage.parameters.attachedRecords}" /><br />
+<apex:form id="postchatform">
+<apex:inputHidden value="{! caseId}"/>
+</apex:form>
+-->
+</apex:page>

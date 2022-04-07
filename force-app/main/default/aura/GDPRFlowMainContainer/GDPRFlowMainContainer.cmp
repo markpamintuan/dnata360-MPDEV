@@ -1,0 +1,124 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <!-- Step Number used to update Progress Indicator & Content of Body -->
+    <aura:attribute name="stepNumber" type="Integer" default="1" />       
+    
+    <!-- Used to open sub-tab in console window -->
+    <lightning:workspaceAPI aura:id="workspace" />
+    
+    <!-- Search Form Fields Object -->
+    <aura:attribute name="formObj" type="Object" />
+    
+    <!-- Result Wrapper List -->
+    <aura:attribute name="resultWrapList" type="Object[]" />
+    
+    <!-- Search  field values  -->
+    <aura:attribute name="FirstName" type="string"/>
+    <aura:attribute name="LastName" type="string"/>
+    <aura:attribute name="Email" type="sObject[]"/>
+    <aura:attribute name="Mobile" type="sObject[]"/>
+    <aura:attribute name="Keyword" type="sObject[]"/>
+    
+    <!-- this is aura style to make it sure that the scroll bar comes when content is more -->
+    <aura:html tag="style">
+        html, body {        
+        margin: 0;
+        padding: 0;
+        }
+        
+        html {
+        overflow: hidden;
+        }
+        
+        .wrapper {
+        display: table;
+        width: 100%;
+        height: 100%;
+        }
+        
+        .header, .content, .footer {
+        display: table-row;
+        }
+        
+        .header, .footer {
+        height: 5%;
+        background: #eee;
+        }
+        
+        .inner {
+        height: 95%;
+        overflow: auto;
+        }
+    </aura:html>
+    
+    <!-- main div -->
+    <div class="wrapper">
+        
+        <!-- header component -->
+        <div class="header">
+            <c:ProgressIndicator stepNumber="{!v.stepNumber}" />
+        </div>        
+        
+        <!-- this is the content component -->
+        <div class="content" style="background: white;">            
+            
+            <!-- heading Section -->
+            <center>
+                <c:HeadingCmp stepNumber="{!v.stepNumber}"></c:HeadingCmp>
+            </center>
+            
+            <div class="inner">
+                
+                <!-- step 1 -->
+                <aura:if isTrue="{!v.stepNumber == 1}">                    
+                    <center>
+                        <c:SearchBox SearchKeyWord_FirstName="{!v.FirstName}" 
+                                     SearchKeyWord_LastName="{!v.LastName}" 
+                                     lstSelectedRecords_Email="{!v.Email}" 
+                                     lstSelectedRecords_Mobile="{!v.Mobile}" 
+                                     resultWrapList = "{!v.resultWrapList}"
+                                     lstSelectedRecords_Keywords = "{!v.Keyword}"
+                                     stepNumber = "{!v.stepNumber}"/> 
+                    </center>
+                </aura:if>
+                
+                <!-- step 2 -->                
+                <aura:if isTrue="{!v.stepNumber == 2}">                   
+                    <c:ResultCmp stepNumber="{!v.stepNumber}"  
+                                 resultWrapList="{!v.resultWrapList}" 
+                                 isNonSelectable="false" 
+                                 FirstName="{!v.FirstName}" 
+                                 LastName="{!v.LastName}" 
+                                 Email="{!v.Email}" 
+                                 Mobile="{!v.Mobile}"
+                                 Keyword="{!v.Keyword}"/> 
+                </aura:if>
+                
+                <!-- step 3 -->
+                <aura:if isTrue="{!v.stepNumber == 3}">
+                    <c:ResultCmp formObj="{!v.formObj}" 
+                                 resultWrapList="{!v.resultWrapList}" 
+                                 isNonSelectable="true" 
+                                 stepNumber="{!v.stepNumber}"/>
+                    <!-- for view all modal - passed stepNumber attribute to ResultTableCmp -->
+                </aura:if>
+                
+                <!-- step 4 -->
+                <aura:if isTrue="{!v.stepNumber == 4}">
+                    <c:ReviewCmp formObj="{!v.formObj}"
+                                 resultWrapList="{!v.resultWrapList}" 
+                                 stepNumber="{!v.stepNumber}"></c:ReviewCmp>
+                    
+                    <!-- <c:Step4POC resultWrapList="{!v.resultWrapList}" /> -->
+                    
+                </aura:if>
+            </div>
+        </div>
+        <div class="footer">
+            <c:ButtonsCmp stepNumber="{!v.stepNumber}" 
+                          resultWrapList = "{!v.resultWrapList}"/>
+        </div>
+    </div>
+    
+    
+</aura:component>

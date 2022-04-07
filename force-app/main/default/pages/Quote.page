@@ -1,0 +1,734 @@
+<apex:page standardController="Quote_Header__c" extensions="QuotePDFGenerationController" showHeader="false" sidebar="false" applyHtmlTag="false" renderAs="pdf" applyBodyTag="false" ><!-- renderAs="pdf" -->
+    <html>
+        <head>
+            <style>
+				@page{
+					/*@top-right {
+						content: element(header);
+					}*/
+					margin-left:0px;
+					margin-right:0px;
+					@bottom-center {
+						content: element(footer);
+					}
+                    @top-center {
+                    	content: element(header); 
+                	
+                	} 					
+				}
+					
+				@page :first {
+					/* Top margin on first page 10cm */
+					@top-center {
+						content: element(header); 
+						
+					}
+				   
+				}
+				
+      		 	@page:last { /*T-00668*/
+                	@top-center {
+                    	content: element(header); 
+                	}  
+            	}
+            					
+				div.header {
+					padding: 0px;
+					display:block;
+					position: running(header);
+				}
+					
+				div.footer {
+					display: block;
+					padding:0px;
+					position:running(footer); /*T-00668 changed position:relative;*/
+					
+				}
+
+				table { page-break-inside:avoid } /*T-00668 changed 'auto' to 'avoid'*/
+				tr    { page-break-inside:avoid; page-break-after:auto;border-color:black;border-width:2px;}
+
+				body,td, tr {
+					font-family: Tahoma !important;
+					font-size: 14px !important;
+					
+
+				}
+
+				.headerRow {
+					background-color: #008FCB !important;
+					color: #FFFFFF !important;
+					padding-left: 8px;
+					padding-top: 7px;
+					padding-bottom: 7px;
+				}
+
+				.ekhHeaderRow { /*T-00478*/
+					background-color: #D81921 !important;
+					color: #FFFFFF !important;
+					padding-left: 8px;
+					padding-top: 7px;
+					padding-bottom: 7px;
+				}
+				
+				.trheaderRow{
+					background-color: #013B92 !important;
+					color: #FFFFFF !important;
+					padding-left: 8px;
+					padding-top: 7px;
+					padding-bottom: 7px;
+				}
+				
+				.footerRow {
+					background-color: #83C551 !important;
+					color: #FFFFFF !important;
+				}
+
+                .ekhFooterRow { /*T-00478*/
+                    background-color: #D81921 !important;
+                    color: #FFFFFF !important;
+                }
+
+				.trfooterRow{
+					background-color : #EA7005!important;
+					color: #FFFFFF !important;
+				}
+				
+				table{
+					border:.5px solid #A4A6A8;/*T-00668*/
+					border-collapse: collapse;
+				}
+				
+				td {
+					border:.5px solid #A4A6A8;/*T-00668*/
+					border-collapse: collapse;
+				}
+
+				.textRow {
+					background-color: #F2F2F2 !important;
+					padding-left: 8px;
+					padding-top: 5px;
+					padding-right: 8px;
+					padding-bottom: 5px;
+					text-align:center;
+					
+				}
+
+				.rowData {
+					padding-left: 8px;
+					padding-right: 8px;
+					padding-top: 7px;
+					padding-bottom: 7px;
+					text-align:center; 
+					
+				}
+
+                /*T-00668*/
+                .dtmeTextRow {
+                    background-color: #F5F5F5 !important;
+                    padding-left: 8px;
+                    padding-top: 5px;
+                    padding-right: 8px;
+                    padding-bottom: 5px;
+                    text-align:center;
+                    color:#65696C !important;
+                    
+                }
+
+                .dtmeRowData {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    padding-top: 7px;
+                    padding-bottom: 7px;
+                    text-align:center;
+                    color:#65696C !important;
+                    
+                }               
+                /*T-00668*/
+                
+				/*T-00413*/
+                .tailorRowData {
+                    padding-left: 8px;
+                    padding-right: 8px;
+                    padding-top: 7px;
+                    padding-bottom: 7px;
+                    //text-align:center;
+                    color:#65696C !important;
+                    
+                } 
+                /*T-00413*/                
+				
+				.textColor {
+					text-color: #FFFFFF !important;
+				}
+				
+				body {
+					font-family: Times !important;/*T-00668*/ 
+					font-color: #f2f2f2 !important;
+				}
+				
+				.lineColor {
+					text-color: #83C551 !important;
+				}
+				
+				hr {
+					color: #008FCB !important;		
+				}
+
+				.footers{
+					position:absolute;
+					bottom:0;
+					right:0;
+					width:48%;
+					height:120px; /* Height of the footer */
+				}
+				
+				.content{
+					margin-left:20px !important;
+					margin-right:20px !important;
+				}
+            </style>
+            
+        </head>
+        
+        <body style="width:90%;margin:auto;margin-top:5%">
+		
+			<apex:outputPanel rendered="{!OR(record.Case__r.Record_Type_Name__c == 'Duty Travel - New Enquiry',record.Case__r.Record_Type_Name__c == 'Duty Travel UK - New Enquiry')}"><!-- T-00826 -->
+				<apex:image style="display: block;margin-left:auto;margin-right: auto; width: 40%;margin-top:0%"  height="110px;" value="{!$Resource.quote_header_logo_duty_travel}"/>
+			</apex:outputPanel>
+
+            <!-- T-00668 -->
+			<!-- start dnata Header -->             
+            <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry'}">
+            	<div class="header">
+					<apex:image url="{!$Resource.dnataHeaderFirst}" width="816px"/> 
+            	</div>
+            	<div class="header">
+					<apex:image url="{!$Resource.dnataHeaderLast}" width="816px"/> 
+            	</div>                
+            </apex:outputPanel>
+            <!-- End dnata Header -->
+             
+            <!-- start dnata Footer -->
+            <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry'}">
+                <div class="footer">           
+        		    <apex:image url="{!$Resource.dnataFooter}" width="816px" />
+                </div>
+            </apex:outputPanel>
+            <!-- End dnata Footer -->
+            <!-- T-00668 -->   
+			
+			<!-- T-00478 -->
+            <apex:outputPanel rendered="{!IF(record.Case__r.Record_Type_Name__c == 'EKH - Tailor Made Enquiry',true,false)}">
+                <apex:image style="width:100%;height:100px;" url="{!IF(record.Case__r.Org_Brand__c == 'EKH',$Resource.EKH_QuoteHeader,$Resource.QuoteHeader)}" width="100%" height=""/> 
+            </apex:outputPanel>
+			<!-- T-00478 -->
+			
+            <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+				<div class="header">           
+					<center><apex:image url="{!$Resource.TR_logo}" width="817px" /> </center>
+				</div>
+            </apex:outputPanel>
+			
+            <p style="margin:auto">
+              <!--  <apex:image id="theImage" value="{!$Resource.dnatatravel_header_logo}" style="float:right;"/> -->
+            </p>
+            <br/>
+            <div class="content" style="{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','padding-top:280px',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','padding-top:420px','padding-top:0px'))}"><!-- T-00668 -->
+				<!--
+				<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+					<p style="padding-top: 5px;padding-bottom: 5px;">
+
+						Dear {!record.Customer__r.Salutation} {!record.Customer__r.Name},<br/><br/>
+						
+						Thank you for choosing travel republic for your travel needs. <br/><br/>
+						
+						We are delighted to provide you with the following quotations for your upcoming trip to {!record.Case__r.Org_Destinations__c}.<br/><br/>
+					</p>
+				</apex:outputPanel>
+				-->
+				<!-- <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry'}"> --><!--T-00478-->
+				<apex:outputPanel rendered="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry',false,true)}"><!-- T-00668 -->
+					<p style="padding-top: 5px;padding-bottom: 5px;">
+	
+						Dear {!record.Customer__r.Salutation} {!record.Customer__r.Name},<br/><br/>
+						
+						Thank you for choosing {!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','Travel Republic',IF(record.Case__r.Org_Brand__c == 'EKH','Emirates Holidays','dnata'))} for your travel needs. <br/><br/> <!--T-00478-->
+						
+						We are delighted to provide you with the following quotations for your upcoming trip to {!record.Case__r.Org_Destinations__c}.<br/><br/>
+					</p>
+				</apex:outputPanel>
+				<!-- </apex:outputPanel> --><!--T-00478-->
+				<table  border="1" id="tblReq" style="width:100%;border-collapse: collapse;vertical-align: text-top;">
+					<!-- <tr><th colspan="3" style="background-color:royalblue !important;color:White !important;">Your Requirements</th></tr> -->
+					<!-- <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry'}"> -->
+					<tr><td colspan="7" class="{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','trheaderRow',IF(record.Case__r.Org_Brand__c == 'EKH','ekhHeaderRow','headerRow'))}"><b>{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry',UPPER(record.Customer__r.Salutation + ' ' + record.Customer__r.Name),'Your Requirements')}</b></td></tr> <!--T-00478--><!--T-00668-->
+					<!-- </apex:outputPanel> -->
+					<!--
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+						<tr><th colspan="7" class="trheaderRow" ><b>Your Requirements</b></th></tr>
+					</apex:outputPanel>
+					--> 
+					<tr>
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="text-align:left;font-size:14px !important">Destination:</td>
+						<td colspan="3" class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left;font-size:14px !important">{!record.Case__r.Org_Destinations__c}</td>
+					</tr>
+					
+					<tr>
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="text-align:left;font-size:14px !important">Dates: </td>
+						<td colspan="3" class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left;font-size:14px !important">
+
+							<apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!record.Date_From__c}"/></apex:outputText> to&nbsp;<apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!record.Date_To__c}"/></apex:outputText></td>
+					</tr>
+					
+					<tr>
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="text-align:left;font-size:14px !important">Duration:</td>
+						<td colspan="3" class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left;font-size:14px !important">{!record.Duration__c}</td>
+					</tr>
+					
+					<tr style="vertical-align: text-top;">
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="text-align:left;font-size:14px !important">Passengers:</td>
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left;font-size:14px !important">{!noOfAdults} Adults</td>
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left;font-size:14px !important">{!noOfChildren} Children
+							<br/><br/>
+							<apex:variable value="{!1}" var="n"/>
+							<apex:repeat value="{!travellers}" var="t">
+								<apex:outputPanel rendered="{!IF(t.Traveller_Type__c == 'Child', true, false)}">
+									Child {!n}: {!t.Age_of_child__c} 
+									<apex:variable value="{!n+1}" var="n"/> <br/>
+								</apex:outputPanel>
+								
+							</apex:repeat>
+							
+						</td>
+						<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left;font-size:14px !important">{!noOfInfants} Infants
+							 <br/><br/>
+							<apex:variable value="{!1}" var="n"/>
+							<apex:repeat value="{!travellers}" var="t">
+								<apex:outputPanel rendered="{!IF(t.Traveller_Type__c == 'Infant', true, false)}">
+									Child {!n}: {!t.Age_of_child__c} 
+									<apex:variable value="{!n+1}" var="n"/> <br/>
+								</apex:outputPanel>
+							</apex:repeat>
+						</td>
+					   <!-- <td >
+							<!-- <table border="1" style="width:100%;border-collapse: collapse;"> 
+								<tr>
+									<td>{!noOfAdults} Adults</td>
+									<td>{!noOfChildren} Children</td>
+									<td>{!noOfInfants} Infants</td>
+								</tr>
+								<tr><td></td><td>
+									<apex:variable value="{!1}" var="n"/>
+									<apex:repeat value="{!travellers}" var="t">
+										Child {!n}: {!t.Age_in_yrs__c} years
+										<apex:variable value="{!n+1}" var="n"/> <br/>
+									</apex:repeat>
+									
+									</td><td></td></tr>
+							<!-- </table> -
+						</td>-->
+					</tr>
+					
+				</table><br/>
+
+				<!-- T-00668 -->
+	            <apex:outputPanel rendered="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry',true,false)}">
+		            <p style="padding-top: 5px;padding-bottom: 5px;color:#65696C">
+		                We are delighted to provide you with the following quotations for your upcoming trip to {!record.Case__r.Org_Destinations__c}.<br/><br/>
+		            </p>
+            	</apex:outputPanel>            
+            	<!-- T-00668 -->
+				
+				<apex:repeat value="{!mapOptionWithServices}" var="key">
+
+					<b style="padding-top:5px;padding-bottom:5px;color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#000000')}">{!key}</b><br/>
+					
+					<!-- T-00413 -->
+					<apex:outputPanel rendered="{!record.Tailormade__c}" >
+						<table border="1" style="margin-top: 5px;width:100%;border-collapse: collapse">
+							<tr><td colspan="1" class="{!IF(record.Case__r.Org_Brand__c == 'EKH','ekhHeaderRow','headerRow')}"><b>Tailormade Itinerary</b></td></tr>
+							<td colspan="1" class="tailorRowData"><apex:outputText style="color:#65696C;" value="{!mapOptionWithServices[key].tailormadeOption}" escape="false"/></td>
+						</table><br/><br/>
+					</apex:outputPanel>
+					<!-- T-00413 -->					
+					
+					<apex:outputPanel rendered="{!IF(mapOptionWithServices[key].Flights.size > 0, true, false)}" >
+						<table border="1" style="margin-top: 5px;width:100%;border-collapse: collapse;">
+							<!-- <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry'}"> -->
+							<tr><td colspan="7" class="{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','trheaderRow',IF(record.Case__r.Org_Brand__c == 'EKH','ekhHeaderRow','headerRow'))}"><b style="float:left;">Flights &nbsp; </b><apex:image style="height:18px;width:18px;" value="{!$Resource.flightIcon}"/></td></tr> <!--T-00478-->
+							<!-- </apex:outputPanel> -->
+							<!--
+							<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+							<tr><th colspan="7" class="trheaderRow"><b>Flights</b></th></tr>
+							</apex:outputPanel>
+							-->
+							<tr class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}">
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Airline</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Routing</b></td>
+								<!--<td class="textRow">Date</td>-->
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Flight number</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Departure</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Arrival</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="display:{!IF((mapOptionWithServices[key].isFlightPriceVailable && mapOptionWithServices[key].FlightPrice == null && record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'), 'table-cell','none')}"><b>Price</b></td>
+							</tr>
+							
+							<apex:repeat var="f" value="{!mapOptionWithServices[key].Flights}">
+								<tr>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.Airline} </td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.Routing}<br/>{!f.FlightClass}</td>
+								   <!-- <td class="rowData">{!f.FlightDate} <!--<apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!f.FlightDate}"/></apex:outputText></td>-->
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.FlightNo}</td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.DepartureDateTime}<!--<apex:outputText value="{0,time,hh:mm a}"><apex:param value="{!f.DepartureDateTime}"/></apex:outputText>--></td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.ArrivalDateTime}<!--<apex:outputText value="{0,time,hh:mm a}"><apex:param value="{!f.ArrivalDateTime}"/></apex:outputText>--></td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="display:{!IF((mapOptionWithServices[key].isFlightPriceVailable && mapOptionWithServices[key].FlightPrice == null && record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'), 'table-cell','none')}" >{!mapOptionWithServices[key].CurrencyISOCode} {!f.flightprice}</td>           </tr>
+							</apex:repeat>
+							
+						</table>
+						<apex:outputpanel rendered="{!IF(setFPflag[key]&& record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry',true,false)}">
+							<table border="1" style="width:100%;border-collapse: collapse;" class="{!IF(record.Case__r.Org_Brand__c == 'EKH','ekhFooterRow','footerRow')}"> <!--T-00478-->
+								<td class="rowData" style="text-align:left;font-size: 16px !important"><b>Flight Package Cost</b></td>
+								<td class="rowData" style="text-align:right; font-size: 16px !important"><b>{!mapOptionWithServices[key].CurrencyISOCode} {!mapOptionWithServices[key].FlightPrice}</b></td>
+							</table>
+						</apex:outputpanel>
+						<apex:outputpanel rendered="{!IF(setFPflag[key] && record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry',true,false)}">
+							<table border="1" style="width:100%;border-collapse: collapse;" class="trfooterRow">
+								<th class="rowData" style="text-align:left;font-size: 16px !important"><b>Flight Package Cost</b></th>
+								<th class="rowData" style="text-align:right; font-size: 16px !important"><b>{!mapOptionWithServices[key].CurrencyISOCode} {!mapOptionWithServices[key].FlightPrice}</b></th>
+							</table>
+						</apex:outputpanel> 
+					</apex:outputPanel>
+					
+				
+					<apex:outputPanel rendered="{!IF(mapOptionWithServices[key].Hotels.size > 0, true, false)}">
+						<table border="1" style="width:100%;border-collapse: collapse;">
+                        
+							<!-- <apex:outputPanel layout="none" rendered="{!record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'}"> -->
+							<tr><td colspan="8" class="{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','trheaderRow',IF(record.Case__r.Org_Brand__c == 'EKH','ekhHeaderRow','headerRow'))}"><b style="float:left;">Hotels &nbsp;</b><apex:image style="height:18px;width:23px;" value="{!$Resource.hotelIcon}"/></td></tr> <!--T-00478-->
+							<!-- </apex:outputPanel> -->
+							
+							<!--
+						   <apex:outputPanel layout="none" rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+							<tr><th colspan="7" class="trheaderRow"><b>Hotels</b></th></tr>
+							</apex:outputPanel>
+							-->
+							<tr class="textRow">
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Hotel Name</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Room Type</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Check in</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Check out</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Duration</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}"><b>Meal Type</b></td>
+								<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="display:{!IF(mapOptionWithServices[key].isHotelPriceVailable, 'table-cell','none')}"><b>Price</b></td>
+								
+							</tr>
+							
+							<apex:repeat var="f" value="{!mapOptionWithServices[key].Hotels}">
+								<tr>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.HotelName} , {!f.HotelCity}</td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.RoomType}</td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.CheckIn}<!--<apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!f.CheckIn}"/></apex:outputText>--></td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.CheckOut}<!--<apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!f.CheckOut}"/></apex:outputText>--></td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.Duration}</td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">{!f.MealType}</td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="display:{!IF(mapOptionWithServices[key].isHotelPriceVailable, 'table-cell','none')}">{!mapOptionWithServices[key].CurrencyISOCode} {!f.HotelPrice}</td>
+								</tr>
+							</apex:repeat>
+							
+						</table>
+					</apex:outputPanel>
+
+					<apex:outputPanel rendered="{!IF(mapOptionWithServices[key].AdditionalServices.size > 0, true, false)}">
+						<table border="1" style="width:100%;border-collapse: collapse;">
+							<!-- <apex:outputPanel layout="none" rendered="{!record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'}"> -->
+							<tr><td colspan="6" class="{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','trheaderRow',IF(record.Case__r.Org_Brand__c == 'EKH','ekhHeaderRow','headerRow'))}"><b>Additional Services</b></td></tr> <!--T-00478-->
+							<!-- </apex:outputPanel> -->
+							<!--
+							<apex:outputPanel layout="none" rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+							<tr><th colspan="6" class="trheaderRow"><b>Additional Services</b></th></tr>
+							</apex:outputPanel>
+							-->
+							<apex:repeat var="f" value="{!mapOptionWithServices[key].AdditionalServices}">
+								<tr class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}">
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="text-align:left"><b>{!f.ServiceType}</b></td>
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeTextRow','textRow')}" style="display:{!IF(mapOptionWithServices[key].isAdServicePriceVailable, 'table-cell','none')};text-align:left;" width="10.5%"><b>Price</b></td>
+									<!-- <td>{!f.ServiceDesc}</td> -->
+								</tr>
+								<tr class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}">
+									<td class="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','dtmeRowData','rowData')}" style="text-align:left">
+										<apex:outputText escape="false" value="{!f.ServiceDesc}"></apex:outputText>
+										
+									</td>
+									<td style="display:{!IF(mapOptionWithServices[key].isAdServicePriceVailable, 'table-cell','none')}">{!mapOptionWithServices[key].CurrencyISOCode} {!f.ASPrice}</td>
+								</tr>
+							</apex:repeat>
+							
+						</table>
+					</apex:outputPanel>
+					<!-- <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'}"> -->
+					<table border="1" style="width:100%;border-collapse: collapse;" class="{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','trfooterRow',IF(record.Case__r.Org_Brand__c == 'EKH','ekhFooterRow','footerRow'))}"> <!--T-00478-->
+						<td class="rowData" style="text-align:left;font-size: 16px !important;color:#FFFFFF;"><b>Total Package Cost</b></td>
+						<td class="rowData" style="text-align:right; font-size: 16px !important"><b>{!mapOptionWithServices[key].CurrencyISOCode} {!mapOptionWithServices[key].TotalPrice}</b></td>
+					</table>
+					<!-- </apex:outputPanel> -->
+					<!--
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+							<table border="1" style="width:100%;border-collapse: collapse;" class="trfooterRow">
+						<th class="rowData" style="text-align:left;font-size: 16px !important"><b>Total Package Cost</b></th>
+						<th class="rowData" style="text-align:right; font-size: 16px !important"><b>{!mapOptionWithServices[key].CurrencyISOCode} {!mapOptionWithServices[key].TotalPrice}</b></th>
+					</table>
+					</apex:outputPanel>
+					-->
+					<br/><br/>
+				   <!--  <div style="page-break-after: always;" /> -->
+				</apex:repeat>
+            
+                <p style="padding-left: 8px;padding-top: 5px;padding-bottom: 5px;">
+					<apex:outputPanel rendered="{!Quote_Header__c.Errata__c != null}" >
+						<apex:outputField value="{!Quote_Header__c.Errata__c}" label="Errata"/>                       
+					</apex:outputPanel>
+				</p>
+				<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','')}">
+					Should you wish to make a booking or require an alternative option, please do not hesitate to contact us{!IF(record.Case__r.Org_Brand__c == 'EKH','.','; otherwise we will contact you in the next 48 hours.')} 
+				</p>
+				<div style="page-break-before:always;"><!-- T-00668 -->
+				<p style="padding-left:8px;padding-top:5px;padding-bottom:5px;color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','')}">
+					<strong style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}">Disclaimer</strong><br/>
+                	<apex:outputPanel rendered="{!IF(AND(Quote_Header__c.Disclaimer__c != null, record.Case__r.Record_Type_Name__c != 'dTME - New Enquiry',record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'),true,false)}">
+						<apex:outputPanel rendered="{!Quote_Header__c.Disclaimer__c != null}" >
+							<apex:outputText value="{!Quote_Header__c.Disclaimer__c}" escape="false" />                       
+						</apex:outputPanel>
+                	</apex:outputPanel>
+					<apex:outputPanel rendered="{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry',true,false)}" ><!-- T-00668 -->
+						<ul style="list-style-type:disc; color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','')}">
+							<li><span style="color:#65696C;">No Reservations have been made.</span></li>
+							<li><span style="color:#65696C;">Prices are subject to availability and may change without prior notice.</span></li>
+							<li><span style="color:#65696C;">Prices are guaranteed only upon full payment of all services and issuance of the tickets.</span></li>
+							<li><span style="color:#65696C;">You are responsible for verifying the travel documents requirement with the respective Consulate/Embassy.</span></li>
+							<li><span style="color:#65696C;">We recommend that you travel with a comprehensive travel insurance policy.</span></li>
+						</ul>
+					</apex:outputPanel>
+				</p>
+				<!-- <p><strong>&nbsp;</strong></p> -->
+					<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}"><strong>Terms and Conditions </strong></p>
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c != 'EKH - Tailor Made Enquiry'}">
+						<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}"><strong>Travel advice:</strong></p>
+						<ul style="list-style-type:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','disc','square')}; color:{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','#EA7005',IF(record.Case__r.Org_Brand__c == 'EKH','#000000',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#83c551')))}"> <!--T-00478-->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Please check that all names, dates and timings are correct before leaving the store or on receipt of emails</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Please ensure that you carry all valid documents for the destination/Transit city prior departure.</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','red')}">We recommend to contact the nearest embassy/Consulate of the country you are visiting in order to familiarise yourself with the latest passport and visa requirements plus general travel and health advice. We do not accept any responsibility if you cannot travel because you have not complied with any passport, visa or immigration requirements.</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Please note that recent immigration requirements in the Maldives stipulate that <span style="background-color:{!IF(record.Case__r.Record_Type_Name__c != 'dTME - New Enquiry','#FFFF00','')}">non machine readable passports will no longer be accepted on arrival at Male International Airport.</span> As such please be aware that all customers travelling to the Maldives MUST ensure that they are travelling on a biometric passport in order to board their flight.</span></li>
+						</ul>
+					</apex:outputPanel>
+					<!--
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+						<p><strong>Travel advice:</strong></p>
+						<ul style="list-style-type: square; color:#EA7005">
+							<li><span style="color:black;">Please check that all names, dates and timings are correct before leaving the store or on receipt of emails</span></li>
+							<li><span style="color:black;">Please ensure that you carry all valid documents for the destination/Transit city prior departure</span></li>
+							<li><span style="color:red;">We recommend to contact the nearest embassy/Consulate of the country you are visiting in order to familiarise yourself with the latest passport and visa requirements plus general travel and health advice. We do not accept any responsibility if you cannot travel because you have not complied with any passport, visa or immigration requirements.</span></li>
+							<li><span style="color:black;">Please note that recent immigration requirements in the Maldives stipulate that <span style="background-color: #FFFF00">non machine readable passports will no longer be accepted on arrival at Male International Airport.</span> As such please be aware that all customers travelling to the Maldives MUST ensure that they are travelling on a biometric passport in order to board their flight.</span></li>
+						</ul>
+					</apex:outputPanel>
+					-->
+					<apex:outputPanel rendered="{!IF(NOT(ISBLANK(flightSize)) && flightSize > 0 && record.Case__r.Record_Type_Name__c != 'EKH - Tailor Made Enquiry', true, false)}">
+						<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}"><strong>Flights</strong></p>
+						<ul style="list-style-type:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','disc','square')};color:{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','#EA7005',IF(record.Case__r.Org_Brand__c == 'EKH','#000000',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#83c551')))}"> <!--T-00478-->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Standard airport Check in begins 3- hours prior to the scheduled departure time, and closes 60 minutes before departure. Late arrival at the check in counter may prevent you from boarding the flight</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Ensure the names mentioned on the ticket are as per your name on the passport. All timings mentioned on the ticket are based on the city local time</span></li>
+							<!-- <li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">All timings mentioned on the ticket are based on the city local time</span></li> -->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Flight times given on ticket may change without prior notice from the airline. Kindly call the local airline office or the {!IF(record.Case__r.Org_Brand__c == 'EKH','Emirates Holidays','dnata')} office to obtain updated information on your flight timings</span></li> <!--T-00478-->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">The standard Baggage policy will differ from airlines and are subject the conditions on carriage. Prior to travel keep yourself updated on the restrictions on carriage of Liquids, aerosols and gels in hand baggage</span></li>
+						<!-- </ul>
+
+						<ul style="list-style-type:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','disc','square')};color:{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','#EA7005',IF(record.Case__r.Org_Brand__c == 'EKH','#000000',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#83c551')))}"> -->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">As a general rule you can check-in from 14:00 on the day of arrival and must check-out at 12:00 (noon) on the day of departure.</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">No show and early checkout will be charged 100% of the reserved booking.</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Bookings including children will be based on sharing parents bedding and no separate bed for children is provided unless otherwise stated</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">If you are checking In later than 1500Hrs , please advise {!IF(record.Case__r.Org_Brand__c == 'EKH','Emirates Holidays','dnata')} or the hotel directly</span></li><!--T-00478-->
+						</ul>
+					</apex:outputPanel>
+					<!--
+					<apex:outputPanel rendered="{!IF(NOT(ISBLANK(flightSize)) && flightSize > 0 && record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry', true, false)}">
+						<p><strong>Flights </strong></p>
+						<ul style="list-style-type: square; color:#EA7005">
+							<li><span style="color:black;">Standard airport Check in begins 3- hours prior to the scheduled departure time, and closes 60 minutes before departure. Late arrival at the check in counter may prevent you from boarding the flight</span></li>
+							<li><span style="color:black;">Ensure the names mentioned on the ticket are as per your name on the passport</span></li>
+							<li><span style="color:black;">All timings mentioned on the ticket are based on the city local time</span></li>
+							<li><span style="color:black;">Flight times given on ticket may change without prior notice from the airline. Kindly call the local airline office or the dnata office to obtain updated information on your flight timings</span></li>
+							<li><span style="color:black;">The standard Baggage policy will differ from airlines and are subject the conditions on carriage. Prior to travel keep yourself updated on the restrictions on carriage of Liquids, aerosols and gels in hand baggage</span></li>
+						</ul>
+
+						<ul style="list-style-type: square; color:#EA7005">
+							<li><span style="color:black;">As a general rule you can check-in from 14:00 on the day of arrival and must check-out at 12:00 (noon) on the day of departure.</span></li>
+							<li><span style="color:black;">No show and early checkout will be charged 100% of the reserved booking.</span></li>
+							<li><span style="color:black;">Bookings including children will be based on sharing parents bedding and no separate bed for children is provided unless otherwise stated</span></li>
+							<li><span style="color:black;">If you are checking In later than 1500Hrs , please advise dnata or the hotel directly</span></li>
+						</ul>
+					</apex:outputPanel>
+					-->
+					<apex:outputPanel rendered="{!IF(NOT(ISBLANK(HotelSize)) && HotelSize > 0 && record.Case__r.Record_Type_Name__c != 'EKH - Tailor Made Enquiry' , true, false)}">
+						<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}"><strong>Board Basis (Accommodation)</strong></p>
+						<ul style="list-style-type:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','disc','square')};color:{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - New Booking Enquiry','#EA7005',IF(record.Case__r.Org_Brand__c == 'EKH','#000000',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#83c551')))}"> <!--T-00478-->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}"><u>Bed &amp; Breakfast (BB)</u> means it includes breakfast and all other meals will be at extra cost</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}"><u>Full Board (FB)</u> means that breakfast, lunch and evening meals are included in the price but any drinks or snacks outside of these meal times will cost you extra.</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}"><u>Half Board (HB)</u> means that Breakfast and dinner or Lunch is included in the price, meaning that any food or drink outside of meal times will cost you extra.</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}"><u>An&nbsp;all-inclusive&nbsp;</u>means that include Breakfast, Lunch and dinner along with soft drinks, and sometimes alcoholic drinks, possibly other services in the price. May differ based on the property</span></li>
+						</ul>
+							 
+						<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}"><strong>In resort Issues</strong></p>
+						<ul style="list-style-type:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','disc','square')};color:{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - New Booking Enquiry','#EA7005',IF(record.Case__r.Org_Brand__c == 'EKH','#000000',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#83c551')))}"> <!--T-00478-->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">While in the hotel you need any assistance, please contact the hotel management for immediate resolution</span></li>
+						</ul>
+					</apex:outputPanel> 
+					<!--
+					<apex:outputPanel rendered="{!IF(NOT(ISBLANK(HotelSize)) && HotelSize > 0 && record.Case__r.Record_Type_Name__c == 'Travel Republic - New Booking Enquiry', true, false)}">   
+						<p>Board Basis (Accommodation)</p>
+						<ul style="list-style-type: square; color:#EA7005">
+							<li><span style="color:black;"><u>Bed &amp; Breakfast (BB)</u> means it includes breakfast and all other meals will be at extra cost</span></li>
+							<li><span style="color:black;"><u>Full Board (FB)</u> means that breakfast, lunch and evening meals are included in the price but any drinks or snacks outside of these meal times will cost you extra.</span></li>
+							<li><span style="color:black;"><u>Half Board (HB)</u> means that Breakfast and dinner or Lunch is included in the price, meaning that any food or drink outside of meal times will cost you extra.</span></li>
+							<li><span style="color:black;"><u>An&nbsp;all-inclusive&nbsp;</u>means that include Breakfast, Lunch and dinner along with soft drinks, and sometimes alcoholic drinks, possibly other services in the price. May differ based on the property</span></li>
+						</ul>
+							 
+						<p><strong>In resort Issues</strong></p>
+						<ul style="list-style-type: square; color:#EA7005">
+							<li><span style="color:black;">While in the hotel you need any assistance, please contact the hotel management for immediate resolution</span></li>
+						</ul>
+					</apex:outputPanel>
+					-->
+					<!--
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Duty Travel - New Enquiry'}">
+						<p><strong>Cancelation and Amendments</strong></p>
+						<ul style="list-style-type: square; color:{!IF(record.Case__r.Org_Brand__c == 'EKH','#000000','#83c551')}"> T-00478
+							<li><span style="color:black;">Once bookings confirmed we could incur charges for amendment and cancelation</span></li>
+							<li><span style="color:black;">A processing fee will apply to all documents refunded in addition to any fees charged by the suppliers , you will receive the refund, where applicable, within 30 working days</span></li>
+							<li><span style="color:black;">Any Travel insurance issued will always be Non refundable</span></li>
+							<li><span style="color:black;">Cancellation and amendment requests must be received at least 24 hours before the cancelation deadline. This will not apply if booking is non-refundable and if a specific time/date provided for cancelations and amendments</span></li>
+							<li><span style="color:black;">For all amendment and cancelations, <strong>after office hours</strong> you can either call us on 3166151 and select the Option 2, or write to us on the below mentioned email address</span></li>
+				 
+						</ul>
+					</apex:outputPanel>
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+						<p><strong>Cancelation and Amendments</strong></p>
+						<ul style="list-style-type: square; color:#EA7005">
+							<li><span style="color:black;">Once bookings confirmed we could incur charges for amendment and cancelation</span></li>
+							<li><span style="color:black;">A processing fee will apply to all documents refunded in addition to any fees charged by the suppliers , you will receive the refund, where applicable, within 30 working days</span></li>
+							<li><span style="color:black;">Any Travel insurance issued will always be Non refundable</span></li>
+							<li><span style="color:black;">Cancellation and amendment requests must be received at least 24 hours before the cancelation deadline. This will not apply if booking is non-refundable and if a specific time/date provided for cancelations and amendments</span></li>
+							<li><span style="color:black;">For all amendment and cancelations, <strong>after office hours</strong> you can either call us on 3166151 and select the Option 2, or write to us on the below mentioned email address</span></li>
+				 
+						</ul>
+					</apex:outputPanel>
+					-->
+					
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'EKH - Tailor Made Enquiry'}"> 
+						<ul style="list-style-type: square; color:#000000"> <!--T-00478-->
+							<li><span style="color:black;">At this stage this is not a confirmed booking and no reservations have been made.</span></li>
+							<li><span style="color:black;">Deposits vary depending on your travel dates and destination. Full payment will be due 10 weeks prior to travel. Holidays cannot be confirmed until payment has been taken.</span></li>
+							<li><span style="color:black;">Please note prices are subject to availability and are subject to change until your full booking confirmation is received.</span></li>
+							<li><span style="color:black;">Please ensure your passport is valid more than 6 months from the date of return for every country you are visiting.</span></li>
+							<li><span style="color:black;">Please also ensure there is sufficient space in your passport to allow for all immigration procedures.</span></li>
+							<li><span style="color:black;">We would strongly recommend that you obtain appropriate travel insurance for your trip, and for it to include cancellation and medical cover.</span></li>
+						</ul>
+					</apex:outputPanel>         
+					 
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c != 'EKH - Tailor Made Enquiry'}">
+						<p style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#008FCB','#000000')}"><strong>Cancelation and Amendments</strong></p>
+						<ul style="list-style-type:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','disc','square')};color:{!IF(record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry','#EA7005',IF(record.Case__r.Org_Brand__c == 'EKH','#000000',IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','#65696C','#83c551')))}"> <!--T-00478-->
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Once bookings confirmed we could incur charges for amendment and cancelation</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">A processing fee will apply to all documents refunded in addition to any fees charged by the suppliers , you will receive the refund, where applicable, within 30 working days</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Any Travel insurance issued will always be Non refundable</span></li>
+							<li><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">Cancellation and amendment requests must be received at least 24 hours before the cancelation deadline. This will not apply if booking is non-refundable and if a specific time/date provided for cancelations and amendments</span></li>
+							<li style="display:{!IF(record.Case__r.Org_Brand__c == 'EKH','none','list-item')}"><span style="color:{!IF(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry','##65696C','#000000')}">For all amendment and cancelations, <strong>after office hours</strong> you can either call us on {!IF(record.Case__r.Org_Brand__c == 'EKH',$Label.ekh_Phone_Number,$Label.dnata_Phone_Number)} and select the Option 2, or write to us on the below mentioned email address.</span></li> <!--T-00478-->
+				 
+						</ul>
+					</apex:outputPanel>
+
+				</div>
+				<br/>
+				<div style="width:50%">
+					<p>
+						Kind Regards,
+					</p>
+					<apex:outputPanel rendered="{!IF(OR(record.Case__r.Record_Type_Name__c == 'Duty Travel - New Enquiry',record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'),true,false)}">
+						<apex:image id="logosign" style="height:40px;width:100px;" value="{!IF(record.Case__r.Record_Type_Name__c == 'Duty Travel - New Enquiry',$Resource.dnata_logo_for_duty_travel,$Resource.TravelRepublic_Header_logo)}"/>
+					</apex:outputPanel>
+					
+					<apex:outputPanel rendered="{!IF(OR(record.Case__r.Record_Type_Name__c == 'dTME - New Enquiry',record.Case__r.Record_Type_Name__c == 'EKH - Tailor Made Enquiry'),true,false)}">
+						<apex:image id="sign"  value="{!IF(record.Case__r.Org_Brand__c == 'EKH',$Resource.EmiratesHolidaysLogoForQuote,$Resource.dnatatravel_header_logo)}"/> <!--T-00478-->
+					</apex:outputPanel>
+					<!--
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+					<apex:image id="trsign" style="height:40px;width:100px;" value="{!$Resource.TravelRepublic_Header_logo}"/>
+					</apex:outputPanel>
+					-->
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry'}">
+						<hr style="border:1px solid; border-color:{!IF(record.Case__r.Org_Brand__c == 'EKH','#D81921','#008fcb')}"/> <!--T-00478-->
+						<b><apex:outputText style="color:{!IF(record.Case__r.Org_Brand__c == 'EKH','#D81921','#008fcb')}" value="{!record.Case__r.Org_Case_Owner__c}"></apex:outputText></b><br/> <!--T-00478-->
+						<apex:outputText style="color:#008fcb" value="{!$User.Title}"></apex:outputText>
+						<hr style="border:1px solid; border-color:{!IF(record.Case__r.Org_Brand__c == 'EKH','#D81921','#008fcb')}"/> <!--T-00478-->
+						<p style="margin-bottom:1px; margin-top: 1px;font-size:13px !important">{!IF(record.Case__r.Org_Brand__c == 'EKH',$Label.ekh_Address,$Label.dnata_Address)}</p> <!--T-00478-->
+						<p style="margin-bottom:1px; margin-top: 1px;font-size:13px !important"><b>T</b>{!dynamicPhoneNumber}</p> <!--T-00478-->
+						<p style="margin-bottom:1px; margin-top: 1px;font-size:13px !important">{!IF(record.Case__r.Org_Brand__c == 'EKH',$Label.ekh_Website,$Label.dnata_Website)}</p> <!--T-00478-->
+						<hr style="border:1px solid; border-color:{!IF(record.Case__r.Org_Brand__c == 'EKH','#D81921','#008fcb')}"/> <!--T-00478-->
+					</apex:outputPanel>	 
+					 
+					<apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+						<hr style="border:1px solid; border-color:#013B92"/>
+						<b><apex:outputText style="color:#013B92" value="{!record.Case__r.Org_Case_Owner__c}"></apex:outputText></b><br/>
+						<apex:outputText style="color:#013B92" value="{!$User.Title}"></apex:outputText>
+						<hr style="border:1px solid; border-color:#013B92"/>
+						<p style="margin-bottom:1px; margin-top: 1px;font-size:13px !important">Clarendon House,Kingston upon Thames KT2 6TL, UK</p>
+						<p style="margin-bottom:1px; margin-top: 1px;font-size:13px !important"><b>T</b>800(2019/2020)</p>
+						<p style="margin-bottom:1px; margin-top: 1px;font-size:13px !important">travelrepublic.com</p>
+						<hr style="border:1px solid; border-color:#013B92"/>
+					</apex:outputPanel>
+					
+				</div>
+				<!--&& record.Case__r.Record_Type_Name__c != 'Travel Republic - New Enquiry'-->
+				<apex:outputPanel rendered="{!AND(record.Case__r.Record_Type_Name__c != 'Duty Travel - New Enquiry', record.Case__r.Record_Type_Name__c != 'Travel Republic - Booking Enquiry', record.Case__r.Org_Brand__c != 'EKH', record.Case__r.Record_Type_Name__c != 'dTME - New Enquiry')}">
+					<div class="footers">
+						<apex:image url="{!$Resource.QuoteFooter}" width="50%" style="float:right;padding-top:100px"/>    
+					</div>
+				</apex:outputPanel>
+            </div>
+			<!--<p>
+            	Kind Regards,
+		        <p style="margin:auto">
+		            <apex:image id="sign" value="{!$Resource.dnatatravel_header_logo}"/>
+		        </p> 
+        
+	        <br/>
+	        before hr
+	
+	        <div>
+	            <hr width="50%"/>
+	        </div>
+	        
+	        
+	        <apex:outputText value="{!$User.FirstName} {!$User.LastName}"></apex:outputText><br/>
+	        <apex:outputText value="{!$User.Title}"></apex:outputText><br/>
+	        <div>
+	            <hr width="50%"/>
+	        </div>
+	        
+	        Customer Care Centre<br/><br/>
+	        
+	        P.O. BOX 1515 Dubai, United Arab Emirates<br/>
+	        T +971 (0)4 316 6588 <br/>
+	        dnatatravel.com<br/>
+	        <div>
+	            <hr width="50%"/>
+	        </div>
+	    </p> -->
+	    <br/>
+            <apex:outputPanel rendered="{!record.Case__r.Record_Type_Name__c == 'Travel Republic - Booking Enquiry'}">
+    		<div class="footer">           
+        		<center><apex:image url="{!$Resource.TR_Footer}" width="817px" /> </center>
+              </div>
+            </apex:outputPanel>
+    
+		</body>
+	</html>
+</apex:page>

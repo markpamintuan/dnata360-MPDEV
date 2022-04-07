@@ -1,0 +1,5 @@
+<design:component>
+    <design:attribute name="objectAPIName" label="Object" description="Object to do search"/>
+    <design:attribute name="label" label="Field Label" description="Field Label"/>
+    <design:attribute name="selectedRecord" label="Selected Record" description="selected record value"/>
+</design:component>

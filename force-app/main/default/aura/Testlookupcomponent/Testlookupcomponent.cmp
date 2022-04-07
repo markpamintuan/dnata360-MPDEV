@@ -1,0 +1,18 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="searchstrp" type="String"/>
+    <aura:attribute name="searchtext" type="String"/>
+    <aura:attribute name="isLookup" type="Boolean" default="true"/>
+    
+    <aura:handler name="PF_LookupEvent" event="c:PF_LookupEvent" action="{!c.setValues}" />
+    <div id="LookupEdit">                    
+        <!-- <label class="slds-form-element__label" for="lookup-input">Account </label>-->
+        <!--<c:InputLookup type="Account" value="{!v.id}" className="form-control " aura:id="lookup"/>-->
+        
+        <ui:inputText aura:id="emp"  class="slds-input" label="Account" value="{!v.searchtext}" labelClass="slds-form-element__label"  updateOn="keyup"  keyup="{!c.searchstring}" required="true"/> 
+        <aura:if isTrue="{!and(v.searchstrp.length>1,v.isLookup)}">
+            <c:PF_Lookup objName="Account" searchstr="{!v.searchstrp}"/>
+        </aura:if>
+    </div> 
+    
+    
+</aura:component>

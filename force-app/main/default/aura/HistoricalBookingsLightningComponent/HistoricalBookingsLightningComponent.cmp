@@ -1,0 +1,66 @@
+<aura:component controller="AccountAuraExtensionController" implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" >   
+    
+    <!--on component load call doInit javaScript function and fetch records from server-->  
+    <lightning:workspaceAPI aura:id="workspace" />
+
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="caseList" type="List"/>
+    
+    <lightning:accordion class="slds-accordion">
+        <aura:iteration items="{!v.caseList}" var="cs" indexVar="iVar">
+
+            <lightning:accordionSection  name="{!cs.Name}" label="{!cs.Name + ' - '+ cs.Destination__c+' - '+cs.Departure_Date__c}" class="section-title-bg">
+                <aura:set attribute="actions">
+                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Flight'}">
+                        <img src="{!$Resource.Icon_Flight}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Accommodation'}">
+                        <img src="{!$Resource.Icon_Hotel}"/>
+                    </aura:if> 
+                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Transfer'}">
+                        <img src="{!$Resource.Icon_Transfer}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Travel Insurance'}">
+                        <img src="{!$Resource.Icon_Insurance}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!cs.Org_Booking_Type__c == 'Marhaba'}">
+                        <img src="{!$Resource.Icon_Marhaba}"/>
+                    </aura:if>
+				</aura:set>
+                <aura:set attribute="body">
+                    <div class="slds-grid slds-wrap">
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Title :</div>
+                        <div class="slds-size_2-of-3">{!cs.Name}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Booking Type :</div>
+                        <div class="slds-size_2-of-3">{!cs.Org_Booking_Type__c}</div> 
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Booked Status :</div>
+                        <div class="slds-size_2-of-3">{!cs.Booking_Status__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Booked Date :</div>
+                        <div class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.Org_Booked_Date__c}" />
+                        </div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Departure Date :</div>
+                        <div class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.Org_Travel_Start_Date__c}" />
+                        </div>
+                        
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Details :</div>
+                        <div class="slds-size_2-of-3" 
+                                onclick="{!c.openTabWithSubtab}" 
+                                data-value="{!cs.Id}"><a href="#" >View Record</a></div>
+                </div>
+                </aura:set>
+            </lightning:accordionSection>
+
+        </aura:iteration>
+    </lightning:accordion>
+	<aura:if isTrue="{!empty(v.caseList)}">
+        <div style="padding-left:10px"><i>No Records</i></div>
+    </aura:if>
+</aura:component>

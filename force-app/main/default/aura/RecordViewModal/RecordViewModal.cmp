@@ -1,0 +1,61 @@
+<aura:component controller="RecordViewModal">
+    
+    <!-- This will be used to hold the record id on which the view link is clicked -->
+    <aura:attribute name="recId" type="string"/>
+    
+    <!-- saving object Name -->
+    <aura:attribute name="sObjectName" type="String"/>
+    
+    <!-- navigation to open sub tab -->
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:navigation aura:id="navService"/>
+
+    
+    <!-- this will be used to hide and show the modal -->
+    <aura:attribute name="displayChildRecordsModal" type="boolean"/>
+    
+    <!-- this will be used to hide and show the modal -->
+    <aura:attribute name="childObjDetails" type="Object[]"/>
+    
+    <!-- this is for spinner -->
+    <aura:attribute name="showSpinner" type="Boolean" default="true"/>
+    
+    <!-- this will be used call method on component load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+    
+    <!-- added z-index for view all modal -->
+    <section style="z-index: 20000;" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">                
+                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Summary of Related Records</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height: 100px;max-height: 300px;overflow-y: auto;">
+                <p>            
+                    
+                    <aura:if isTrue="{!v.showSpinner}">
+                        <lightning:spinner alternativeText="Loading" variant="brand"  style="position: static"/>
+                    </aura:if>
+                    
+                    
+                    <div class="slds-grid slds-wrap">
+                      
+                        <aura:iteration items="{!v.childObjDetails}" var="childobj">
+                        	
+                            <div class="slds-col slds-size_12-of-12">
+                                {!childobj.objectName} -> {!childobj.recordCount} <br/>
+                            </div>
+
+                            
+                        </aura:iteration>                        
+                    </div>
+                </p>
+            </div>
+            <footer class="slds-modal__footer">                
+                <button class="slds-button slds-button_destructive" onclick="{!c.cancel}">Close Window</button>                
+                <button class="slds-button slds-button_brand" onclick="{!c.openSubtab}">View Record</button>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

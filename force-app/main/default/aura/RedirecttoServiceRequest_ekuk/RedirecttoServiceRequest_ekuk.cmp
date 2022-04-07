@@ -1,0 +1,14 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" >
+    
+    <aura:attribute type="String" name="hiddenAttrib" default="{!$Label.c.EKUK_Service_Request_Record_Type_ID}" />
+    
+    <aura:attribute name="recordInfo" type="Object" access="private"/>
+
+    <force:recordData aura:id="recordHandler"  
+                      recordId="{!v.recordId}"  
+                      layoutType="FULL" 
+                      fields = "Org_Person_Account_Contact_Id__c"
+                      targetFields="{!v.recordInfo}" 
+                      targetError="{!v.recordError}" 
+                      recordUpdated="{!c.handleRecordUpdated}"/>
+</aura:component>

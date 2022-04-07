@@ -1,0 +1,29 @@
+<apex:component controller="PF_Homepage" >
+    <div id="tab-task" class="tab-content2">
+        <div class="slds-feed">
+            <ul class="slds-feed__list">
+                <apex:repeat value="{!myTasks}" var="pf">
+                    <li class="slds-feed__item">
+                        <div class="slds-media slds-comment slds-hint-parent">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-new-task">
+                                    <a href="{!$Site.Domain}/{!pf.id}" target="_blank" title="Design Systems">
+                                        Due Date: 
+                                        <apex:outputText value="{0, date, MMMM d','  yyyy}">
+                                            <apex:param value="{!pf.ActivityDate}" /> 
+                                        </apex:outputText> 
+                                        <br/>
+                                        Subject: {!pf.subject}
+                                        
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    
+                </apex:repeat>       
+            </ul>
+            
+        </div>
+    </div>
+</apex:component>

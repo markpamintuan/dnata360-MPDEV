@@ -1,0 +1,13 @@
+<aura:component controller="ResendSMSComponentCntrl" access="global" implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:availableForFlowActions" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordInfo" type="Object"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="recordError" type="String" description="An error message bound to force:recordData"/>
+    <force:recordData aura:id="recordHandler"  
+                          recordId="{!v.recordId}"  
+                          layoutType="FULL" 
+                          targetFields="{!v.recordInfo}" 
+                          fields = "Id"
+                          targetError="{!v.recordError}" 
+                          />
+</aura:component>

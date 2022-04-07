@@ -1,0 +1,91 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global" 
+                controller="IndvEmailResultTableController" >
+     
+  <aura:handler name="init" action="{!c.doInit}" value="{!this}" /> 
+  <aura:attribute name="wrapperList" type="object"/>
+  <aura:attribute name="checkbox" type="boolean" default ="False" />
+  
+  <lightning:navigation aura:id="navService"/>
+  <aura:attribute name="pageReference" type="Object"/>
+  <aura:attribute name="url" type="String"/>
+
+    
+  <div clss="slds">
+  	<div class="slds-card_boundary">
+  		<div class="slds-card__header slds-grid">
+    		<header class="slds-media slds-media_center slds-has-flexi-truncate">
+				<div class="slds-media__figure">
+					<span class="slds-icon_container slds-icon-standard-contact" title="contact">
+          			<lightning:icon iconName="standard:custom" size="small" />
+          			<span class="slds-assistive-text">Individual Email Results</span>
+        			</span>
+      			</div>
+      			<div class="slds-media__body">
+        			<h2 class="slds-card__header-title">
+          			<a href="javascript:void(0);" class="slds-card__header-link slds-truncate">
+            		<span>Individual Email Results</span>
+         			 </a>
+        			</h2>
+      			</div>
+      			
+    		</header>
+  		</div>
+  		<div class="slds-card__body ">
+    		<table class="slds-table slds-table_fixed-layout slds-table_bordered " role="grid">
+      		<thead>
+        		<tr class="slds-line-height_reset">
+          			<th class="" scope="col">
+            			<div class="slds-truncate" >Email Name</div>
+      		   		</th>
+          			<th class="" scope="col">
+            			<div class="slds-truncate" >Date Sent</div>
+          			</th>
+          			<th class="" scope="col">
+                		<div class="slds-truncate"  >Opened</div>
+          			</th>
+          			<th class="" scope="col">
+            			<div class="slds-truncate ">Date Opened</div>
+          			</th>
+                    
+                </tr>
+      		</thead>
+      		<tbody>
+      		<aura:iteration items="{!v.wrapperList.bigObjectList}" var="big">
+        	<tr class="slds-hint-parent">
+          		<th scope="row">
+            		<div class="slds-truncate" title="Email Name"  >
+              			 <a href="#" onclick="{!c.handleClick}" data-mergeid="{!big.MergeId__c }"
+                            									data-relobjid="{!big.Related_Object_ID__c}"
+                            									data-relsendid="{!big.Related_Send_ID__c}"
+                          >
+                         {!big.Email_Name__c}</a>
+            		</div>
+          		</th>
+          		<td role="gridcell">
+            		<div class="slds-truncate" title="{!big.CreatedBy.Name}">
+                        
+                        <ui:outputDateTime aura:id="yDateTime" value="{!big.Date_Sent__c}" format="dd/MM/yyyy hh:mm "/>
+                    </div>
+          		</td>
+                
+          		<td role="gridcell">
+                    <div class="slds-truncate" title="{!big.IsPublished}">{!big.Opened__c}</div>
+          		</td>  
+                <td role="gridcell">
+                    <div class="slds-truncate" title="{!big.IsPublished}">
+                        
+                    <ui:outputDateTime aura:id="yDateTime" value="{!big.Date_Opened__c}" format="dd/MM/yyyy hh:mm "/>
+                    </div>
+          		</td>
+          	</tr>
+       		</aura:iteration>
+                
+      		</tbody>
+    	</table>
+      
+         
+  		</div>
+  	</div>
+ </div>   	
+</aura:component>

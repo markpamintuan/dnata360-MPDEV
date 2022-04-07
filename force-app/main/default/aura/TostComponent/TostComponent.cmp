@@ -1,0 +1,20 @@
+<aura:component >
+	
+    <!-- This will be used to show the tost message -->
+    <aura:attribute name="displayTostMsg" type="boolean" default="false"/>    
+    
+    <!-- this will check if flat is change to true then display tost -->
+    <aura:handler name="change" value="{!v.displayTostMsg}" action="{!c.displayTost}"/>
+    
+    <!-- to store the messgae -->
+    <aura:attribute name="Message" type="string" />   
+    
+    
+    <!-- to store the type -->
+    <aura:attribute name="type" type="string" />   
+    
+    <!-- to store the tile -->
+    <aura:attribute name="title" type="string" />  
+    
+    
+</aura:component>

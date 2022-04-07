@@ -1,0 +1,44 @@
+<apex:page showHeader="false" sidebar="false">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+            <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+            <title>New Testcase Assignment</title>
+            <apex:slds />
+            <apex:includeLightning />
+            
+            
+            
+            <script>
+            var recordId = "{!$CurrentPage.parameters.id}";
+            console.log('----- recordId:  ' + recordId);
+            $Lightning.use("c:PF_AddTestAssignment", function() {
+                $Lightning.createComponent(
+                    "c:PF_AddTestAssign",
+                    {"recordId" : recordId},
+                    "lightning"
+                );
+                
+            });
+            </script>
+            
+            
+            <apex:outputPanel layout="block" rendered="{!$User.UIThemeDisplayed == 'Theme3'}">
+                <div class="slds">
+                    <div class="slds-container--x-large slds-container--center">
+                        <div class="slds-box"  id="lightning" />                        
+                    </div>
+                </div>
+                
+            </apex:outputPanel>
+            <apex:outputPanel layout="block" rendered="{!$User.UIThemeDisplayed == 'Theme4d' || $User.UIThemeDisplayed == 'Theme4t'}">
+                
+                <div class="slds">
+                    <div id="lightning"></div> 
+                </div>
+            </apex:outputPanel>
+            
+            
+        </head>
+    </html>
+</apex:page>

@@ -1,0 +1,219 @@
+@isTest
+private class SCCCustomerCaseMgmtService_Test {
+
+    @testSetup 
+    static void setup() {
+
+        SCCTestDataFactory.createSFCCConfigDefaultCustomSetting();
+        SCCTestDataFactory.createSFCCCredentialDefaultCustomSetting();    	
+    	SCCTestDataFactory.createSFCCLogDefaultCustomSetting();  
+        SCCTestDataFactory.createAccount(new Map<Integer, String>{1=>'1fname', 2=>'2fname', 3=>'3fname'}, new Map<Integer, String>{1=>'1lname', 2=>'2lname', 3=>'3lname'}, new Map<Integer, String>{1=>'1test@hotmail.com', 2=>'2test@yahoo.com', 3=>'3test@salesforce.com'}, new Map<Integer, String>{1=>'12345', 2=>'23456', 3=>'34567'});
+        SCCTestDataFactory.createContact(new Map<Integer, String>{1=>'1fname', 2=>'2fname', 3=>'3fname'}, new Map<Integer, String>{1=>'1lname', 2=>'2lname', 3=>'3lname'}, new Map<Integer, String>{1=>'1test@hotmail.com', 2=>'2test@yahoo.com', 3=>'3test@salesforce.com'});
+        SCCTestDataFactory.createAccount(1, 'test account', false);
+        SCCTestDataFactory.createAccountOrder(5, [SELECT Id FROM Account LIMIT 1].Id, System.today(), 'Draft', '12345', [SELECT Id FROM Contact LIMIT 1].Id);
+        SCCTestDataFactory.createFieldMappingCustomSettings(new Map<String, String>{'contact_id'=>'SFCC_Customer_Id__c', 'order_no'=>'SFCC_Order_No__c', 'case_type'=>'Type', 'description'=>'Description', 'title'=>'Subject', 'enquiry_type'=>'Status'}, 'Case');          
+        //SCCTestDataFactory.createCase(1, [SELECT Id FROM Contact LIMIT 1].Id, 'test description', 'Contact us', 'test title');
+        SCCTestDataFactory.createAccountCase(1, [SELECT Id FROM Account LIMIT 1].Id, 'test description', 'Contact us', 'test title');
+    }
+
+    @isTest 
+    static void A() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        Account acc = [Select Id from Account Limit 1];
+        req.requestBody = Blob.valueOf('{"contact_id":"'+acc.Id+'","order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New","brand":"marhaba"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req; 
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Customer_Id__c = :acc.Id AND SFCC_Order_No__c = '12345'].Id)), System.JSON.serialize(stas));
+
+    }
+    
+    @isTest 
+    static void B() {
+        Account testAcc = new Account(LastName = 'test',PersonEmail='1test@hotmail.com');
+        insert testAcc;
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        //Account acc = [Select Id from Account Limit 1];
+        req.requestBody = Blob.valueOf('{"contact_id":"123123123123123","order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New","brand":"marhaba","email":"1test@hotmail.com"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        //System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Customer_Id__c = :acc.Id AND SFCC_Order_No__c = '12345'].Id)), System.JSON.serialize(stas));
+
+    }
+
+    @isTest 
+    static void C() {
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        //Account acc = [Select Id from Account Limit 1];
+        req.requestBody = Blob.valueOf('{"order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New","brand":"marhaba","email":"1test@hotmail.com"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+    }
+	/**
+    @isTest 
+    static void testCreate_two() {
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","last_name":"testLName","email":"test@testing.com","order_no":"98765","title":"test title case","description":"test description case","case_type":"Contact us","test":"test","enquiry_type":"New","brand":"marhaba"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Order_No__c = '98765'].Id)), System.JSON.serialize(stas));
+    }
+    
+    @isTest 
+    static void testCreate_three() {
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","last_name":"testLName","email":"test@yahoo.com","order_no":"98765","title":"test title case","description":"test description case","case_type":"Contact us","test":"test","enquiry_type":"New","brand":"marhaba"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Order_No__c = '98765'].Id)), System.JSON.serialize(stas));
+    }    
+    
+    @isTest 
+    static void testCreate_four() {
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","email":"test@testing.com","order_no":"98765","title":"test title case","description":"test description case","case_type":"Contact us","test":"test","enquiry_type":"New","brand":"marhaba"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Order_No__c = '98765'].Id)), System.JSON.serialize(stas));
+    }    
+
+    @isTest 
+    static void testCreate_five() {
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        //Broken Json
+        req.requestBody = Blob.valueOf('{"');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals('{"recordId":null,"objectType":null,"errors":{"typeOfError":"System.JSONException","status":"500","errorMessage":"Unexpected end-of-input: was expecting closing \'\\"\' for name at [line:1, column:5]","errorLine":"11"}}', System.JSON.serialize(stas));
+    }
+    /**
+    @isTest 
+    static void testCreate_six() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","last_name":"testLName","email":"test@testing.com","contact_id":"5000Q000000rFSiQAM","customer_id":"5000Q000000rFSiQAM","order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Customer_Id__c = '5000Q000000rFSiQAM' AND SFCC_Order_No__c = '12345'].Id)), System.JSON.serialize(stas));
+
+    } 
+    
+    @isTest 
+    static void testCreate_seven() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","last_name":"testLName","contact_id":"5000Q000000rFSiQAM","customer_id":"5000Q000000rFSiQAM","order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals('{"recordId":null,"objectType":null,"errors":{"typeOfError":"System.SObjectException","status":"500","errorMessage":"Mandatory field email is missing and provided salesforce contact_id is invalid","errorLine":"95"}}', System.JSON.serialize(stas));
+
+    } 
+    
+    @isTest 
+    static void testCreate_eight() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","last_name":"testLName","email":"test@yahoo.com","contact_id":"5000Q000000rFSiQAM","customer_id":"5000Q000000rFSiQAM","order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals(System.JSON.serialize(SCCReturnResponse.createResponse([SELECT Id FROM Case WHERE SFCC_Customer_Id__c = '5000Q000000rFSiQAM' AND SFCC_Order_No__c = '12345'].Id)), System.JSON.serialize(stas));
+
+    } 
+    
+    @isTest 
+    static void testCreate_nine() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestBody = Blob.valueOf('{"first_name":"testFName","last_name":"testLName","customer_id":"5000Q000000rFSiQAM","order_no":"12345","title":"test title case","description":"test description case","case_type":"Contact us","enquiry_type":"New"}');
+        req.requestURI = '/services/apexrest/Case';
+        req.httpMethod = 'POST';
+        RestContext.request = req;
+        RestContext.response= res;
+        SCCReturnResponse stas = SCCCustomerCaseMgmtService.create();
+        System.assertEquals('{"recordId":null,"objectType":null,"errors":{"typeOfError":"System.SObjectException","status":"500","errorMessage":"Mandatory field email is missing","errorLine":"119"}}', System.JSON.serialize(stas));
+
+    }   
+
+    /**
+    @isTest 
+    static void testShow_one() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestURI = '/Case/' + [SELECT Id FROM Case LIMIT 1].Id;
+        req.httpMethod = 'GET';
+        RestContext.request = req;
+        RestContext.response= res;
+        List<Case> stas = SCCCustomerCaseMgmtService.show();
+        String query = SCCQueryUtilClass.getInstance()
+                                      .getQueryInstance()
+                                      .setObjectName('Case')
+                                      .setAllFields()
+                                      .getQuery();
+        List<Case> caseList = SCCQueryUtilClass.getRecords(query);
+        System.assertEquals(caseList, stas);
+
+    }
+
+    @isTest 
+    static void testShow_two() {
+        
+        RestRequest req = new RestRequest();
+        RestResponse res = new RestResponse();
+        req.requestURI = '/Case/' + [SELECT Id FROM Contact LIMIT 1].Id;
+        req.httpMethod = 'GET';
+        RestContext.request = req;
+        RestContext.response= res;
+        List<Case> stas = SCCCustomerCaseMgmtService.show();
+        String query = SCCQueryUtilClass.getInstance()
+                                      .getQueryInstance()
+                                      .setObjectName('Case')
+                                      .setRelatedFields(new Set<String>{'Id', 'Subject', 'Status', 'LastModifiedDate'})
+                                      .setClause('ContactId = \'' + [SELECT Id FROM Contact LIMIT 1].Id + '\'')
+                                      .getQuery();
+        List<Case> caseList = SCCQueryUtilClass.getRecords(query);
+        System.assertEquals(caseList, stas);        
+    }
+    **/
+}

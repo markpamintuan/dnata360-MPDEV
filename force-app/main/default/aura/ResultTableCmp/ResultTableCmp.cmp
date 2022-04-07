@@ -1,0 +1,276 @@
+<aura:component >
+    
+    <!-- Step Number used to update Progress Indicator & Content of Body -->
+    <aura:attribute name="stepNumber" type="Integer" />
+    
+    <!-- this will save the record id to be passed in the view modal -->
+    <aura:attribute name="recId" type="string" />
+    
+    <!-- saving object Name -->
+    <aura:attribute name="sObjectName" type="String"/>
+    
+    <!-- saving the icon name -->
+    <aura:attribute name="Section_IconName" type="String"/>
+    
+    <!-- section heading -->
+    <aura:attribute name="Section_Heading" type="String"/>
+    
+    <!-- saving the field set values -->
+    <aura:attribute name="fieldSetValues" type="List"/>
+    
+    <!-- saving the record of the object -->
+    <aura:attribute name="tableRecords" type="List"/>
+    
+    <!-- this is cmp is used for step 2 or step 3 -->
+    <aura:attribute name="showRemoveModal" type="Boolean"/>
+    
+    <!-- this will be used to hide and show the modal -->
+    <aura:attribute name="displayChildRecordsModal" type="boolean"/>
+    
+    <!-- this is for spinner -->
+    <aura:attribute name="showSpinner" type="Boolean" description="To handle Spinner"/>
+    
+    <!-- this ised for the modal i.e. which button is pressed -->
+    <aura:attribute name="buttonAction" type="String" />
+    
+    <!-- this will save which record is selected -->
+    <aura:attribute name="SelectedRecIndexNumber" type="Integer" />
+    
+    <!-- is the selected button has to be displayed or not -->
+    <aura:attribute name="isNonSelectable" type="Boolean" default="false" />
+    
+    <!-- show view all(+5) link if records are more than 5 --><!-- for view all modal -->
+    <aura:attribute name="viewAll" type="Boolean" default="false" />
+    
+    <!-- saving the record of the object --><!-- for view all modal -->
+    <aura:attribute name="tableRecordsAll" type="List"/>
+    
+    <!-- show view modal --><!-- for view all modal -->
+    <aura:attribute name="viewAllModal" type="Boolean" default="false" />
+    
+    <!-- for view all modal --><!-- this is handler setting opacity of view all modal after closing view record modal -->
+    <aura:handler name="change" value="{!v.displayChildRecordsModal}" action="{!c.changeOpacity}"/>
+    
+    <!-- this is handler for modal -->
+    <aura:handler name="change" value="{!v.buttonAction}" action="{!c.buttonActionChange}"/>
+    
+    <!-- saving the icon name -->
+    <aura:attribute name="displaytable" type="boolean"/>
+    
+    <!-- INIT Method -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- Spinner -->
+    <aura:if isTrue="{!v.showSpinner}" >
+        <lightning:spinner alternativeText="Loading" variant="brand" />
+    </aura:if>
+    
+    <!-- Modal on Remove Action -->
+    <aura:if isTrue="{!v.showRemoveModal}">
+        <c:ConfirmationModalCmp buttonAction="{!v.buttonAction}"/>
+    </aura:if>    
+    
+    <aura:if isTrue="{!v.displaytable}" >
+        
+        <!-- each section data -->
+        <div  class="bgColor1" style="padding-top:2%">
+            
+            <!-- this is for icons -->
+            <lightning:card  class="bgColor childcard" iconName="{!v.Section_IconName}">
+                <!-- start - for view all modal -->
+                <aura:set attribute="title">
+                    {!v.sObjectName} &nbsp;&nbsp;
+                    <aura:if isTrue="{!v.viewAll}">
+                        <a onclick="{!c.showAll}"> <span style="font-size: 12px;">View All (5+)</span> </a>
+                    </aura:if>
+                </aura:set>
+                <!-- end - for view all modal -->
+                
+                <!-- this is for the data for the object -->
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" >
+                    <!-- header section -->
+                    <thead>
+                        <tr>
+                            <th>
+                                Action
+                            </th>
+                            <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                <th>{!field.fieldLabel}</th>
+                            </aura:iteration>
+                        </tr>
+                    </thead>
+                    
+                    <!-- body section -->
+                    <tbody>
+                        <aura:iteration items="{!v.tableRecords}" var="row" indexVar="num">                            
+                            <aura:if isTrue="{!v.isNonSelectable}">
+                                <aura:if isTrue="{!row.isSelected}">
+                                    <tr>
+                                        <td style="width:10%">
+                                            <!-- <ui:outputURL value="{!'/one/one.app?#/sObject/'+ row.Id + '/view'}" target="_blank" label="View"/> -->
+                                            <a  onclick="{!c.openView}" name="{!num}">View</a>
+                                            <aura:if isTrue="{!v.stepNumber != 4}">| 
+                                                <aura:if isTrue="{!row.isSelected}">
+                                                    <a name="{!num}" onclick="{!c.updateSelectionFalse}" class="anchorColor">
+                                                        Remove
+                                                    </a>
+                                                    <aura:set attribute="else">
+                                                        <a name="{!num}" onclick="{!c.updateSelectionTrue}">
+                                                            Select
+                                                        </a>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </aura:if>
+                                        </td>
+                                        <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                            <td>
+                                                <c:ResultTableCellCmp record="{!row}" field="{!field}"/>
+                                            </td>
+                                        </aura:iteration>
+                                    </tr>
+                                </aura:if>
+                                
+                                <aura:set attribute="else">
+                                    <tr>
+                                        <td style="width:10%">
+                                            <!-- <ui:outputURL value="{!'/one/one.app?#/sObject/'+ row.Id + '/view'}" target="_blank" label="View"/> -->
+                                            <a name="{!num}" onclick="{!c.openView}">View</a>
+                                            <aura:if isTrue="{!v.stepNumber != 4}">
+                                                |
+                                                <aura:if isTrue="{!row.isSelected}">
+                                                    <a name="{!num}" onclick="{!c.updateSelectionFalse}" class="anchorColor">
+                                                        Remove
+                                                    </a>
+                                                    <aura:set attribute="else">
+                                                        <a name="{!num}" onclick="{!c.updateSelectionTrue}">
+                                                            Select
+                                                        </a>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </aura:if>
+                                        </td>
+                                        
+                                        <!-- this is for each column which have data for object -->
+                                        <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                            <td>
+                                                <c:ResultTableCellCmp record="{!row}" field="{!field}"/>
+                                            </td>
+                                        </aura:iteration>
+                                    </tr>
+                                </aura:set>
+                                
+                            </aura:if>
+                        </aura:iteration>           
+                    </tbody>
+                </table>   
+            </lightning:card>            
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.displayChildRecordsModal}" >
+        <c:RecordViewModal recId="{!v.recId}"
+                           displayChildRecordsModal = "{!v.displayChildRecordsModal}"
+                           sObjectName = "{!v.sObjectName}"></c:RecordViewModal>
+    </aura:if>
+    
+    <!-- for view all modal -->
+    <aura:if isTrue="{!v.viewAllModal}" >
+        <section aura:id="viewAllModalId" style="z-index: 10000;" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="width: 100% !important; max-width: 95% !important;">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.closeModal}">
+                        <!--<lightning:icon iconName="utility:close" alternativeText="Close" title="Close" />
+                        <span class="slds-assistive-text">Close</span>-->
+                        <lightning:buttonIcon iconName="utility:close" onclick="{! c.closeModal }" alternativeText="Close" title="Close" />
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">All Records</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium slds-scrollable-y" id="modal-content-id-1">
+                    <lightning:card  class="bgColor childcard" title="{!v.sObjectName}" iconName="{!v.Section_IconName}">
+                        <!-- this is for the data for the object -->
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" >
+                            <!-- header section -->
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Action
+                                    </th>
+                                    <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                        <th>{!field.fieldLabel}</th>
+                                    </aura:iteration>
+                                </tr>
+                            </thead>
+                            
+                            <!-- body section -->
+                            <tbody>
+                                <aura:iteration items="{!v.tableRecordsAll}" var="row" indexVar="num">                            
+                                    <aura:if isTrue="{!v.isNonSelectable}">
+                                        <aura:if isTrue="{!row.isSelected}">
+                                            <tr>
+                                                <td style="width:10%">
+                                                    <!-- <ui:outputURL value="{!'/one/one.app?#/sObject/'+ row.Id + '/view'}" target="_blank" label="View"/> -->
+                                                    <a  onclick="{!c.openView}" name="{!num}">View</a>
+                                                    <aura:if isTrue="{!v.stepNumber != 4}">| 
+                                                        <aura:if isTrue="{!row.isSelected}">
+                                                            <a name="{!num}" onclick="{!c.updateSelectionFalse}" class="anchorColor">
+                                                                Remove
+                                                            </a>
+                                                            <aura:set attribute="else">
+                                                                <a name="{!num}" onclick="{!c.updateSelectionTrue}">
+                                                                    Select
+                                                                </a>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                </td>
+                                                <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                                    <td>
+                                                        <c:ResultTableCellCmp record="{!row}" field="{!field}"/>
+                                                    </td>
+                                                </aura:iteration>
+                                            </tr>
+                                        </aura:if>
+                                        
+                                        <aura:set attribute="else">
+                                            <tr>
+                                                <td style="width:10%" >
+                                                    <!-- <ui:outputURL value="{!'/one/one.app?#/sObject/'+ row.Id + '/view'}" target="_blank" label="View"/> -->
+                                                    <a name="{!num}" onclick="{!c.openView}">View</a>
+                                                    <aura:if isTrue="{!v.stepNumber != 4}">
+                                                        |
+                                                        <aura:if isTrue="{!row.isSelected}">
+                                                            <a name="{!num}" onclick="{!c.updateSelectionFalse}" class="anchorColor">
+                                                                Remove
+                                                            </a>
+                                                            <aura:set attribute="else">
+                                                                <a name="{!num}" onclick="{!c.updateSelectionTrue}">
+                                                                    Select
+                                                                </a>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                </td>
+                                                <!-- this is for each column which have data for object -->
+                                                <aura:iteration items="{!v.fieldSetValues}" var="field">
+                                                    <td>
+                                                        <c:ResultTableCellCmp record="{!row}" field="{!field}"/>
+                                                    </td>
+                                                </aura:iteration>
+                                            </tr>
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </lightning:card>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.closeModal}">Continue</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+</aura:component>

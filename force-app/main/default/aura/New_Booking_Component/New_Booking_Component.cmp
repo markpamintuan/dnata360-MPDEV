@@ -1,0 +1,96 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"    access="global">
+    
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="account" type="Object" default="{'sobjectType':'Account'}"/> 
+    <aura:attribute name="recordType" type="string"></aura:attribute>
+    <aura:attribute name="accountRecord" type="Object" description="A simplified view record object to be displayed"/>
+    <aura:attribute name="recordTypeId" type="string" access="global"></aura:attribute>
+    <aura:attribute name="objectName" type="string" default="Case"></aura:attribute>  
+   
+    
+    <force:recordData aura:id="caseRec" 
+                      layoutType="FULL" 
+                      recordId="{!v.recordId}"  
+                      targetError="{!v.recordSaveError}"
+                      targetRecord="{!v.account}"
+                      fields="Org_Derwent_Customer_No__c"
+                      targetFields="{!v.accountRecord}"
+                      mode="VIEW"
+                      />
+    
+    <!--<aura:attribute name="fields"  type="String[]" default="['EKUK_TM_Marketing_Source__c','Org_No_of_Adults_Travelling__c','Org_Preferred_Cabin__c','Destination__c','Org_Traveller__c','Number_of_children_below_12__c','Org_Number_of_Nights__c','Org_Departure_Date__c','Org_Product_Type__c','EKUK_TM_Budget__c']" required="true"/>
+                             '{ApiName: Org_No_of_Adults_Travelling__c',required: true}'    -->
+    
+    <aura:attribute name="fields"  
+                    type="Map[]" 
+                    default="[
+                             {ApiName: 'EKUK_TM_Marketing_Source__c', required: 'true'},
+                             {ApiName: 'Org_No_of_Adults_Travelling__c', required: 'true'},
+                             {ApiName: 'Org_Preferred_Cabin__c', required: 'true'},
+                             {ApiName: 'Org_Destinations__c', required: 'true'},
+                             {ApiName: 'Org_Traveller__c', required: 'true'},
+                             {ApiName: 'Number_of_children_below_12__c', required: 'true'},
+                             {ApiName: 'Org_Number_of_Nights__c', required: 'false'},
+                             {ApiName: 'Org_Departure_Date__c', required: 'true'},
+                             {ApiName: 'EKUK_TM_Budget__c', required: 'false'},
+                             {ApiName: 'Description', required: 'true'}, 
+                             {ApiName: 'AccountId', required: 'false'}
+                             ]" />
+    
+    
+    
+    <lightning:notificationsLibrary aura:id="notifLib"/>    
+    <div class="slds-p-around_small">
+        <span class="slds-card__header-link slds-text-heading_small">Booking Enquiry</span>
+        <lightning:workspaceAPI aura:id="workspace"/>             
+        <lightning:recordEditForm aura:id="recordEditForm"
+                                  objectApiName="{!v.objectName}" 
+                                  recordTypeId="{!v.recordTypeId}"
+                                  onsubmit="{!c.handleSubmit}"
+                                  onsuccess="{!c.handleSuccess}" >
+            <lightning:messages />
+            
+            
+            <div class="slds-grid slds-wrap">
+                <aura:iteration items="{!v.fields}" var="field">
+                    <aura:if isTrue="{!field.ApiName == 'Org_Product_Type__c'}">
+                        <div class="slds-col slds-size_1-of-1" >
+                            <span>
+                                <aura:if isTrue="{!field.required}">
+                                    <span class="required" style="font-size:12px;width:17px;height:5px;padding:0px!important;">*</span>
+                                </aura:if>
+                                <lightning:inputField  fieldName="{!field.ApiName}" aura:id="{!field.ApiName}"/>
+                            </span>
+                        </div>
+                    </aura:if>
+                    
+                    <div class="slds-col slds-size_1-of-2" style="padding:1%;width:50%">
+                        	
+                        
+                        <aura:if isTrue="{!field.ApiName == 'AccountId'}">
+                            <span>
+                                <lightning:inputField fieldName="{!field.ApiName}" aura:id="{!field.ApiName}" value="{!v.recordId}" class="slds-hidden"/>
+                            </span>
+                            <aura:set attribute="else">
+                                <span>
+                                    <aura:if isTrue="{!field.ApiName != 'Org_Product_Type__c'}">
+                                   <aura:if isTrue="{!field.required}">
+                                        <span class="required" style="font-size:12px;width:17px;height:5px;padding:0px!important;">*</span>
+                                    </aura:if>
+                                    
+                                        <lightning:inputField  fieldName="{!field.ApiName}" aura:id="{!field.ApiName}"/>
+                                    </aura:if>
+                                  </span>
+                            </aura:set>
+                        </aura:if>
+                    </div>                              
+                </aura:iteration>
+            </div>
+            <div class="slds-m-top_medium" style="text-align:right">
+                
+                <lightning:button variant="brand" type="submit" name="save" label="Create"/>
+            </div>
+            
+        </lightning:recordEditForm>
+    </div>
+</aura:component>

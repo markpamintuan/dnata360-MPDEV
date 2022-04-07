@@ -1,0 +1,21 @@
+<aura:component controller="ProcessResult">
+	
+    <!-- List of Wrapper Objects that have Object name and list of records -->
+    <aura:attribute name="resultWrapList" type="Object[]"/>
+    
+    <!-- Step Number used to update Progress Indicator & Content of Body -->
+    <aura:attribute name="stepNumber" type="Integer" /> 
+    
+    <!-- Search Form Fields Object -->
+    <aura:attribute name="formObj" type="Object" />
+    
+    <!-- calling method -->
+    <aura:handler name="init" value="{!this}" action="{!c.onload}"/>
+    
+    <!-- showing the table -->
+    <c:ResultCmp formObj="{!v.formObj}" 
+                 resultWrapList="{!v.resultWrapList}" 
+                 isNonSelectable="true" 
+                 stepNumber = "{!v.stepNumber}"/>
+	
+</aura:component>

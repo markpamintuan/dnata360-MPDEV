@@ -1,0 +1,59 @@
+<aura:component access="global">
+    <!-- this will have the record for sobject -->
+    <aura:attribute name="record" type="sObject" description="record which is being displayed"/>
+    
+    <!-- this will have the field value for which value has to be displayed -->
+    <aura:attribute name="field" type="Object" description="field object which is being rendered"/>
+    
+    <!-- this will have the actual value of the cell which has ti be displayed -->
+    <aura:attribute name="cellValue" type="Object"/>
+    
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="selectedRecord" type="sobject" /> 
+    
+    <!-- this will save the fag is the column is action column or not -->
+    <aura:attribute name="isActionCol" type="boolean" default = "false"/>
+    
+    <!-- this will save the flag is the column is action column or not -->
+    <aura:attribute name="actionColText" type="string" default = "Link"/>
+    
+    <!-- this will save the action user performed -->
+    <aura:attribute name="actionName" type="string" />
+    
+    <!-- this will have object of HeaderWrapper -->
+    <aura:attribute name="header" type="ContainerWrapperClass.HeaderWrapper"/>
+    
+    <!-- this will be called when component is loaded -->
+    <aura:handler name="init" value="{!this}" action="{!c.getRecField}"/>
+    
+    <!-- the value of object record -->
+    <aura:if isTrue="{!!v.isActionCol}">
+        <aura:if isTrue="{!v.header.fTypes.isDateTime || v.header.fTypes.isDate}"> 
+            <ui:outputDate value="{!v.cellValue}" format="MM/dd/yyyy"/>
+            
+            <aura:set attribute="else">
+                <aura:if isTrue="{!v.header.fTypes.isBoolean}">
+                    <ui:outputCheckbox value="{!v.cellValue}" />
+                    <aura:set attribute="else">
+                        <ui:outputText value="{!v.cellValue}"/>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        
+        <aura:set attribute="else">
+            <aura:if isTrue="{!v.actionColText == 'Delink'}">
+                <a href="" style="color:red;" onclick="{!c.handleActionclick}"> 
+                	{!v.actionColText}
+                </a>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.actionColText != 'Delink'}">
+                <a href="" onclick="{!c.handleActionclick}"> 
+                    {!v.actionColText}
+                </a>
+            </aura:if>
+        </aura:set>
+        
+    </aura:if>
+</aura:component>

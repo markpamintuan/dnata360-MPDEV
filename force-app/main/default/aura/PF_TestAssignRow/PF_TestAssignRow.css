@@ -1,0 +1,16 @@
+.THIS .assigned_to_date a.datePicker-openIcon{
+    position: absolute;
+    left: 80%;
+    top: 8px;
+}
+
+.THIS .target-completion-field .datePicker-openIcon{left:88% !important;}
+.THIS .otherstatus {
+    background-color:yellow !important;;
+}
+.THIS .failed {
+    background-color:red !important;;
+}
+.THIS .Passed {
+    background-color:green !important;;
+}

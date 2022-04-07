@@ -1,0 +1,584 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" controller="PF_Homepage" extensions="PF_ProjectSprintClass">    
+    
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+        
+        <head>
+            <title>pForce</title>
+            <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+            
+        </head>    
+        
+        <body>
+            <apex:form >
+                <!-- REQUIRED SLDS WRAPPER -->
+                <div class="slds">    
+                    
+                    <!-- PRIMARY CONTENT WRAPPER -->
+                    <div class="myapp">    
+                        
+                        <div class="slds-grid slds-wrap slds-grid--pull-padded">
+                            <div class="slds-col--padded slds-size--1-of-1" style="margin-bottom:10px;">     
+                                <!-- Workspace PageHeader --->
+                                <div class="slds-page-header" role="banner">
+                                    <div class="slds-grid">
+                                        <div class="slds-col slds-has-flexi-truncate">
+                                            <div class="slds-media">
+                                                <div class="slds-media__figure">
+                                                    <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-opportunity">
+                                                        <use xlink:href="{!URLFOR($Resource.SLDS100, 'assets/icons/standard-sprite/svg/symbols.svg#opportunity')}"></use>
+                                                    </svg>
+                                                </div>
+                                                <div class="slds-media__body">
+                                                    <div class="slds-grid">
+                                                        <p class="slds-page-header__title slds-truncate slds-align-middle">My Workspace</p>
+                                                    </div>
+                                                    <p class="slds-text-body--small slds-page-header__info">{!currentUsername} • pForce Role •  &nbsp;
+                                                        <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                                            <apex:param value="{!today()}" /> 
+                                                        </apex:outputText>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="slds-col slds-no-flex slds-align-bottom">
+                                            <div class="slds-button-group" role="group">
+                                                <a href="#homeBtn" onclick="homePage()" class="slds-button" style="padding-left:10px;">
+                                                    <svg aria-hidden="true" class="slds-icon slds-icon-standard-home slds-icon--Medium">
+                                                        <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/standard-sprite/svg/symbols.svg#home')}"></use>
+                                                    </svg> 
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-page-header__detail-row">
+                                        <div class="slds-col--padded slds-size--1-of-4">
+                                            <dl>
+                                                <dt>
+                                                    <p class="slds-text-heading--label slds-truncate" title="Field2 (3)">Project
+                                                        <button class="slds-button slds-button--icon-bare">
+                                                            <svg aria-hidden="true" class="slds-button__icon slds-button__icon--small">
+                                                                <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#down"></use>
+                                                            </svg>
+                                                        </button>
+                                                    </p>
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="slds-select_container">
+                                                        <apex:actionFunction name="onchangeProject" action="{!changeProject}" reRender="releaseList, sprint, burndownchart, burndownchart2" oncomplete="endLoading();"/>
+                                                        <apex:selectList value="{!projId}" size="1" styleClass="slds-select" onchange="onchangeProject(); startLoading();">
+                                                            <apex:selectOptions value="{!ProjectList}"/>
+                                                            
+                                                            <!--<apex:actionSupport event="onchange" action="{!changeProject}" reRender="releaseList, sprint, burndownchart, burndownchart2" />-->
+                                                            
+                                                        </apex:selectList>
+                                                    </div>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="slds-col--padded slds-size--1-of-4">
+                                            <dl>
+                                                <dt>
+                                                    <p class="slds-text-heading--label slds-truncate" title="Field 3">Release</p>
+                                                </dt>
+                                                <dd>
+                                                    <div class="slds-select_container">
+                                                        <apex:actionFunction name="onchangeRelease" action="{!changeRelease}" reRender="sprint, burndownchart, burndownchart2" oncomplete="endLoading();"/>
+                                                        <apex:selectList value="{!releaseId}" size="1" id="releaseList" styleClass="slds-select" onchange="onchangeRelease(); startLoading();">
+                                                            <apex:selectOptions value="{!ReleaseList}" />
+                                                            <!--<apex:actionSupport event="onchange" action="{!changeRelease}" reRender="sprint, burndownchart, burndownchart2" oncomplete="endLoading();"/>-->
+                                                        </apex:selectList>
+                                                    </div>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="slds-col--padded slds-size--1-of-4">
+                                            <dl>
+                                                <dt>
+                                                    <p class="slds-text-heading--label slds-truncate" title="Field 4">Sprint</p>
+                                                </dt>
+                                                <dd>
+                                                    
+                                                    <div class="slds-select_container">
+                                                        <apex:actionFunction name="refreshChart" action="{!retrieveChart}" reRender="burndownchart, rerenderscript, burndownchart2" 
+                                                                             oncomplete="endLoading(); oncompleteRefresh();" />
+                                                        <apex:selectList value="{!sprintId}" size="1" id="sprint" onchange="refreshChart(); startLoading();" styleClass="slds-select" >
+                                                            <apex:selectOptions value="{!Sprints}" />
+                                                        </apex:selectList>
+                                                    </div>
+                                                    
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slds-col--padded slds-size--1-of-2 slds-medium-size--3-of-6 slds-large-size--6-of-12">
+                                <div class="slds-tabs--scoped">
+                                    <apex:outputPanel id="burndownchart">
+                                        <apex:outputPanel rendered="{!if((sprintid != null || sprintid != '') && sprintBurndownAvail == true, true, false)}" >
+                                            <div id="linePanel">
+                                                <br/>
+                                                <p class="slds-text-heading--label">Sprint Burndown Chart</p>
+                                                <canvas id="linechart"></canvas>
+                                            </div>
+                                        </apex:outputPanel>
+                                        
+                                        <apex:outputPanel rendered="{!if((sprintid != null || sprintid != '') && sprintBurndownAvail == false, true, false)}" >
+                                            <div id="linePanel">
+                                                <br/>
+                                                <p class="slds-text-heading--label"> Sprint Burndown Not Yet Available</p>
+                                            </div>
+                                        </apex:outputPanel>
+                                        
+                                    </apex:outputPanel>
+                                    
+                                    <apex:outputPanel id="rerenderscript">
+                                        
+                                        <script>
+                                        //script will be used to rerender data points for the graph
+                                        function myrepeatValues(){
+                                            var ctz = document.getElementById("linechart").getContext("2d");
+                                            arrayList = []; 
+                                            <apex:repeat value="{!stringLabel}" var="s">
+                                                arrayList.push('{!s}');
+                                            </apex:repeat>
+                                            console.log('Im now in the repeat values' +arrayList +'---' +'{!sprintId}');
+                                            myLineChartData(arrayList, {!optimizedList},  {!actualList});
+                                            //myLineChart.destroy();
+                                            myLineChart = new Chart(ctz).Line(lineChartData, options);
+                                        }
+                                        </script>
+                                        
+                                    </apex:outputPanel>
+                                </div>
+                                
+                            </div>
+                            <!-- Feed Items -->
+                            <div class="slds-col--padded slds-size--1-of-2 slds-medium-size--3-of-6 slds-large-size--6-of-12">
+                                
+                                <div class="slds-tabs--scoped">
+                                    <div id="tabs-container" class="slds-tabs--scoped">
+                                        <ul class="tabs-menu slds-tabs--scoped__nav">
+                                            <li class="current slds-tabs--scoped__item slds-text-heading--label slds-active">
+                                                <a href="#tab-1" role="tab" class="slds-tabs--scoped__link" id="projects">Projects</a>
+                                            </li>
+                                            <li class="slds-tabs--scoped__item slds-text-heading--label">
+                                                <a href="#tab-2" role="tab" class="slds-tabs--scoped__link" id="releases">Releases</a>
+                                            </li>
+                                            <li class="slds-tabs--scoped__item slds-text-heading--label">
+                                                <a href="#tab-3" role="tab" class="slds-tabs--scoped__link" id="sprints">Sprints</a>
+                                            </li>
+                                            <li class="slds-tabs--scoped__item slds-text-heading--label">
+                                                <a href="#tab-4" role="tab" class="slds-tabs--scoped__link" id="stories">Stories</a>
+                                            </li>
+                                            <li class="slds-tabs--scoped__item slds-text-heading--label">
+                                                <a href="#tab-5" role="tab" class="slds-tabs--scoped__link" id="projectItems">Project Items</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab">
+                                            <!-- Projects Feed-->
+                                            <div id="tab-1" class="slds-tabs--scoped__content slds-show">
+                                                <div class="slds-feed">
+                                                    <ul class="slds-feed__list">
+                                                        <apex:repeat value="{!myProjectfeeds}" var="pf">
+                                                            <li class="slds-feed__item" style="padding:10px 0 !important;">
+                                                                <div class="slds-media slds-comment slds-hint-parent">
+                                                                    <div class="slds-media__figure">
+                                                                        <div class="slds-avatar slds-avatar--circle slds-avatar--medium">
+                                                                            <a href="#void">
+                                                                                <img src="{!URLFOR($Resource.SLDS100, 'assets/images/avatar1.jpg')}"/>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="slds-media__body">
+                                                                        <div class="slds-grid slds-grid--align-spread slds-has-flexi-truncate">
+                                                                            <p class="slds-truncate">
+                                                                                <a href="#void" title="Design Systems">{!pf.Parent.Name}</a> -
+                                                                                <a href="#void">{!pf.CreatedBy.FirstName} {!pf.CreatedBy.LastName}</a>
+                                                                            </p>
+                                                                        </div>
+                                                                        <p class="slds-text-body--small">
+                                                                            <a href="#void" title="Click for single-item view of this post">{!pf.lastmodifiedDate}</a>
+                                                                        </p>
+                                                                        <div class="slds-comment__content slds-text-longform"><apex:outputText escape="false" value="{!pf.body}"></apex:outputText></div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </apex:repeat>                                            
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <!-- Release Feed-->
+                                            <div id="tab-2" class="slds-tabs--scoped__content slds-show">
+                                                <ul class="slds-feed__list">
+                                                    <apex:repeat value="{!myReleasefeeds}" var="rl">
+                                                        <li class="slds-feed__item" style="padding:10px 0 !important;">
+                                                            <div class="slds-media slds-comment slds-hint-parent">
+                                                                <div class="slds-media__figure">
+                                                                    <div class="slds-avatar slds-avatar--circle slds-avatar--medium">
+                                                                        <a href="#void">
+                                                                            <img src="{!URLFOR($Resource.SLDS100, 'assets/images/avatar1.jpg')}"/>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="slds-media__body">
+                                                                    <div class="slds-grid slds-grid--align-spread slds-has-flexi-truncate">
+                                                                        <p class="slds-truncate">
+                                                                            <a href="#void" title="Design Systems">{!rl.Parent.Name}</a> -
+                                                                            <a href="#void">{!rl.CreatedBy.FirstName} {!rl.CreatedBy.LastName}</a>
+                                                                        </p>
+                                                                    </div>
+                                                                    <p class="slds-text-body--small">
+                                                                        <a href="#void" title="Click for single-item view of this post">{!rl.lastmodifiedDate}</a>
+                                                                    </p>
+                                                                    <div class="slds-comment__content slds-text-longform"><apex:outputText escape="false" value="{!rl.body}"></apex:outputText></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </apex:repeat>   
+                                                </ul>
+                                            </div>
+                                            <!-- Sprints Feed-->
+                                            <div id="tab-3" class="slds-tabs--scoped__content slds-show">
+                                                <ul class="slds-feed__list">
+                                                    <apex:repeat value="{!mySprintfeeds}" var="sp">
+                                                        <li class="slds-feed__item" style="padding:10px 0 !important;">
+                                                            <div class="slds-media slds-comment slds-hint-parent">
+                                                                <div class="slds-media__figure">
+                                                                    <div class="slds-avatar slds-avatar--circle slds-avatar--medium">
+                                                                        <a href="#void">
+                                                                            <img src="{!URLFOR($Resource.SLDS100, 'assets/images/avatar1.jpg')}"/>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="slds-media__body">
+                                                                    <div class="slds-grid slds-grid--align-spread slds-has-flexi-truncate">
+                                                                        <p class="slds-truncate">
+                                                                            <a href="#void" title="Design Systems">{!sp.Parent.Name}</a> -
+                                                                            <a href="#void">{!sp.CreatedBy.FirstName} {!sp.CreatedBy.LastName}</a>
+                                                                        </p>
+                                                                    </div>
+                                                                    <p class="slds-text-body--small">
+                                                                        <a href="#void" title="Click for single-item view of this post">{!sp.lastmodifiedDate}</a>
+                                                                    </p>
+                                                                    <div class="slds-comment__content slds-text-longform"><apex:outputText escape="false" value="{!sp.body}"></apex:outputText></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </apex:repeat> 
+                                                </ul>
+                                            </div>
+                                            <!-- Stories Feed-->
+                                            <div id="tab-4" class="slds-tabs--scoped__content slds-show">
+                                                <ul class="slds-feed__list">
+                                                    <apex:repeat value="{!myStoryFeeds}" var="st">
+                                                        <li class="slds-feed__item" style="padding:10px 0 !important;">
+                                                            <div class="slds-media slds-comment slds-hint-parent">
+                                                                <div class="slds-media__figure">
+                                                                    <div class="slds-avatar slds-avatar--circle slds-avatar--medium">
+                                                                        <a href="#void">
+                                                                            <img src="{!URLFOR($Resource.SLDS100, 'assets/images/avatar1.jpg')}"/>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="slds-media__body">
+                                                                    <div class="slds-grid slds-grid--align-spread slds-has-flexi-truncate">
+                                                                        <p class="slds-truncate">
+                                                                            <a href="#void" title="Design Systems">{!st.Parent.Name}</a> -
+                                                                            <a href="#void">{!st.CreatedBy.FirstName} {!st.CreatedBy.LastName}</a>
+                                                                        </p>
+                                                                    </div>
+                                                                    <p class="slds-text-body--small">
+                                                                        <a href="#void" title="Click for single-item view of this post">{!st.lastmodifiedDate}</a>
+                                                                    </p>
+                                                                    <div class="slds-comment__content slds-text-longform"><apex:outputText escape="false" value="{!st.body}"></apex:outputText></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </apex:repeat>
+                                                </ul>
+                                            </div>
+                                            <!-- Project Items-->
+                                            <div id="tab-5" class="slds-tabs--scoped__content slds-show">
+                                                <ul class="slds-feed__list">
+                                                    <apex:repeat value="{!myItemFeeds}" var="it">
+                                                        <li class="slds-feed__item" style="padding:10px 0 !important;">
+                                                            <div class="slds-media slds-comment slds-hint-parent">
+                                                                <div class="slds-media__figure">
+                                                                    <div class="slds-avatar slds-avatar--circle slds-avatar--medium">
+                                                                        <a href="#void">
+                                                                            <img src="{!URLFOR($Resource.SLDS100, 'assets/images/avatar1.jpg')}"/>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="slds-media__body">
+                                                                    <div class="slds-grid slds-grid--align-spread slds-has-flexi-truncate">
+                                                                        <p class="slds-truncate">
+                                                                            <a href="#void" title="Design Systems">{!it.Parent.Name}</a> -
+                                                                            <a href="#void">{!it.CreatedBy.FirstName} {!it.CreatedBy.LastName}</a>
+                                                                        </p>
+                                                                    </div>
+                                                                    <p class="slds-text-body--small">
+                                                                        <a href="#void" title="Click for single-item view of this post">{!it.lastmodifiedDate}</a>
+                                                                    </p>
+                                                                    <div class="slds-comment__content slds-text-longform"><apex:outputText escape="false" value="{!it.body}"></apex:outputText></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </apex:repeat>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><br/>
+                            </div>
+                            <!-- User Stories Trending and Risk -->
+                            <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+                                <div class="slds-tabs--scoped">
+                                    <div id="tabs-container" class="slds-tabs--scoped">
+                                        <ul class="tabs-menu3 slds-tabs--scoped__nav">
+                                            <li class="current slds-tabs--scoped__item slds-text-heading--label slds-active">
+                                                <a href="#tab-11" role="tab" class="slds-tabs--scoped__link" id="trendtabid">Trending User Stories</a>
+                                            </li>
+                                            <li class="slds-tabs--scoped__item slds-text-heading--label">
+                                                <a href="#tab-12" role="tab" class="slds-tabs--scoped__link" id="risktabid">Top Risk Items</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab" id="tabPFPage">
+                                            
+                                            <div id="tab-11" class="slds-tabs--scoped__content slds-show" role="tabpanel" aria-labelledby="tab-scoped-1__item">
+                                                <c:PF_TrendingUserStories ></c:PF_TrendingUserStories>
+                                            </div>
+                                            <div id="tab-12" class="slds-tabs--scoped__content slds-show">
+                                                <c:PF_TopRisks ></c:PF_TopRisks>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <!-- My Tasks -->
+                            
+                            <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+                                <div class="slds-box" >
+                                    <div class="slds-card__header slds-grid">
+                                        <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                            <div class="slds-media__figure">
+                                                <svg aria-hidden="true" class="slds-icon slds-icon-action-new-task slds-p-around--x-small">
+                                                    <use xlink:href="{!URLFOR($Resource.SLDS100, 'assets/icons/standard-sprite/svg/symbols.svg#task')}"></use>
+                                                </svg>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <h2 class="slds-text-heading--small slds-truncate">My Tasks</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <c:PF_MyTask ></c:PF_MyTask>
+                                </div>
+                            </div>
+                            
+                            <!-- My Recent Followed Records -->
+                            <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3">
+                                <div class="slds-box" >
+                                    <div class="slds-card__header slds-grid">
+                                        <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                            <div class="slds-media__figure">
+                                                <svg aria-hidden="true" class="slds-icon slds-icon-action-following slds-p-around--x-small">
+                                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/action-sprite/svg/symbols.svg#following')}"></use>
+                                                </svg>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <h2 class="slds-text-heading--small slds-truncate">Followed Records</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <c:PF_MyFollows ></c:PF_MyFollows>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- / PRIMARY CONTENT WRAPPER -->    
+                </div>
+                <!-- / REQUIRED SLDS WRAPPER -->    
+            </apex:form>
+        </body>
+    </html>
+    <c:PF_LoadingIndicator ></c:PF_LoadingIndicator>
+    <!-- SCRIPT TAGS HERE -->
+    <apex:includeScript value="{!URLFOR($Resource.PF_jquery)}"/>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js"/>
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"/>
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"/>
+    <script>
+    var arrayList = [];
+    var lineChartData;
+    var myLineChart;
+    var ctz;
+    
+    var options = {
+        responsive: true,
+        multiTooltipTemplate: "<%= datasetLabel %> - <%= value %>",
+        legend: {
+            display: true
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Month'
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Value'
+                }
+            }]
+            
+        }
+    }
+    
+    function myRefreshFunction(){
+        refreshChart();
+    }
+    
+    function oncompleteRefresh(){
+        myrepeatValues();
+    }
+    
+    function myLineChartData(stringLabel, optimized, actuals ){
+        //lineChartData = {};
+        lineChartData = {
+            labels : stringLabel,
+            datasets : [
+                {
+                    label: "Ideal",
+                    fillColor : "rgba(220,220,220,0.2)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    pointColor : "rgba(220,220,220,1)",
+                    pointStrokeColor : "#fff",
+                    pointHighlightFill : "#fff",
+                    pointHighlightStroke : "rgba(220,220,220,1)",
+                    data : optimized
+                },
+                {
+                    label: "Actual",
+                    fillColor : "rgba(151,187,205,0.2)",
+                    strokeColor : "rgba(151,187,205,1)",
+                    pointColor : "rgba(151,187,205,1)",
+                    pointStrokeColor : "#fff",
+                    pointHighlightFill : "#fff",
+                    pointHighlightStroke : "rgba(151,187,205,1)",
+                    data: actuals
+                }
+            ]
+            
+        } 
+        console.log('LINE CHART DATA HERE 1'  +JSON.stringify(lineChartData));
+    }
+    function chartJS() {
+        console.log('ChartJS START' );
+        ctz = document.getElementById("linechart").getContext("2d");
+        myLineChart = new Chart(ctz).Line(lineChartData, options);
+        console.log('console update' +myLineChart);
+        console.log('LINE CHART DATA HERE' +JSON.stringify(lineChartData));
+    }
+    
+    function homePage() {
+        console.log('REDIRECT Home');
+        window.location = "/home/home.jsp";
+    }
+    
+    $(document).ready(function() {
+        
+        $("#tab-2").hide();
+        $("#tab-3").hide();
+        $("#tab-4").hide();
+        $("#tab-5").hide();
+        $("#tab-12").hide();
+        
+        $(".tabs-menu a").click(function(event) {
+            console.log('Tab is clicked' + $(this).attr('id'));
+            var tabid = $(this).attr('id');
+            event.preventDefault();
+            $(this).parent().addClass("current").addClass("slds-active");
+            $(this).parent().siblings().removeClass("current").removeClass("slds-active");
+            if(tabid =="projects") {
+                $("#tab-2").hide();
+                $("#tab-3").hide();
+                $("#tab-4").hide();
+                $("#tab-5").hide();
+            } else if(tabid=="releases") {
+                $("#tab-1").hide();
+                $("#tab-3").hide();
+                $("#tab-4").hide();
+                $("#tab-5").hide();
+            } else if(tabid=="sprints") {
+                $("#tab-1").hide();
+                $("#tab-2").hide();
+                $("#tab-4").hide();
+                $("#tab-5").hide();
+            } else if(tabid=="stories") {
+                $("#tab-1").hide();
+                $("#tab-2").hide();
+                $("#tab-3").hide();
+                $("#tab-5").hide();
+            } else if(tabid=="projectItems") {
+                $("#tab-1").hide();
+                $("#tab-2").hide();
+                $("#tab-3").hide();
+                $("#tab-4").hide();
+            }
+            
+            var tab = $(this).attr("href");
+            $(".tab-content").not(tab).css("display", "none");
+            $(tab).fadeIn();
+        });
+        
+        $(".tabs-menu3 a").click(function(event) {
+            console.log('tab clicked' +$(this).attr('id') );
+            var tabid = $(this).attr('id');
+            event.preventDefault();
+            $(this).parent().addClass("current").addClass("slds-active");
+            $(this).parent().siblings().removeClass("current").removeClass("slds-active");
+            var tab = $(this).attr("href");
+            console.log(tabid);
+            if(tabid == 'risktabid'){
+                console.log('HELLO THERE');
+                $("#tab-11").hide();
+            }else{
+                $("#tab-12").hide();
+            }
+            //$(".tab-content2").not(tab).css("display", "none");
+            $(tab).fadeIn();
+        });
+        
+        //load chartJS
+        arrayList = []; 
+        <apex:repeat value="{!stringLabel}" var="s">
+            arrayList.push('{!s}');
+        </apex:repeat>
+        console.log('Im now in the repeat values' +arrayList +'---' +'{!sprintId}');
+        
+        //myrepeatValues();
+        
+        
+        var recSprintId = '{!sprintId}';
+        console.log('RecSprintId ==== ' +recSprintId);
+        if(recSprintId) {
+            myLineChartData(arrayList, {!optimizedList},  {!actualList});
+            chartJS();
+        }
+        
+        
+    });
+    
+    </script>
+    
+</apex:page>

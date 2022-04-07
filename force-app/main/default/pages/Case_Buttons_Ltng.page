@@ -1,0 +1,16 @@
+<apex:page standardController="Case" >
+    <apex:slds />
+    <input type="button" class="slds-button slds-button_stateful slds-button_neutral slds-not-selected" value="New CSR" onclick="openTab('{!$Label.Derwent_CSR_Page}', '{!Case.CaseNumber}')"> </input>
+    <input type="button" class="slds-button slds-button_stateful slds-button_neutral slds-not-selected" value="Close Case" onclick="openTab('{!$Label.Derwent_CSR_Page}', '{!Case.CaseNumber}')"> </input>
+   
+    
+    
+    <script>
+    
+        function openTab(url, caseNo){
+            window.open(url + '?' + caseNo ,"_blank");
+        }
+    
+    </script>
+
+</apex:page>

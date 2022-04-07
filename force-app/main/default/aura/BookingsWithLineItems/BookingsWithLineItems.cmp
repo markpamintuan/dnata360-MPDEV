@@ -1,0 +1,43 @@
+<aura:component controller="AccountAuraExtensionController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <!--on component load call doInit javaScript function and fetch records from server-->  
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="bookingList" type="List"/>
+    <div style="background-color: white !important; width:100%">
+        <lightning:workspaceAPI aura:id="workspace" />
+        <lightning:button label="Open Tab with Subtab" onclick="{! c.openTabWithSubtab }" />
+         <div class="slds-m-around_x-large">
+        <lightning:accordion class="slds-section">
+
+            <aura:iteration items="{!v.bookingList}" var="bookHeader" indexVar="iVar">              
+                <lightning:accordionSection name="{!bookHeader.Org_Booking_Ref__c}" label="{!bookHeader.Org_Booking_Ref__c}" class="section-title-bg">
+                    <aura:set attribute="body" >
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-size_1-of-2">Title :</div><div class="slds-size_1-of-2">{!bookHeader.Booking_Status__c}</div>
+                            <div class="slds-size_1-of-2">Booking Type :</div><div class="slds-size_1-of-2">{!bookHeader.Org_Booking_Type__c}</div>
+                            <div class="slds-size_1-of-2">Booking Status :</div><div class="slds-size_1-of-2">{!bookHeader.Booking_Status__c}</div>
+                            <div class="slds-size_1-of-2">Booked Date :</div><div class="slds-size_1-of-2"><lightning:formattedDateTime value="{!bookHeader.CreatedDate}" /></div>
+                            <div class="slds-size_1-of-2">Details :</div><div class="slds-size_1-of-2"><a href="#" aura:id="{!bookHeader.Id}" id="{!bookHeader.Id}" onclick="{!c.openTabWithSubtab}" >View Record</a></div>
+                        </div>
+                        <br/>
+                        <h1 class="slds-page-header__title slds-truncate slds-align-middle" style="font-style: Lato; font-size: 14px;" title="Booked Items">Booked Items:</h1>
+                            <aura:iteration items="{!bookHeader.Bookings__r}" var="li" indexVar="indx">
+                                <div class="slds-size_1-of-1">
+                                    <h1 style="color:#2699FB"  class="slds-truncate" title="{!li.Org_Booking_Type__c}"> {!li.bookingtype}</h1>                                    
+                                </div>
+                                <aura:iteration items="{!li.records}" var="innerLi" indexVar="indxvv">
+                                   <div class="slds-size_1-of-1">
+                                        <p class="slds-truncate" title="{!innerLi.Org_Title__c}"> {!innerLi.Org_Title__c} </p>                                           
+                                    </div>
+                                </aura:iteration>
+                            </aura:iteration>
+                    </aura:set>
+                </lightning:accordionSection> 
+            </aura:iteration>
+        </lightning:accordion>
+    </div>
+    </div>
+    
+
+   
+</aura:component>

@@ -1,0 +1,26 @@
+<apex:component controller="PF_Homepage" >
+    <div id="tab-12" class="tab-content2">
+        <div class="slds-feed">
+            <ul class="slds-feed__list">
+                <apex:repeat value="{!Risk}" var="pf">
+                    <li class="slds-feed__item">
+                        <div class="slds-media slds-comment slds-hint-parent">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-new-task">
+                                    <svg aria-hidden="true" class="slds-icon slds-icon-action-close slds-p-around--x-small" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        
+                                        <use xlink:href="{!URLFOR($Resource.SLDS100,
+                                                         '/assets/icons/action-sprite/svg/symbols.svg#info')}"></use>
+                                    </svg>
+                                    <a href="{!$Site.Domain}/{!pf.id}" target="_blank" title="Design Systems">{!pf.Name} - Risk Ranking: {!pf.PF_Risk_Ranking__c}</a>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    
+                </apex:repeat>
+            </ul>
+            
+        </div>
+    </div>
+</apex:component>

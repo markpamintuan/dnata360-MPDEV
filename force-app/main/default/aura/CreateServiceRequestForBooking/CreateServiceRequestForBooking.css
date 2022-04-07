@@ -1,0 +1,71 @@
+.THIS textarea {
+    height:200px;
+}
+
+.THIS .slds-progress{
+    width:20% !important;
+}
+
+.THIS .lookuptypeselect{
+   width: 12%;
+    display: inline-block;
+    padding-left: 10px;
+}
+
+.THIS .leftPaddingClass{
+   	padding-left:30px;
+}
+
+.THIS .slds-notify_toast{
+    position:absolute!important;
+    left:0px!important;
+    top:calc(0.25rem + 30px);
+    background:none!important;
+    padding : 0px!important;
+    font-size:12px!important;
+    font-family:Salesforce Sans !important;
+    font-weight:500;
+}
+
+.THIS .slds-theme_error{
+    color : #C23934!important;
+}
+
+.THIS .allowoverflow{
+    overflow: visible;
+}
+
+.THIS .slds-modal__content.slds-p-around--medium.allowoverflow {
+    height: 414px!important;
+}
+
+.THIS select{
+    height:32px !important;
+}
+
+.THIS .fielddiv{
+    display:inline-block;
+    width:50%;
+    padding-left:10px;
+    
+}
+
+.THIS .sendSMS{
+    float:right;
+    padding-top:1%;
+    display:inline-flex;
+}
+
+.THIS .sendButton{
+    float:right;
+    width:165px;
+}
+
+
+.THIS .checkbox{
+    display:inline-block;
+}
+
+.THIS .shrinkinput{
+    min-height:0px !important;
+}

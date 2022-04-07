@@ -1,0 +1,56 @@
+<apex:page standardController="PF_TestCaseExecution__c" extensions="PF_EditTestCaseStepExtension">
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<head>
+			<title>Clone Test Case</title>
+			<apex:slds rendered="{!$User.UIThemeDisplayed == 'Theme4d'}"/>
+		</head>
+		<body class="slds-scope">
+		    <apex:form >
+		    	<apex:outputPanel rendered="{!$User.UIThemeDisplayed == 'Theme3'}">
+			        <apex:pageBlock >
+			            <apex:pageBlockTable value="{!TestCaseSteps}" var="t"> <!-- style="font-size:.8125rem;" -->
+			                <apex:column value="{!t.testCsWr.PF_Step_Number__c}"/>
+			                <apex:column value="{!t.testCsWr.PF_Step_Description__c}"/>
+			                <apex:column value="{!t.testCsWr.PF_Expected_Result__c}"/>
+			            </apex:pageBlockTable>
+			        </apex:pageBlock>
+		        </apex:outputPanel>
+		        
+		        <apex:outputPanel rendered="{!$User.UIThemeDisplayed == 'Theme4d' || $User.UIThemeDisplayed == 'Theme4t'}">
+		        <div class="slds">
+		        	<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+		        		<thead>
+							<tr class="slds-text-title_caps">
+								<th scope="col">
+									<div class="slds-truncate" title="Step Number">Step Number</div>
+								</th>
+								<th scope="col">
+									<div class="slds-truncate" title="Step Description">Step Description</div>
+								</th>
+								<th scope="col">
+									<div class="slds-truncate" title="Expected Result">Expected Result</div>
+								</th>
+							</tr>						    
+						</thead>
+						<apex:repeat value="{!TestCaseSteps}" var="t">
+							<tbody>
+	    						<tr>
+									<td data-label="Step Number">
+										<div class="slds-truncate" title="{!t.testCsWr.PF_Step_Number__c}">{!t.testCsWr.PF_Step_Number__c}</div>
+									</td>
+									<td data-label="Step Description">
+										<div class="slds-truncate" title="{!t.testCsWr.PF_Step_Description__c}">{!t.testCsWr.PF_Step_Description__c}</div>
+									</td>
+									<td data-label="Expected Result">
+										<div class="slds-truncate" title="{!t.testCsWr.PF_Expected_Result__c}">{!t.testCsWr.PF_Expected_Result__c}</div>
+									</td>
+								</tr>
+							</tbody>
+						</apex:repeat>
+					</table>
+				</div>
+		        </apex:outputPanel>
+		    </apex:form>
+		</body>    
+	</html>
+</apex:page>

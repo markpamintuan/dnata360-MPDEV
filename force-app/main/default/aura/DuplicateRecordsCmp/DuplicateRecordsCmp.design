@@ -1,0 +1,7 @@
+<design:component>
+    <design:attribute name="fieldSetName" label="Field Set Name" description="Name of Field Set" />
+    <design:attribute name="searchFieldSetName" label="Search Field Set Name" description="Name of Search Field Set" />
+    <design:attribute name="linkingfield" label="linkingfield" description="Whcih will have field API name which wil be used to find linked records. e.g Org_Linking_360_Field__c" />
+    <design:attribute name="ConsolidatedReportFolder" label="Consolidated Report Folder" />
+    <design:attribute name="InitalvalueToUse" label="InitalvalueToUse"  description="This Value will be used to pick values for linked section initially" />
+</design:component>

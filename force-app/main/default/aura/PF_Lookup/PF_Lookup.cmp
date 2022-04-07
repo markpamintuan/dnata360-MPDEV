@@ -1,0 +1,39 @@
+<aura:component controller="PF_dynamicLookupcontroller">
+   <ltng:require styles="/resource/SLDS105/assets/styles/salesforce-lightning-design-system.css"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="objName" type="string" />
+    <aura:attribute name="searchstr" type="string" />
+    <aura:attribute name="recordtypename" type="String" />
+    <aura:attribute name="searchresults" type="List" /> 
+    <aura:attribute name="showresults" type="Boolean" default="false" />
+    <aura:registerEvent name="PF_LookupEvent" type="c:PF_LookupEvent"/>
+    <style>
+         .tabshow{
+        display:block;
+        }
+        .tabhide{
+        display:none;
+        }
+    </style>
+    <div class="slds-form-element slds-lookup slds-is-open" data-select="single" style="height:140px;margin-bottom:1%" aura:id="lookupcard">
+        <aura:renderIf isTrue="{!v.showresults}">   
+            <div class="slds-lookup__menu slds-scrollable--y" id="lookup-357">
+                <div class="slds-lookup__item--label slds-text-body--small ">Search Results</div>
+                <ul class="slds-lookup__list" role="listbox">
+                    <aura:iteration items="{!v.searchresults}" var="obj">
+                        <li role="presentation">
+                            <span class="slds-lookup__item-action slds-media slds-media--center" id="lookup-option-359" role="option">
+                                
+                                <lightning:icon iconName="standard:user" />
+                                <div class="slds-media__body ">
+                                    <div class="slds-lookup__result-text slds-p-left_small"> <a href=""><ui:outputText value="{!obj.Name}" title="{!obj.Id}" click="{!c.populatevalue}"/></a></div>
+                                </div>
+                            </span>
+                        </li>
+                    </aura:iteration>
+                </ul>
+            </div> 
+        </aura:renderIf>
+    </div>
+    
+</aura:component>

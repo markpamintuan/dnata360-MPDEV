@@ -1,0 +1,41 @@
+<aura:component access="global">
+    
+    <!-- this is for spinner -->
+    <aura:attribute name="showSpinner" type="Boolean" description="To handle Spinner"/>
+    
+    <!-- this is used to save the step number -->
+    <aura:attribute name="stepNumber" type="Integer" />    
+    
+    <!-- Result Wrapper List -->
+    <aura:attribute name="resultWrapList" type="Object[]" />
+    
+    <!-- Spinner -->
+    <aura:if isTrue="{!v.showSpinner}" >
+        <lightning:spinner alternativeText="Loading" variant="brand" />
+    </aura:if>
+    
+    <!-- button container -->
+    <div style="width:100%;margin:1%;">
+        <!-- Cancel -->
+        <!--
+        <lightning:button variant="destructive" label="Cancel" title="Cancel" onclick="{! c.cancel }"/>
+        -->
+        
+        <!-- Search -->
+        <aura:if isTrue="{!v.stepNumber == 1}">
+            <lightning:button variant="brand" label="Search" title="Search" onclick="{! c.goToNextStep }" />
+        </aura:if>
+        
+        <!-- Back -->
+        <aura:if isTrue="{!v.stepNumber != 1}">
+            <lightning:button label="Back" title="Back" onclick="{! c.goToPreviousStep }"/>
+        </aura:if>
+        
+        <!-- Next -->
+        <aura:if isTrue="{!or(v.stepNumber == 2, v.stepNumber == 3)}">
+            <lightning:button variant="brand" label="Next" title="Next" onclick="{! c.goToNextStep }" />
+        </aura:if>
+        
+    </div>
+    
+</aura:component>

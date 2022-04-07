@@ -1,0 +1,77 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,force:hasRecordId" access="global"
+                controller="PF_TestAssignController">
+    
+    <aura:attribute name="lookuser" type="String" default="test value" />
+    <aura:attribute name="testCase" type="PF_TestCaseExecution__c" default="{ 'sobjectType': 'PF_TestCaseExecution__c',
+                                                                            'PF_Assigned_To__c': '',
+                                                                            'PF_Target_Completion_Date__c': '',
+                                                                            'PF_Status__c': ''}" />
+    <aura:attribute name="openPopup" type="boolean" default="false"/>
+    <aura:attribute name="testCases" type="PF_TestCaseExecution__c[]" /> 
+    <aura:attribute name="PFTargetCompletion" type="Date"/>
+    <aura:attribute name="testCaseOnload" type="PF_TestCaseExecution__c[]"/>
+    <aura:attribute name="delAssId" type="String[]" />
+    <aura:attribute name="valueEntered" type="boolean" default="false"/>
+    <aura:attribute name="isSelected" type="boolean" default="false"/>
+    <aura:attribute name="notHavingAccess" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="removeAssigne" event="c:PF_RemoveAssigne"
+    action="{!c.removeAssignTestCase}"/>
+
+    <aura:handler event="c:TestAssignRowEventApp" action="{!c.closePopup}"/>
+    <aura:handler event="c:TestAssignRowEventApp" action="{!c.deleteRecs}"/>
+    <aura:if isTrue="{!v.notHavingAccess}">
+    You donot have sufficient permission to Access the page, Please contact your System Administrator.
+    <aura:set attribute="else">
+    <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!$Label.c.PF_Add_Edit_Assignments}</h2>
+    </header>
+    <div class="slds-m-top--large slds-p-horizontal_small">
+        <lightning:button variant="brand" label="Add New" onclick="{!c.addRecord}" />
+        <lightning:button variant="brand" label="Save" onclick="{!c.Save}" />
+        <lightning:button variant="brand" label="Cancel" onclick="{!c.Cancel}" />
+        <lightning:button variant="brand" label="Mass Delete" onclick="{!c.MassDelete}"/>
+    </div>
+    <div>
+        {!v.body}
+    </div>
+    <div class="slds-grid slds-wrap slds-m-top_large">
+        <div style="padding-left: 14px;">
+        <span><ui:inputCheckbox aura:id="all" change="{!c.allSelect}"/></span>
+        <span class="slds-is-relative" style="padding-left:5px;">Select All</span>
+    	</div>
+    	
+    	<div class="slds-p-horizontal_small">
+    		<div  style="padding-left: 382px;">
+            <div class="slds-form-element slds-is-relative assigned_to_date">
+            	<label class="slds-form-element__label" style="font-size: .8125rem;">Select a Default Date</label> 
+                <div class="slds-form-element__control target-completion-field">
+                	<ui:inputDate label="" class="slds-input" value="{!v.PFTargetCompletion}" displayDatePicker="true" />
+                </div>
+            </div>
+            </div>
+        </div>
+        
+    	
+        
+    </div>
+    
+    
+    <div class="slds-m-top_small test-assignment">
+        <aura:iteration items="{!v.testCaseOnload}" var="test" indexVar="i">
+            <c:PF_TestAssignRow test="{!test}" index="{!i}" aura:id="childComp"/> <br/>
+        </aura:iteration>   
+    </div>
+    <aura:If isTrue="{!v.isSelected}">
+        <c:TestAssignModalPopUp headerMsg="Error" errorMsg="Please Select atleast 1 record."/>
+   </aura:If>
+    <aura:If isTrue="{!v.valueEntered}">
+        <c:TestAssignModalPopUp headerMsg="Error" errorMsg="Please populate mandatory fields such as Assigned To and Target completion date for all test case assignments."/>
+   </aura:If>
+    <aura:If isTrue="{!v.openPopup}">
+    	<c:TestAssignModalPopUp headerMsg="Alert!!" showbutton="true" errorMsg="The test results may impacted by the deletion, Do you want to Proceed?"/>
+    </aura:If>
+    </aura:set>
+    </aura:if>
+</aura:component>

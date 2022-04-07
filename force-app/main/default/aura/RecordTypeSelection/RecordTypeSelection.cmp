@@ -1,0 +1,43 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" controller="RecordTypeSelectionController">
+    <aura:attribute name="objType" type="String" required="true" default="Case"/>
+    <aura:attribute name="selectedRecordType" type="String"/>
+    <aura:attribute name="recordTypeList" type="Object[]"/>
+<!--    <aura:attribute name="recordId" type="String" /> -->
+
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" />
+    
+        <div class="slds-modal__header">
+            <h2 id="header43" class="slds-text-heading--medium">Please select a type</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around--medium">
+            
+                <div class="slds-p-top--small slds-p-bottom--small" >
+                    <fieldset class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <aura:iteration items="{!v.recordTypeList}" var="item">
+                                <label class="slds-radio slds-p-top--small">
+                                    <tr>
+                                        <td>
+                                            <ui:inputRadio name="benefits" change="{!c.onChange}" text="{!item.recordTypeId}" value="true"/>
+                                            <span class="slds-radio--faux"></span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-form-element__label">{!item.recordTypeLabel}</span>
+                                        </td>
+                                    </tr>
+                                </label>
+                            </aura:iteration>
+                        </div>
+                    </fieldset>
+                </div>
+            
+        </div>
+        
+        <div class="slds-modal__footer">
+            <lightning:button label="Cancel" variant="neutral"  onclick="{!c.defaultCloseAction}"/>
+            <lightning:button label="Continue" variant="brand"  onclick="{!c.createRecord}"/>
+            <!--<lightning:button label="Continue to Ext" variant="brand"  onclick="{!c.navigateToExternal}"/>-->
+            <!--<ui:button label="Open in New window" press="{!c.createRecord}"/>-->
+        </div>
+    
+</aura:component>

@@ -1,0 +1,32 @@
+<aura:component controller="AccountButtonsController" access="global" implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId"  >
+  
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+
+    <aura:attribute name="recordInfo" type="Object"/>
+    <aura:attribute name="recordId" type="id" />
+    <aura:attribute name="recordError" type="String" description="An error message bound to force:recordData"/>
+	<aura:attribute type="Boolean" name="showAccount" default="false"/>
+    <aura:attribute type="Boolean" name="showBooking" default="false"/>
+     
+    <aura:if isTrue="{!v.showAccount}">
+         <force:recordData aura:id="recordHandler"  
+                          recordId="{!v.recordId}"  
+                          layoutType="FULL" 
+                          fields = "Org_Brand__c"
+                          targetFields="{!v.recordInfo}" 
+                          targetError="{!v.recordError}" 
+                           /> 
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showBooking}">
+         <force:recordData aura:id="recordHandlerBooking"  
+                          recordId="{!v.recordId}"  
+                          layoutType="FULL" 
+                          targetFields="{!v.recordInfo}" 
+                          fields = "Org_Brand__c,Org_Person_Account_Contact_Id__c,Org_SF_Case_Reference__c"
+                          targetError="{!v.recordError}" 
+                          />
+    </aura:if>
+</aura:component>

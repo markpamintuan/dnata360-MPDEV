@@ -1,0 +1,149 @@
+<apex:page controller="UnsubscribePageController" action="{!unsubscribeCustomer}" showHeader="false" sidebar="false">
+    <html>
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Helvetica Neue';
+            src: url({!URLFOR($Resource.EmiratesFonts, '/emiratesFonts/HelveticaNeue-Roman.otf')});
+        }
+
+        @font-face {
+            font-family: 'EKB';
+            src: url({!URLFOR($Resource.EmiratesFonts, '/emiratesFonts/Emirates-Bold.otf')});
+        }
+
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        [class*="col-"] {
+            float: left;
+            padding: 15px;
+        }
+
+        html {
+            font-family: "Lucida Sans", sans-serif;
+        }
+
+        .header {
+            padding: 15px;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu li {
+            padding: 8px;
+            margin-bottom: 7px;
+            background-color: #33b5e5;
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+
+        .menu li:hover {
+            background-color: #0099cc;
+        }
+
+        .aside {
+            background-color: #33b5e5;
+            padding: 15px;
+            color: #ffffff;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+        /* For mobile phones: */
+
+        [class*="col-"] {
+            width: 100%;
+        }
+
+        @media only screen and (min-width: 768px) {
+            /* For desktop: */
+            .col-1 {
+                width: 8.33%;
+            }
+            .col-2 {
+                width: 16.66%;
+            }
+            .col-3 {
+                width: 25%;
+            }
+            .col-4 {
+                width: 33.33%;
+            }
+            .col-5 {
+                width: 41.66%;
+            }
+            .col-6 {
+                width: 50%;
+            }
+            .col-7 {
+                width: 58.33%;
+            }
+            .col-8 {
+                width: 66.66%;
+            }
+            .col-9 {
+                width: 75%;
+            }
+            .col-10 {
+                width: 83.33%;
+            }
+            .col-11 {
+                width: 91.66%;
+            }
+            .col-12 {
+                width: 100%;
+            }
+        }
+        </style>
+    </head>
+
+    <body>
+        <div class="header">
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        
+        </div>
+        <div class="row" style="width: fit-content; margin: auto;">
+            <div class="col-6" style="width: fit-content; margin: auto; text-align: center;">
+                <br/>
+                <img src="{!URLFOR($Resource.dnataTravelLogoV3)}" alt="dnata" width="275" height="95" style="margin: auto; display: inline; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: 0 none;"  />
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <h2 style="color:#005293;font-family: tahoma, arial, verdana; font-size:1.9em;font-weight:400;line-height:26px;margin:14px 0 14px 0;;text-align:center;">Thank You.</h2>
+                <br/>
+                <br/>
+                <p style="font-family: tahoma, arial, verdana; color:#6c6f70;font-size:1.3em;margin:0 0 25px 0;">You have been succesfully opted out, and will not receive future surveys.</p>
+                <br/>
+                <br/>
+                <p class="callout-footer" style="font-family: tahoma, arial, verdana; color: #6c6f70; font-size: 12px !important; font-weight: normal; line-height: 1.6; text-align: center; margin: 0; padding: 0;" align="center">
+                                                dnata Travel {!year(today())} |  <a href="https://www.dnatatravel.com/privacypolicy.aspx" target="_blank" class="text-link" style="font-family: tahoma, arial, verdana; text-decoration: none; color: #2BA6CB; margin: 0; padding: 0;">Privacy Policy</a>                                          
+                </p>
+             </div>
+        </div>
+        <div class="col-3 right">
+        </div>
+    </body>
+
+    </html>
+</apex:page>

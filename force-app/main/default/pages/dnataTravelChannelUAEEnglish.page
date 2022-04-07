@@ -1,0 +1,152 @@
+<apex:page doctype="html-5.0"  showChat="false" standardStylesheets="false" showHeader="false">  
+ <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+ <!--This style is custom by keith -->
+ <style>
+    body {
+        background-image: url("https://dnata360--c.eu13.visual.force.com/resource/1581141623000/dnataTravelWebsiteScreenshot");
+        background-position: 0% 0%;
+        background-repeat: no-repeat;
+        background-size: 1300px 600px;
+    }
+</style>
+
+<body>
+    
+    <h1>dnata Travel Channel Menu UAE English</h1>
+  <script type='text/javascript' src='https://service.force.com/embeddedservice/menu/fab.min.js'></script>
+<script type='text/javascript'>
+    var initESW = function(gslbBaseURL) {
+        // Required if you want labels in a language that’s different from your user’s context.
+        //embedded_svc.menu.settings.language = ''; //For example, enter 'en' or 'en-US'
+
+    /*************************** Custom JS **********************************/
+    embedded_svc.menu.settings.extraPrechatFormDetails = [
+            {
+                'value': window.location.href,
+                'transcriptFields': ['Current_URL__c']
+            },
+            {
+                'label': 'Email',
+                'transcriptFields': ['Contact_Email__c']
+            },            
+            {
+                'value': 'en',
+                'transcriptFields': ['Live_Chat_Language__c']
+            },
+            {
+              "label": "customerDomain",
+              "value": "UAE",
+              "displayToAgent": false
+            },
+            {
+              "label": "origin",
+              "value": "Live Chat",
+              "displayToAgent": false
+            }
+           
+        ];
+       
+       
+       
+
+        embedded_svc.menu.settings.extraPrechatInfo = [{
+        "entityFieldMaps": [{
+                "doCreate": false,
+                "doFind": false,
+                "fieldName": "LastName",
+                "isExactMatch": true,
+                "label": "Last Name"
+            },
+            {
+                "doCreate": false,
+                "doFind": false,
+                "fieldName": "FirstName",
+                "isExactMatch": true,
+                "label": "First Name"
+            }
+        ],
+        "entityName": "Contact",
+        "saveToTranscript": "Contact",
+        "showOnCreate": false
+    },
+
+    {
+
+        "entityFieldMaps": [{
+            "isExactMatch": false,
+            "doCreate": true,
+            "doFind": false,
+            "fieldName": "SuppliedEmail",
+            "label": "Email"
+            },
+            {
+            "isExactMatch": false,
+            "doCreate": true,
+            "doFind": false,
+            "fieldName": "SuppliedPhone",
+            "label": "Mobile"
+            },
+            {
+            "isExactMatch": false,
+            "doCreate": true,
+            "doFind": false,
+            "fieldName": "First_Name__c",
+            "label": "First Name"
+            },
+            {
+            "isExactMatch": false,
+            "doCreate": true,
+            "doFind": false,
+            "fieldName": "Last_Name__c",
+            "label": "Last Name"
+            },
+            {
+            "isExactMatch": false,
+            "doCreate": true,
+            "doFind": false,
+            "fieldName": "Case_Domain__c",
+            "label": "customerDomain"
+            },
+            {
+            "isExactMatch": false,
+            "doCreate": true,
+            "doFind": false,
+            "fieldName": "origin",
+            "label": "origin"
+            }
+        ],
+        "entityName": "Case",
+        "linkToEntityName": "Case",
+        "linkToEntityField": "CaseId",
+        "saveToTranscript": "CaseId",
+        "showOnCreate": true
+    }
+
+];
+        /*************************** End of Custom JS **********************************/
+        
+        // Chat server endpoint URLs.
+        embedded_svc.menu.init(
+            'https://dnata360.my.salesforce.com',
+            'https://d.la1-c2-frf.salesforceliveagent.com/chat',
+            gslbBaseURL,
+            '00D0Y0000035L25',
+            'dnata_Travel_UAE_English'
+        );
+    };
+
+    if (!window.embedded_svc || !window.embedded_svc.menu) {
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://dnata360.my.salesforce.com/embeddedservice/menu/fab.min.js');
+        s.onload = function() {
+            initESW(null);
+        };
+        document.body.appendChild(s);
+    } else {
+        initESW('https://service.force.com');
+    }
+</script>
+   
+   
+</body>
+</apex:page>

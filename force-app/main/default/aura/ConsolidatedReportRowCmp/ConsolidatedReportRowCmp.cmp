@@ -1,0 +1,9 @@
+<aura:component>
+    <aura:attribute name="report" type="Report" />
+    <aura:attribute name="reportParameter0" type="String" /> 
+
+    <lightning:workspaceAPI aura:id="workspace" />
+    <div>
+        <a class="slds-text-link" data-value="{!v.report.Id}" onclick="{!c.openReport}">{!v.report.Name}</a>    	
+    </div>
+</aura:component>

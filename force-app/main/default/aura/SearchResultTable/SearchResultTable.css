@@ -1,0 +1,12 @@
+.THIS {
+}
+
+.THIS .headingstyle{
+    margin-bottom:5px; 
+    clear:both;
+}
+
+.THIS.headingstyle{
+    margin-bottom:5px; 
+    clear:both;
+}

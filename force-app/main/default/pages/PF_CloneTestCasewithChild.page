@@ -1,0 +1,258 @@
+<apex:page standardController="PF_TestCases__c" extensions="PF_CloneTestCasewithChildController" showQuickActionVfHeader="false"><!-- showHeader="false" sidebar="false" applyHTmlTag="false" -->
+ 
+	<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<head>
+			<title>Clone Test Case</title>
+			<apex:slds rendered="{!$User.UIThemeDisplayed == 'Theme4d'}"/>
+		</head>
+		<body class="slds-scope">
+			<apex:pageMessages />
+			<apex:form >
+				<apex:outputPanel rendered="{!if(isHavingPermission == false, false, true)}">
+					<apex:outputPanel rendered="{!$User.UIThemeDisplayed == 'Theme3' || $User.UIThemeDisplayed == 'Theme4t'}"> <!-- rendered="{!$User.UIThemeDisplayed == 'Theme3'}"> -->
+						<apex:pageBlock > 
+							<apex:outputPanel layout="block" id="pnlTestCase" style="padding-bottom:15px !important;">
+								<apex:outputText value="Test Case Name" style="font-size:14px;"/>
+								<apex:outputLabel >
+									<img src="/img/s.gif" alt="" class="helpOrb" title="Enter a new name if you want to change the name of the new Test Case that will be created" />
+								</apex:outputLabel>
+								<apex:inputText value="{!parentRecordName}" style="font-size:14px; width:50%;" title=""/>
+							</apex:outputPanel>	
+	
+							<apex:outputPanel layout="block" id="txtSelect">
+								<apex:outputText value="Select the child object(s) you want to clone."/> 
+							</apex:outputPanel>
+	
+							<apex:outputPanel layout="block" id="pnlSelectTable" style="padding-top:10px !important;">
+								<apex:pageBlockTable value="{!childObjectList}" var="child" columns="2">
+									<apex:column headerValue="Select">
+										<apex:facet name="header">
+											<apex:inputCheckbox value="{!isSelected}">
+												<apex:outputText value="Select All"/>
+												<apex:actionSupport event="onclick" action="{!checkSelectAll}"/>
+											</apex:inputCheckbox>
+										</apex:facet>   
+										<apex:inputCheckbox value="{!child.isSelected}"/>
+									</apex:column>
+									<apex:column headerValue="Child Object">
+										<apex:outputText value="{!child.objLabel} ({!testCaseAssignmentSize})" rendered="{!child.objLabel = 'Test Case Execution'}"/>
+										<apex:outputText value="{!child.objLabel} ({!testCaseStepSize})" rendered="{!child.objLabel = 'Test Case Step'}"/>
+									</apex:column>
+								</apex:pageBlockTable>
+							</apex:outputPanel>
+	
+							<apex:pageBlockButtons >
+								<apex:commandButton title="Clone" value="Clone" onclick="alert('Success! Click Ok to be taken to the newly created Test Case record.')" action="{!cloneParentwithSelectedChild}" id="btnClone" rendered="{!$User.UIThemeDisplayed == 'Theme3'}"/>
+								<apex:commandButton title="Clone" value="Clone" action="{!cloneParentwithSelectedChild}" id="btnCloneSF1" rendered="{!$User.UIThemeDisplayed == 'Theme4t'}"/>
+								&nbsp; &nbsp; <apex:commandButton value="Cancel" action="{!cancel}" id="txtCancel"/>
+							</apex:pageBlockButtons>
+						</apex:pageBlock>
+					</apex:outputPanel>	
+	
+					<apex:outputPanel rendered="{!$User.UIThemeDisplayed == 'Theme4d'}">
+						<div class="slds">
+							<div class="slds-page-header" role="banner">
+								<div class="slds-grid">
+									<div class="slds-col slds-has-flexi-truncate">
+										<div class="slds-media slds-no-space slds-grow">
+											<div class="slds-media__figure">
+												<svg aria-hidden="true" class="slds-icon slds-icon-custom-39">
+													<use xlink:href="{!URLFOR($Asset.SLDS, '/assets/icons/custom-sprite/svg/symbols.svg#custom39')}"></use>
+												</svg>
+											</div>
+											<div class="slds-media__body">
+												<p class="slds-text-heading--label slds-text-title--caps slds-line-height--reset">Test Case</p>
+												<h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="Test Case">
+													<span class="uiOutputText" data-aura-class="uiOutputText">{!parentRecordName}</span>
+												</h1>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+	
+							<apex:outputPanel id="tstpopup">
+					        	<apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displaySuccessMessage}"/>
+						            <!-- <apex:outputPanel styleClass="custPopup slds-notify slds-theme--success customMessage" layout="block" rendered="{!displaySuccessMessage}">
+						                Success! Click Ok to be taken to the newly created Test Case "{!parentRecordName}".<br/><br/><br/>
+						                <apex:commandButton styleClass="slds-button slds-button--brand" title="Clone" value="Clone" id="btnClone" onclick="alert('Success! Click Ok to be taken to the newly created Test Case record.')" action="{!cloneParentwithSelectedChild}" />
+						            </apex:outputPanel> -->
+					        
+							    	<div align="center">
+							        	<apex:outputPanel styleClass="slds-notify slds-theme--success customMessage" layout="block" rendered="{!displaySuccessMessage}">
+							                <span id="err_text"> Success! Test Case "{!parentRecordName}" was created. &nbsp; &nbsp;<br/>Click Ok to navigate to the new record</span>
+							                <apex:commandButton styleClass="slds-button slds-button--brand"  title="OK" value="OK" id="btnClone" action="{!redirectToClonedRecord}" /> <!-- onclick="alert('Success! Click Ok to be taken to the newly created Test Case record.')"  -->
+										</apex:outputPanel>
+						            </div>
+					        	</apex:outputPanel>
+							
+								<apex:pageBlock >
+									<div class="slds-p-horizontal--small slds-size--1-of-2">
+										<div class="slds-form-element slds-hint-parent slds-has-divider--bottom">
+											
+											<apex:outputText value="" style="font-size:14px;">
+												<span class="slds-form-element__label">
+													<label>Test Case Name</label>
+												</span>
+											</apex:outputText>
+											
+										    <apex:outputPanel styleClass="tooltip-wrap" style="padding-top: 15px; padding-bottom: 15px;">
+			                                    <button class="slds-button slds-button_icon slds-button slds-button_icon" aria-describedby="help" disabled="true">
+											        <svg class="slds-button__icon" aria-hidden="true">
+											        	<use xlink:href="{! URLFOR($Asset.SLDS, '/assets/icons/utility-sprite/svg/symbols.svg#info') }"></use>
+											        </svg>
+											        <span class="slds-assistive-text">Help</span>
+										        </button>
+										      
+										        <apex:outputPanel styleClass="tooltip-content slds-popover slds-popover_tooltip slds-nubbin_bottom-left">
+			                                    	<span style="font-size: .75rem; overflow-wrap: break-word;">
+				                                    	Enter a new name if you want to change the name of the new Test Case that will be created
+				                                    </span>
+			                     		        </apex:outputPanel>
+		                                    </apex:outputPanel>
+		 									<div class="slds-form-element__control">
+												<apex:inputText styleClass="slds-input" style="font-size:.8125rem;" value="{!parentRecordName}" />
+											</div>
+										</div>
+									</div>
+									<div class="slds-grid slds-wrap">
+										<div class="slds-p-horizontal--small slds-size--1-of-1 slds-m-top--large">
+											<h3 class="slds-form-element__label">Select the child object(s) you want to clone.</h3>
+										</div>
+									</div>
+									<apex:outputPanel layout="block" id="pnlSelectTable" styleClass="slds-p-horizontal--small"> <!-- style="padding-top:10px !important;" styleClass="slds-p-horizontal--small slds-size--1-of-2" -->
+										<apex:dataTable value="{!childObjectList}" var="child" columns="2" styleClass="slds-table slds-table_bordered slds-table_cell-buffer">
+											<apex:column headerValue="Select All">
+												<apex:facet name="header">
+													<apex:outputText value="Select" styleClass="slds-text-title_caps"/>
+		       										<!-- <apex:inputCheckbox value="{!isSelected}" style="width:1rem; height:1rem; display:inline-block; position:relative; vertical-align:middle; border-radius:.125rem; cursor: pointer;" title="Select All">
+														<apex:outputText value="Select All " styleClass="slds-text-title_caps"/>
+														<apex:actionSupport event="onclick" action="{!checkSelectAll}"/>
+													</apex:inputCheckbox> -->
+												</apex:facet> 
+												<div class="slds-form-element__row">
+										       		<div class="slds-form-element">
+										          		<label class="slds-checkbox">  
+															<apex:inputCheckbox value="{!child.isSelected}" title="Select"/>
+															<span class="slds-checkbox--faux"></span>
+		                   								</label>
+		       										</div>
+		    									</div>
+											</apex:column>
+											<apex:column headerValue="Child Object">
+												<apex:facet name="header">
+													<apex:outputText value="Child Object" styleClass="slds-text-title_caps" style="font-size:0.75rem;"/>
+												</apex:facet>
+												<apex:outputText value="{!child.objLabel} ({!testCaseAssignmentSize})" rendered="{!child.objLabel = 'Test Case Execution'}" title="{!child.objLabel}" style="font-size:0.75rem;"/>
+												<apex:outputText value="{!child.objLabel} ({!testCaseStepSize})" rendered="{!child.objLabel = 'Test Case Step'}" title="{!child.objLabel}" style="font-size:0.75rem;"/>
+											</apex:column>
+										</apex:dataTable>
+									</apex:outputPanel>
+		
+									<div class="slds-p-horizontal--small slds-m-top--medium slds-size--1-of-1 slds-align--absolute-center "> <!-- slds-align--absolute-center -->
+										<apex:commandButton styleClass="slds-button slds-button--brand" title="Clone" value="Clone" id="btnClone" action="{!showSuccessMessage}" rerender="tstpopup"/>
+										<apex:commandButton styleClass="slds-button slds-button--neutral" value="Cancel" action="{!cancel}" id="txtCancel"/>
+									</div>
+								</apex:pageBlock>
+							</div>
+						
+					</apex:outputPanel>
+				</apex:outputPanel>
+				<apex:outputPanel rendered="{!if(isHavingPermission == false, true, false)}">
+				 <b>Insufficient Privileges </b>
+				 <p>You do no have sufficient privileges to access the page. Please contact your administrator if access is necessary.</p>
+				</apex:outputPanel>
+			</apex:form>
+			<style type="text/css">
+		        .custPopup{
+		            background-color: white;
+		            border-width: 2px;
+		            border-style: solid;
+		            z-index: 9999;
+		            left: 50%;
+		            padding:10px;
+		            position: absolute;
+		            /* These are the 3 css properties you will need to change so the popup 
+		            displays in the center of the screen. First set the width. Then set 
+		            margin-left to negative half of what the width is. You can add 
+		            the height property for a fixed size pop up if you want.*/
+		            width: 500px;
+		            margin-left: -250px;
+		            top:100px;
+		        }
+		        .popupBackground{
+		            background-color:white;
+		            opacity: 0.20;
+		            filter: alpha(opacity = 20);
+		            position: fixed;
+		            width: 100%;
+		            height: 100%;
+		            top: 0;
+		            left: 0;
+		            z-index: 9998;
+		        }
+		
+				.msgIcon {
+				    display: none!important
+				}
+				.customMessage * {
+				    color: #fff!important
+				}
+				.customMessage {
+				    margin: 5px 0!important;
+				    max-width: 400px;
+				    opacity: 1!important;
+				    width: 100%;
+				    //font-size: 14px;
+				    border: 0px;
+				    padding: 10px;
+				    align-items: inherit;
+				    display: inline-flex;
+				    justify-content: center;
+				    position: relative;
+				    background: rgba(84,105,141,.95);
+    				font-weight: 300;
+    				text-align: center;
+    				width: 100%;
+    				z-index: 9999;
+				}
+				.message {
+				    opacity: .1
+				}
+				
+				.tooltip-wrap {
+                position: relative;
+            }
+            
+            .tooltip-wrap .tooltip-content {
+                display: none;
+                position: absolute;
+            
+                bottom: 75%;
+                width: 500px;               
+                left: -100%;
+                right: 1%;
+                padding: .5rem .75rem;
+                text-align: justify;
+                //box-shadow: 5px 5px 15px #888888
+            }
+            
+            .tooltip-wrap:hover .tooltip-content {
+                display: block;
+                z-index: 9999;
+                border: 1px solid #bebebe;
+                margin: 7px;
+                background: #FAFCFF;
+                height: auto;
+                border-color: #757575;
+                font-size: .75rem;
+                border-radius: 5px;
+                font-family: "Salesforce Sans",Arial,sans-serif;
+                color: #fff; 
+                background-color: #16325c;
+                            
+            }
+		    </style>
+		</body>
+	</html>	
+</apex:page>

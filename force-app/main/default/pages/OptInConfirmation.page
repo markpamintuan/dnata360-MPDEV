@@ -1,0 +1,210 @@
+<apex:page controller="OptInConfirmationController" action="{!onLoad}" showheader="false">
+   <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        @font-face {
+            font-family: 'Helvetica Neue';
+            src: url({!URLFOR($Resource.EmiratesFonts, '/emiratesFonts/HelveticaNeue-Roman.otf')});
+        }
+
+        @font-face {
+            font-family: 'EKB';
+            src: url({!URLFOR($Resource.EmiratesFonts, '/emiratesFonts/Emirates-Bold.otf')});
+        }
+
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        [class*="col-"] {
+            float: left;
+            padding: 15px;
+        }
+
+        html {
+            font-family: "Lucida Sans", sans-serif;
+        }
+
+        .header {
+            padding: 15px;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu li {
+            padding: 8px;
+            margin-bottom: 7px;
+            background-color: #33b5e5;
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+
+        .menu li:hover {
+            background-color: #0099cc;
+        }
+
+        .aside {
+            background-color: #33b5e5;
+            padding: 15px;
+            color: #ffffff;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+        /* For mobile phones: */
+
+        [class*="col-"] {
+            width: 100%;
+        }
+
+        @media only screen and (min-width: 768px) {
+            /* For desktop: */
+            .col-1 {
+                width: 8.33%;
+            }
+            .col-2 {
+                width: 16.66%;
+            }
+            .col-3 {
+                width: 25%;
+            }
+            .col-4 {
+                width: 33.33%;
+            }
+            .col-5 {
+                width: 41.66%;
+            }
+            .col-6 {
+                width: 50%;
+            }
+            .col-7 {
+                width: 58.33%;
+            }
+            .col-8 {
+                width: 66.66%;
+            }
+            .col-9 {
+                width: 75%;
+            }
+            .col-10 {
+                width: 83.33%;
+            }
+            .col-11 {
+                width: 91.66%;
+            }
+            .col-12 {
+                width: 100%;
+            }
+        }
+        </style>
+    </head>
+    <apex:form >
+    
+         <body>
+            <div class="header">
+            <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+            
+            </div>
+            
+            <apex:pageBlock rendered="{!showErrMsg}">
+                <apex:pageMessages ></apex:pageMessages>
+            </apex:pageBlock>
+            
+            
+                <div class="row" style="width: fit-content; margin: auto;">
+                <div class="col-6" style="width: fit-content; margin: auto; text-align: center;">
+                    <br/>
+                     <a href="https://www.emiratesholidays.com/de_de/?&utm_source=email&utm_medium=newsletter_signup&utm_term=header">
+                         <img src="{!logoURL}" alt="Emirates" width="350px" style="margin: auto; display: inline; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: 0 none;"  />
+                    </a>
+                         <br/>
+                    <br/>
+                            <apex:outputPanel rendered="{!showConfirmMsg }">
+                                <h2 style="color:#222222;font-family:'EKB',Helvetica,Arial,sans-serif;font-size:1.5em;font-weight:400;line-height:26px;margin:14px 0 14px 0;font-size:18px;text-align:center;">Vielen Dank für Ihre Anmeldung!</h2>
+                                <br/><br/>
+                                In der Zukunft genießen Sie viele Vorteile und erhalten zuerst Neuigkeiten über:
+                                <br/>
+                                     <ul style="width: fit-content; margin: auto; text-align: left;">
+                                              <li>Unsere besten Reiseangebote</li>
+                                              <li>Tipps von unseren Urlaubsexperten</li>
+                                              <li>Informationen zu den neuesten Reisezielen und Trends</li>
+                                     </ul>
+                                <br/>
+                                Denken Sie schon an Ihre nächste Reise? Wir helfen Ihnen gerne dabei, Ihren perfekten Urlaub zu planen. <br/> Rufen Sie uns an unter: 069 - 94519923 oder besuchen Sie unsere Webseite 
+                                <a href="https://www.emiratesholidays.com/de_de/?&utm_source=email&utm_medium=newsletter_signup&utm_term=link">hier.</a>
+                                <br/>
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel rendered="{! showDeclineMsg }">
+                                <h2 style="color:#222222;font-family:'EKB',Helvetica,Arial,sans-serif;font-size:1.5em;font-weight:400;line-height:26px;margin:14px 0 14px 0;font-size:18px;text-align:center;">Abmeldung erfolgreich.</h2>
+                                <br/>
+                                Schade, dass Sie sich von unserem Mailing-Service abgemeldet haben, Sie werden nun keine
+                                weiteren E-Mails mehr von uns erhalten. Sollte Ihre Abmeldung nur ein Versehen gewesen sein, so können
+                                Sie sich jeder Zeit <a href="https://www.emiratesholidays.com/de_de/?&utm_source=email&utm_medium=newsletter_signout&utm_term=header">hier</a> wieder anmelden.
+                                
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel rendered="{! showOptOutMsg  }">
+                             Bitte registrieren Sie sich erneut für unseren Newsletter auf der Webseite oder rufen Sie unser Serviceteam an.
+                            </apex:outputPanel>
+                            
+                            
+                            
+                           
+                    <!--/p-->
+                    <!-- 
+                        <apex:pageBlock rendered="{!showConfirmMsg}">
+                            <p>
+                                More Message here....
+                            </p>
+                        </apex:pageBlock>
+                        <apex:pageBlock rendered="{!showDeclineMsg}">
+                            <p>
+                                More Message here....
+                            </p>
+                        </apex:pageBlock>
+                    -->
+                    
+                    <br/>
+                    <br/>
+                <div class="callout-footer" style="font-family: tahoma, arial, verdana; color: #6c6f70; font-size: 12px !important; font-weight: normal; line-height: 1.6; text-align: center; margin: 0; padding: 0;" align="center">
+                    <div style="white-space: nowrap;display:inline-block"> {!brandDomainName.Privacy_Label__c} {! year(today())} |
+                    
+                        </div>&nbsp;
+                    <div style="white-space: nowrap;display:inline-block"> 
+                        <a href="{!brandDomainName.Privacy_URL__c}" target="_blank" class="text-link" style="font-family: tahoma, arial, verdana; text-decoration: none; color: #2BA6CB; margin: 0; padding: 0;">
+                    {!brandDomainName.Privacy_Policy_Label__c}</a> 
+                    </div> 
+                </div>   
+                 </div>
+             
+                </div>
+            
+            
+                
+            
+            
+            
+            <div class="col-3 right">
+            </div>
+        </body>
+        
+    </apex:form>
+    
+</apex:page>

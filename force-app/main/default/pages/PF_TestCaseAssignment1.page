@@ -1,0 +1,23 @@
+<apex:page controller="PF_NewTestCaseAssignmentExtension" showHeader="false" sidebar="false">
+
+  <apex:form >
+  
+      <apex:outputPanel id="session">
+      <apex:pageBlock title="New TestCase Assignment">
+         
+          <apex:pageBlockSection title="">
+               <apex:commandButton value="Add" action="{!addNewAssigne}" rerender="session"/>
+               <apex:inputField label="Date" value="{!testCaseAss.PF_Target_Completion_Date__c}"/>
+               <apex:repeat value="{!testCaseAssWrapList}" var="sessW">
+                  <apex:inputField required="true" value="{!sessW.testCaseAssgn.PF_Assigned_To__c}"/>
+                  <apex:inputField required="true" value="{!sessW.testCaseAssgn.PF_Target_Completion_Date__c}"/>
+               </apex:repeat>
+          </apex:pageBlockSection>
+          <div align="center" draggable="false" >
+          <apex:commandButton value="Save" action="{!onSave}" />
+      </div>
+      </apex:pageBlock>
+      </apex:outputPanel>
+      
+        </apex:form>
+</apex:page>

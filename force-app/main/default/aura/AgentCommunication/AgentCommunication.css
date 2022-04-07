@@ -1,0 +1,161 @@
+.THIS {    
+  
+}
+
+
+.THIS .slds-progress{
+    width:20% !important;
+}
+
+.THIS .Name{
+    background:white;
+    padding:15px;
+}
+
+.THIS.scrollerSize {
+    height: 268px;
+    width:100%;
+    background-color:#f0f8ff;	  
+}
+
+.THIS .customerChat{
+        margin: 1%;
+    border: 1px solid black;
+    padding: 4%;
+    border-radius: 9px;
+    border-bottom-right-radius: 0;
+    background-color: white;
+    border-color: #f2f2f2;
+    width: 80%;
+    float: right;
+       
+}
+
+.THIS .agentChat{
+    margin: 1%;
+    border: 1px solid black;
+    padding: 4%;
+    border-radius: 9px;
+    border-bottom-left-radius: 0;
+    background-color: #055DB6;
+    color: white;
+    border-color: #055DB6;
+    width: 80%; 
+    float:left;
+   
+}
+
+
+
+.THIS.container{
+    background-color:white;
+    padding: 5%;
+    padding-bottom: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.THIS .sperator{
+    margin:0px;
+}
+
+.THIS .headingtxt{
+    padding-bottom:1%
+}
+
+.THIS.replystyle{
+    background-color:white;
+    width:100%;
+    padding:5%;
+    padding-top:1%;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+.THIS .icn svg{
+    fill:rgb(5, 93, 182);    
+}
+
+.THIS .sendIcon{
+    padding-left: 14px
+}
+
+.THIS .chat svg{
+    fill:rgb(5, 93, 182);    
+}
+
+
+.THIS .opacityclass{
+    opacity : 0.3;
+}
+
+.THIS .flexipageComponent{
+    position:relative;
+}
+
+.THIS .LeftMargin{
+    margin-left: 30px;
+}
+.THIS .rightMargin{
+    margin-right: 30px;
+    float: right;
+}
+
+
+.THIS .wordbreak{
+    word-wrap:normal;
+}
+
+.THIS .exampleHolder{
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    top: 50%;
+}
+
+.THIS .tableStyle{
+    width:60%
+}
+.THIS .tempText .slds-textarea{
+    height:180px;
+    resize:none!important;
+}
+
+.THIS textarea{
+    height:77px;
+   
+}
+
+.THIS .slds-modal{
+    position:fixed !important;
+}
+
+.THIS .slds-modal__content{
+    min-height:fit-content;
+}
+
+.THIS .slds-backdrop{
+    position:fixed !important;
+}
+
+
+.THIS .sendSMS{
+    float:right;
+    padding-top:1%;
+    display:inline-flex;
+}
+
+.THIS .sendButton{
+    float:right;
+    width:165px;
+}
+
+
+.THIS .checkbox{
+    display:inline-block;
+}
+
+.THIS .inputtextarea{
+    height:250px;
+}

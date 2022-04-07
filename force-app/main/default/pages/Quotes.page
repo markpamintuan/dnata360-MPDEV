@@ -1,0 +1,2054 @@
+<apex:page standardController="Case"  extensions="QuotesController" showHeader="true" sidebar="true" doctype="html-5.0">
+    <apex:slds />
+    <c:Dnata_CSS />
+    <style>
+        
+        
+        .liItem:hover{
+        background-color: #d4d4d4 !important;
+        cursor: pointer;
+        }
+        
+        li{
+        padding-left:12px !important;
+        }
+    </style>
+    
+    <div class="container quotes">
+        <div id="divQuoteDetails">
+        <apex:form id="frm">
+            <apex:inputHidden id="ih-dateFrom" value="{!caseDetails.DateFrom}"/>
+            <apex:inputHidden id="ih-dateTo" value="{!caseDetails.DateTo}"/>
+            <apex:inputHidden id="ih-childages" value="{!childAges}" />
+            <apex:inputHidden id="ih-disclaimer" value="{!disclaimer}" />
+            <apex:inputHidden id="emailText" value="{!emailText}" /> 
+            <apex:actionFunction reRender="most-outer-panel,outerEmailPopupId,emailPopupId" action="{!validateCaseBfrEmail}" name="validateCase" oncomplete="refreshvalidprice"/>
+            <apex:actionFunction reRender="outerEmailPopupId,emailPopupId" action="{!closeEmailPopup}" name="closeEmailPopup" oncomplete="refreshvalidprice"/>
+            <apex:outputPanel id="most-outer-panel">
+                <apex:actionFunction reRender="most-outer-panel,validprice" name="refreshvalidprice"/>
+                <!--<apex:form >-->
+                <div class="slds">
+                    <!-- <center>
+<div class="slds-p-horizontal--small slds-size--1-of-1" style="font-size:24px;">
+Quote for {!caseDetails.CustomerName} - {!currentOptionId}
+</div>
+</center>
+<hr/> -->
+                    <div class="slds-page-header">
+                        <div class="slds-media">
+                            <!--<div class="slds-media__figure">
+<span class="slds-icon_container slds-icon-standard-opportunity" title="Description of icon when needed">
+</span>
+</div>-->
+                            
+                            <div class="slds-media__figure">
+                                <svg aria-hidden="true" class="slds-icon slds-icon-standard-quotes">
+                                    <use href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#quotes')}"></use>
+                                </svg>
+                            </div>
+                            <div class="slds-media__body">
+                                <!-- buttons goes here -->
+                                
+                                <div id="wrapper">
+                                    <div id="leftcolumn" style=" float: left;">
+                                        <p style="text-align: left !important;" class="slds-text-body_small slds-line-height_reset">Quote</p>
+                                        <h1  class="slds-page-header__title slds-truncate slds-align-middle" title="{!caseDetails.CustomerName} ">{!caseDetails.CustomerName}</h1>
+                                        <!--<div class="slds-p-horizontal--small slds-size--1-of-1" style="font-size:24px;">
+Quote for {!caseDetails.CustomerName} - {!currentOptionId}
+</div>-->
+                                    </div>
+                                    <div id="rightcolumn" style=" float: right;padding-top: 5px;">
+                                        <div>
+                                            <!--<apex:commandButton onclick="deleteQuoteOpt();"  value="Delete" styleClass="slds-button slds-button_destructive" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>-->
+                                            <!--<apex:commandButton onclick="cloneQuoteOption();" value="Clone" styleClass="slds-button slds-button--neutral" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>-->
+                                            <!--Debug info: header.id = {!header.id} , headerid = {!headerid} , totalOptions = {!totalOptions} , currentOpt = {!currentOpt} -->
+                                            <apex:outputPanel rendered="{!IF(currentOptionId != 'QuoteInformation', true,false)}">
+                                                <apex:outputPanel rendered="{!IF(myMapSize > 1 && currentOptionId != '1',true,false)}">
+                                                    <button type="button" onclick="deleteQuoteOpt();" class="slds-button slds-button_destructive deletebutton" >Delete</button>
+                                                </apex:outputPanel>
+                                                <button type="button" onclick="cloneQuoteOption();hideclonebutton();" class="slds-button slds-button--neutral clonebutton">Clone</button>
+                                                <button type="button" onclick="finalizeQuoteOption('{!currentOptionId}');" class="slds-button slds-button--neutral">Confirm Option</button>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!IF(header.id == null, true,false)}">
+                                                <button type="button" onclick="disableButton('topNextButtonId');return setParameters();" class="slds-button slds-button--neutral" id="topNextButtonId">Next</button>
+                                            </apex:outputPanel>
+                                            <!--<apex:outputPanel rendered="{!IF(header.Id != null, true,false)}">
+<button type="button" onclick="return updateQuoteOption();" class="slds-button slds-button--neutral">Next</button>
+</apex:outputPanel>-->
+                                            <apex:outputPanel rendered="{!IF(totalOptions != currentOpt &&  header.id != null && currentoptionid != 'QuoteInformation', true,false )}">
+                                                <button type="button" onclick="return updateQuoteOption();" class="slds-button slds-button--neutral">Next</button>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!IF(currentoptionid == 'QuoteInformation' &&  header.id != null, true,false)}">
+                                                <button type="button" onclick="return updateParameters();" class="slds-button slds-button--neutral">Save</button>
+                                            </apex:outputPanel>
+                                            
+                                            <apex:outputPanel rendered="{!IF(totalOptions == currentOpt && header.id != null  && currentoptionid != 'QuoteInformation', true,false)}">
+                                                <button type="button" onclick="saveAndPreview();" class="slds-button slds-button--neutral">Save &amp; Preview</button>
+                                                <!--<button type="button" onclick="preview('{!header.Id}');" class="slds-button slds-button--neutral">Save &amp; Preview</button>-->
+                                            </apex:outputPanel>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!--<apex:commandButton onclick="deleteQuoteOpt();"  value="Delete" styleClass="slds-button slds-button_destructive" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>
+<apex:commandButton onclick="cloneQuoteOption();" value="Clone" styleClass="slds-button slds-button--neutral" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>
+
+
+<apex:outputPanel rendered="{!IF(header.Id == null, true,false)}">
+<button type="button" onclick="return setParameters();" class="slds-button slds-button--neutral">Next</button>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!IF(header.Id != null, true,false)}">
+<button type="button" onclick="return updateQuoteOption();" class="slds-button slds-button--neutral">Next</button>
+</apex:outputPanel> -->
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <apex:pageMessages ></apex:pageMessages>
+                    
+                    <div class="slds-grid">
+                        
+                        <div class="slds-col slds-size--1-of-6 left-panel">
+                            <div class="menu-panel">
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button onclick="setQuoteOption('QuoteInformation')" id="QuoteInformation" type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option">
+                                            <span class="slds-truncate" title="Section Title">Quote Information</span>
+                                        </button>
+                                    </h3>
+                                </div>
+                                <!-- apex repeat need to be added here -- for each option create a new row -->
+                                
+                                <apex:repeat value="{!mapQuoteItems}" var="key">
+                                    <div class="slds-section slds-is-open ">
+                                        <h3 class="slds-section__title">
+                                            <button onclick="setQuoteOption('{!key}')" type="button" aria-controls="expando-unique-id" aria-expanded="true" class="{!key} slds-button slds-section__title-action ">
+                                                <span class="slds-truncate option-title" title="Section Title">Option {!key}</span>
+                                            </button>
+                                        </h3>
+                                    </div>
+                                </apex:repeat>
+                                <!-- apex repear ends here -->
+                                <!--<div class="slds-section slds-is-open unselected-option">
+<h3 class="slds-section__title">
+<button aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action unselected-option">
+<span class="slds-truncate" title="Section Title">Option 1</span>
+</button>
+</h3>
+</div> -->
+                                <div class="slds-section slds-is-open unselected-option">
+                                    <h3 class="slds-section__title">
+                                        <button onclick="preview('{!header.Id}','QuoteInformation');" type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action unselected-option">
+                                            <span class="slds-truncate" title="Section Title">Preview</span>
+                                        </button>
+                                    </h3>
+                                </div>
+                                <div class="slds-section slds-is-open unselected-option">
+                                    <h3 class="slds-section__title">
+                                        <!--<button  onclick="sendQuoteJS('{!header.Id}');" type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action unselected-option">-->
+                                        <button  onclick="emailQuote('{!header.Id}');" type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action unselected-option">    
+                                            <span class="slds-truncate" title="Section Title">Send</span>
+                                        </button>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size--5-of-6 right-panel">
+                            <apex:outputPanel id="right-panel" rendered="{!IF(currentOptionId == 'QuoteInformation', true,false)}">
+                                <!-- Customer Details Section Starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option">
+                                            <!--<svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#switch')}" />
+</svg>-->
+                                            <span class="slds-truncate" title="Section Title">Customer Information</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1 ">
+                                                <div class="slds-form-element left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Customer Name</label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:outputPanel ><input type="text" id="input-id-01" class="slds-input" value="{!caseDetails.CustomerName}" disabled="true" /></apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Case Number</label>
+                                                    <div class="slds-form-element__control">
+                                                        <a href="/lightning/r/Case/{!Case.Id}/view?0.source=alohaHeader"><input type="text" id="input-id-01" class="slds-input" value="{!caseDetails.CaseNumber}" readonly="true" style="border-color:#c9c7c5;background:#ecebea;padding-left:10px;padding-top:2px;cursor:pointer" /></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Customer Section ends here -->
+                                
+                                <!-- Quote INformation Section starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option">
+                                            <span class="slds-truncate" title="Section Title">Quote Information</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Destination</label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:outputPanel ><apex:inputField value="{!parentRecord.Org_Destinations__c}" html-disabled="true" styleClass="slds-input" /></apex:outputPanel>
+                                                        <!--<input type="text" id="input-id-01" class="slds-input" value="{!caseDetails.Destination}" disabled="true" />-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Traveller Type</label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:outputPanel ><apex:inputField value="{!parentRecord.Org_Traveller__c}" html-disabled="true" styleClass="slds-input" /></apex:outputPanel>
+                                                        <!--<input type="text" id="input-id-01" class="slds-input" value="{!caseDetails.TravellerType}" disabled="true" />-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-datefrom">Date from<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="date" id="input-id-datefrom" class="slds-input" required="required"/>-->
+                                                        <apex:inputField id="quote-date-from" required="true" value="{!header.Date_From__c}" styleClass="slds-input" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    
+                                                    <label class="slds-form-element__label" for="input-id-dateto">Date to<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<apex:inputField value="{!parentRecord.Org_Departure_Date__c}" styleClass="slds-input"/>-->
+                                                        <!--<input type="date" id="input-id-dateto" class="slds-input"  />-->
+                                                        <apex:inputField id="quote-date-to" required="true" value="{!header.Date_To__c}" styleClass="slds-input"/>
+                                                        
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell left-cell-label">
+                                                    <apex:outputPanel rendered="{!caseDetails.Brand !='trp'}">
+                                                    <label class="slds-form-element__label" for="input-id-dateto">Errata<!--<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr>--></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<apex:inputField value="{!parentRecord.Org_Departure_Date__c}" styleClass="slds-input"/>-->
+                                                        <!--<input type="date" id="input-id-dateto" class="slds-input"  />-->
+                                                        <apex:inputTextarea id="quote-errata" required="false" value="{!caseDetails.Errata}" styleClass="slds-input"/>
+                                                        
+                                                    </div>
+                                                        </apex:outputPanel>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Number of Adults<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:outputPanel >
+                                                            <apex:inputText id="no-of-adults" styleClass="slds-input" value="{!caseDetails.NoOfAdults}" label="Number Of Adults" required="true"  /></apex:outputPanel>
+                                                        <!--<input type="number" id="input-id-01" class="slds-input" value="{!caseDetails.NoOfAdults}"/>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Number of Children<!--<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr>--></label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:inputText id="no-of-childs" required="true" styleClass="slds-input" value="{!caseDetails.NoOfChildren}" label="Number of Children">
+                                                            <apex:actionSupport event="onblur" 
+                                                                                action="{!addChildAgeRecords}" 
+                                                                                rerender="right-panel" oncomplete="setFocus()"/>
+                                                        </apex:inputText>
+                                                        <!--<input type="number" id="input-id-01" class="slds-input" value="{!caseDetails.NoOfChildren}"  />-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Quote Information Ends here -->
+                                <script>
+                                
+                                
+                                $(document).ready(function() {  
+                                    var currentpage = "{!currentoptionid}";
+                                    var cYear = new Date().getFullYear() ;     
+                                    if(currentpage=='QuoteInformation'){
+                                        var startYear=(cYear - 12);          
+                                        var endYear=(cYear);  
+                                    } else {
+                                        var startYear=(cYear);          
+                                        var endYear=(cYear + 4);     
+                                    }
+                                    
+                                    var htmlStr='';         
+                                    if(startYear<endYear){
+                                        for(i=startYear;i<endYear+1;i++){
+                                            htmlStr += "<option value=\""+i+"\">"+i+"</option>";
+                                        }
+                                        $('#calYearPicker').html(htmlStr);
+                                    }
+                                    $('#sidebarDiv #hideThisHomePageComp').parent().parent().hide();
+                                    
+                                } );
+                                
+                                
+                                }
+                                </script>                                
+                                <!-- Age INformation Section starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option">
+                                            <!--<svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#switch')}" />
+</svg>-->
+                                            <span class="slds-truncate" title="Section Title">Age Information</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <apex:repeat value="{!ageDetails}" var="ad">
+                                                <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                    <div class="slds-form-element {!ad.CSSClass}">
+                                                        <div class="slds-form-element right-cell right-cell-label">
+                                                            <label class="slds-form-element__label" for="input-id-01">{!ad.ChildName}<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                            <apex:inputField value="{!ad.ChildTraveller.Age_of_child__c}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </apex:repeat>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Age Information Ends here -->
+                                
+                                <!-- Quote Options Section starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option">
+                                            <!--<svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#switch')}" />
+</svg>-->
+                                            <span class="slds-truncate" title="Section Title">Quote Options</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element slds-is-required left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Number of Options<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!-- <input type="text" id="input-id-01" class="slds-input" value="{!caseDetails.NoOfOptions}"/>-->
+                                                        <apex:inputText id="no-of-options" styleClass="slds-input" value="{!caseDetails.NoOfOptions}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+											
+                                            <apex:outputPanel rendered="{!IF(and(parentRecord.Record_Type_Name__c != 'EKH - Tailor Made Enquiry',parentRecord.Org_Brand__c != 'trp'),true,false)}">
+												<div class="slds-size_1-of-2 slds-max-small-size_1-of-1" id="tailormadeCheckbox">
+													<div class="slds-form-element slds-is-required right-cell">
+														<label class="slds-form-element__label" for="input-id-01">Tailormade<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+														<div class="slds-form-element__control">
+															<apex:inputCheckbox id="isTailormade"  value="{!caseDetails.Tailormade}"/>
+														</div>
+													</div>
+												</div>
+                                            </apex:outputPanel>
+																					
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Quote Options Ends here -->
+                                
+                                <!-- Disclaimer section -->
+                                
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option">
+                                            
+                                            <span class="slds-truncate" title="Section Title">Disclaimer</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element">
+                                                    <!-- <label class="slds-form-element__label" for="input-id-01">Disclaimer</label>-->
+                                                    <div class="slds-form-element__control">
+                                                        <!--<apex:inputTextArea id="editor1" styleClass="slds-input" rows="5"/>-->
+                                                        <textarea id="disclaimer-text" name="editor2" rows="4" class="editor slds-input"/>
+                                                        <!--<input type="number" id="input-id-01" class="slds-input" value="{!caseDetails.NoOfChildren}"  />-->
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- disclaimer section ends here -->
+                            </apex:outputPanel>
+                            
+                            <!-- Tailormade option section -->
+							
+                            <table style="-fs-table-paginate: paginate;">
+                                <apex:outputPanel id="tailormade-option-section" rendered="{!AND(caseDetails.Tailormade,currentOptionId != 'QuoteInformation')}">
+                                    <div class="slds-section slds-is-open" >
+                                        <h3 class="slds-section__title">
+                                            <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                                <span class="slds-truncate" title="Section Title" id = 'tairlormadeOption'>Tailormade Itinerary</span>
+                                            </button>
+                                        </h3>
+                                        <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-size_2-of-2 slds-max-small-size_1-of-1">
+                                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer " style="table-layout:fixed">
+                                                        
+                                                        <label class="slds-form-element__label" for="input-id-01">Itinerary<abbr class="slds-required" title=""><b class="bolded-asterisk"></b></abbr></label>
+                                                        <div class="slds-form-element__control" style="page-break-inside:always">
+                                                            <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                            <!-- <apex:inputTextArea value="{!tailormadeItinerary}" styleClass="slds-input" required="false" id="tailormadeOption"/> -->
+                                                            <!-- <apex:inputHidden id="ih-tailormadeoption" value="{!tempTailormadeItinerary}" /> -->
+                                                            <input type="hidden" id="tailormadeOption" value="{!tailormadeItinerary}"/>
+                                                            <textarea id="tailormadeoption-text" name="tailormadeoptioneditor" rows="4" class="editor slds-input"/><!-- T-00413 -->
+                                                            <!-- <apex:inputField value="{!quoteOption.Tailormade_Itinerary__c}"/> -->
+                                                        </div>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </apex:outputPanel>
+                            </table>
+                            
+                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/><br/></div>                              
+                            
+                            <apex:outputPanel id="option-section" rendered="{!IF(currentOptionId != 'QuoteInformation', true,false)}">
+                                
+                                <!-- Flights Details Section Starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                            <!--<svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#switch')}" />
+</svg>-->
+                                            <span class="slds-truncate" title="Section Title" id = 'Flight'>Flights</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1">
+                                                <apex:outputPanel id="flightTable" rendered="true">
+                                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer " style="table-layout:fixed">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:13%">
+                                                                    <div class="slds-truncate">Action</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:7%">
+                                                                    <div class="slds-truncate" title="Airline">Airline</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:8%">
+                                                                    <div class="slds-truncate" title="Flight Number">Flight Number</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:10%">
+                                                                    <div class="slds-truncate" title="FligthClass">Flight Class</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:15%">
+                                                                    <div class="slds-truncate" title="From">From</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:15%">
+                                                                    <div class="slds-truncate" title="To">To</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:13%">
+                                                                    <div class="slds-truncate" title="Departure Date/Time">Departure Date/Time</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink" style="width:13%">
+                                                                    <div class="slds-truncate" title="Arrival Date/Time">Arrival Date/Time</div>
+                                                                </th>
+                                                                
+                                                                <th scope="col" class="slds-cell-shrink" style="width:8%;display:{!IF(totaloptionflightPrice[currentoptionId] == 0, 'table-cell','none')}" >
+                                                                    <div class="slds-truncate" title="Amount">Price</div>
+                                                                </th>
+                                                                
+                                                            </tr>
+                                                            
+                                                        </thead>
+                                                        <tbody>
+                                                            <apex:repeat value="{!mapQuoteItems[currentOptionId]}" var="i">
+                                                                <tr >
+                                                                    <td data-label="Action" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="Edit">
+                                                                            <a href="#" onclick="editLineItem('{!i.Id}','Flight');return false;">Edit</a> | 
+                                                                            <a href="#" onclick="deleteLineItem('{!i.Id}');return false;">Delete</a> |
+                                                                            <a href="#" onclick="returnLineItemnew('{!i.Airline__c}','{!i.Flight_No__c}','{!i.From__c}','{!i.To__c}','{!i.Departure_Date_Time__c}','{!i.Arrival_Date_Time__c}','{!$Component.air_airline}','{!$Component.air_flightno}','{!$Component.air_from}','{!$Component.air_to}','{!$Component.air_datefrom}','{!$Component.air_dateto}');return false;">Return</a>
+                                                                            
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Airline" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Airline_Name__c}">{!i.Airline__c} </div>
+                                                                    </td>
+                                                                    <td data-label="Flight Number" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Flight_No__c}">{!i.Flight_No__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Flight Class" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Flight_Class__c}">{!i.Flight_class__c}</div> 
+                                                                    </td>
+                                                                    <td data-label="From" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.From__c}">{!i.From__c}</div>
+                                                                    </td>
+                                                                    <td data-label="To" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.To__c}">{!i.To__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Departure Date/Time" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Departure_Date_Time__c}">
+                                                                            <apex:outputField value="{!i.Departure_Date_Time__c}"/>
+                                                                            <!--<apex:outputText value="{0,date,dd-MMM-yy hh:mm}"><apex:param value="{!i.Departure_Date_Time__c}"/></apex:outputText>-->
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Arrival Date/Time" style="display:{!IF(i.Type__c == 'Flight', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Arrival_Date_Time__c}">
+                                                                            <apex:outputField value="{!i.Arrival_Date_Time__c}"/>
+                                                                            <!--<apex:outputText value="{0,date,dd-MMM-yy hh:mm}"><apex:param value="{!i.Arrival_Date_Time__c}"/></apex:outputText>-->
+                                                                        </div>
+                                                                    </td >
+                                                                    <td data-label="To" style="display:{!IF(i.Type__c == 'Flight' &&  totaloptionflightPrice[currentoptionId] == 0 , 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.dtme_price__c}">{!recCurrency} {!i.dtme_price__c}</div> 
+                                                                    </td>
+                                                                    
+                                                                </tr>
+                                                            </apex:repeat>
+                                                        </tbody>
+                                                    </table>
+                                                        <apex:outputPanel rendered="{!totaloptionflightPrice[currentoptionId] > 0}">
+                                                        <table >
+                                                            
+                                                            <tr>
+                                                                
+                                                                <td data-label="Action" style="background-color:rgb(250, 250, 249);">
+                                                                        <div class="slds-truncate" title="Edit" style="float:right;padding-left:650px;">
+                                                                            <apex:outputPanel >
+                                                                            <a href="#" onclick="showEdit();">Edit</a> | 
+                                                                                <!-- <apex:actionSupport action="{!showEdit}" event="onclick" /> -->
+                                                                            </apex:outputPanel>
+                                                                            <apex:outputPanel >
+                                                                            <a href="#" onclick="removePriceforFlightPackageCost();">Delete</a> 
+                                                                                <!-- <apex:actionSupport action="{!removePriceforFlightPackageCost}" event="onclick"/> -->
+                                                                            </apex:outputPanel>
+                                                                            
+                                                                    </div>
+                                                                </td>
+                                                                <th class="rowData" style="text-align:right;font-family:'Salesforce Sans',Arial,sans-serif;font-size: 13px !important;background-color:rgb(250, 250, 249);padding:8px;"> Flight Package Cost</th>
+                                                                <th class="rowData" style="text-align:right;font-family:'Salesforce Sans',Arial,sans-serif;font-size: 13px !important;background-color:rgb(250, 250, 249);padding:8px;">{!totaloptionflightPrice[currentoptionId]}</th>
+                                                            </tr>
+                                                        </table>
+                                                        
+                                                    </apex:outputPanel>
+                                                    
+                                                    <apex:outputpanel >
+                                                        <!-- <table>
+<tr>
+<th class="rowData" style="text-align:left;font-size: 16px !important"> Flight Package Cost</th>
+<apex:inputText value="{!totaloptionflightPrice[currentoptionId]}" styleClass="slds-input" id="totalfliprice">
+<apex:actionSupport action="{!updatePriceforFlightPackageCost}" event="onkeypress"/>
+</apex:inputText>
+
+</tr>
+</table> -->
+                                                        <div style="display:{!if(showDivFlag,'block','none')};">
+                                                            <apex:outputPanel rendered="{!IF(showFPCButton, true, false)}">
+                                                            	<!-- 
+                                                                <button  type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px; ">Add Flight Package Cost
+                                                                    <apex:actionSupport action="{!toggleContent}" event="onclick"/>
+                                                                </button>
+                                                                -->
+                                                                <button  type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" onclick="toggleContent();">Add Flight Package Cost</button> 
+                                                            </apex:outputPanel>
+                                                            <apex:outputPanel id="editFPC">
+                                                            <div id="showFPC" style="display:{!if(showContent == true,'block','none')};" >
+                                                               <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/><br/></div>
+                                                                <div class="slds-size_1-of-2 slds-max-small-size_1-of-1"></div>
+                                                                    <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                                
+                                                                    <div class="slds-form-element right-cell right-cell-label" style="float:left;right:0px;left:730px;">
+                                                                        <label class="slds-form-element__label" for="input-id-01">Flight Package Cost</label>
+                                                                        <div class="slds-form-element__control" style="float:right;">
+                                                                            <apex:inputText value="{!totaloptionflightPrice[currentoptionId]}" styleClass="slds-input" id="totalfliprice" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                 <apex:outputPanel >
+                                                                 		<!--
+                                                                        <button  type="button" class="slds-button slds-button_brand" style="float:right;background-color:rgb(194, 57, 52);margin-left:3px;">
+                                                                            Cancel  
+                                                                            <apex:actionSupport action="{!removePriceforFlightPackageCost}" event="onclick"/>
+                                                                        </button>
+                                                                         -->
+                                                                     	<button  type="button" class="slds-button slds-button_brand" style="float:right;background-color:rgb(194, 57, 52);margin-left:3px;" onclick="removePriceforFlightPackageCost();">Cancel</button>
+                                                                    </apex:outputPanel> 
+                                                                    
+                                                                    <apex:outputPanel >
+                                                                    	<!-- 
+                                                                        <button  type="button" class="slds-button slds-button_brand" style="float:right;background-color:green;margin-right:3px;">
+                                                                            Save
+                                                                            <apex:actionSupport action="{!updatePriceforFlightPackageCost}" event="onclick"/>
+                                                                        </button>
+                                                                        -->
+                                                                        <button  type="button" class="slds-button slds-button_brand" style="float:right;background-color:green;margin-right:3px;" onclick="disableButton('saveFlightPackageCostButtonId');updatePriceforFlightPackageCost();" id="saveFlightPackageCostButtonId">Save</button>
+                                                                    </apex:outputPanel>     
+                                                 
+                                                             </div>
+                                                       </apex:outputPanel>
+                                                      </div>
+                                                    </apex:outputpanel>
+                                                </apex:outputPanel>
+                                            </div>
+                                            
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/><br/></div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Airline<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"   />-->
+                                                        <apex:inputField value="{!airline.Airline__c}" styleClass="slds-input" id="air_airline"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Flight Number<abbr class="slds-required" title=""><b class="bolded-asterisk"></b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!airline.Flight_No__c}" styleClass="slds-input" required="false" id="air_flightno"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">From<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!airline.From__c}" type="text" styleClass="slds-input" id="air_from" onkeyup="getRemoteAccountFrom('remoteFrom')"/>
+                                                        <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" id="remoteFrom">
+                                                            
+                                                        </ul>
+                                                        <div id="responseErrorsFrom">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">To<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!airline.To__c}" styleClass="slds-input" id="air_to" onkeyup="getRemoteAccountTo('remoteTo')"/>
+                                                        <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important;left:52.5%;width:95%;" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" id="remoteTo">
+                                                            
+                                                        </ul>
+                                                        <div id="responseErrorsTo">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Departure Date/Time<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="date" id="input-id-01" class="slds-input"   />-->
+                                                        <apex:inputField value="{!airline.Departure_Date_Time__c}" styleClass="slds-input" id="air_datefrom"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Arrival Date/Time<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!-- <input type="date" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!airline.Arrival_Date_Time__c}" styleClass="slds-input" id="air_dateto"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            <!-- button code goes here --->
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element left-cell ">
+                                                    <label class="slds-form-element__label" for="input-id-01">Flight class</label>
+                                                    <div class="slds-form-element__control">
+                                                        <!-- <input type="date" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!airline.Flight_Class__c}" styleClass="slds-input" id="flight_class"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1" style="display:{!if(or($Profile.Name != 'dTME - Retail Agent',$Profile.Name != 'dTME - Retail Manager'),'block','none')};">
+                                                <div class="slds-form-element right-cell right-cell-label ">
+                                                    <label class="slds-form-element__label" for="input-id-01">Price</label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="date" id="input-id-01" class="slds-input"   />-->
+                                                        <!--<apex:inputField value="" styleClass="slds-input" id="air_amount"/>-->
+                                                        <apex:inputText value="{!airline.dtme_price__c}" styleClass="slds-input" id="air_amount" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--<div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+<div class="slds-form-element left-cell left-cell-label">
+<label class="slds-form-element__label" for="input-id-01">Flight Package Cost</label>
+<div class="slds-form-element__control">
+<apex:outputPanel >
+<apex:inputText value="{!totaloptionflightPrice[currentoptionId]}" styleClass="slds-input" id="totalfliprice" >
+</apex:inputText>
+</apex:outputPanel>
+
+</div>
+</div>
+</div>--->
+                                            
+                                            <div class="slds-size_1-of-1 slds-max-small-size_1-of-1">
+                                                <apex:outputPanel rendered="{!IF(airline.Id == null, true, false)}">
+                                                    <button onclick="disableButton('addFlightButtonId');addFlightDetails('Flight','{!currentOptionId}');" type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" id="addFlightButtonId">Add</button>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!IF(airline.Id != null, true, false)}">
+                                                    <button onclick="disableButton('updateFlightButtonId');addFlightDetails('Flight','{!currentOptionId}');" type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" id="updateFlightButtonId">Update</button>
+                                                </apex:outputPanel>
+                                                
+                                            </div>
+                                            <!-- button code ends here --->
+                                            
+                                            
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+                                
+                                <!-- Customer Section ends here -->
+                                
+                                
+                                <!-- Flights Details Section Starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                            <span class="slds-truncate" title="Section Title" id='Hotel' >Hotels</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1">
+                                                <apex:outputPanel rendered="true">
+                                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout:fixed">
+                                                        <thead>
+                                                            <tr >
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate">Action</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Hotel Name">Hotel City</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Hotel Location">Hotel Name</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Check In">Check In</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Check Out">Check Out</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Room Type">Room Type</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Meal Type">Meal Type</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Amount">Price</div>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <apex:repeat value="{!mapQuoteItems[currentOptionId]}" var="i">
+                                                                
+                                                                <tr >
+                                                                    <td data-label="Action" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="Edit">
+                                                                            <a href="#" onclick="editLineItem('{!i.Id}','Hotel');return false;">Edit</a> | 
+                                                                            <a href="#" onclick="deleteLineItem('{!i.Id}');return false;">Delete</a>
+                                                                            
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Hotel City" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Hotel_Name__c}">{!i.Hotel_Location__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Hotel Name" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Hotel_Location__c}">{!i.Hotel_Name__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Check In" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Check_In__c}">
+                                                                            <apex:outputField value="{!i.Check_In__c}"/>
+                                                                            <!-- <apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!i.Check_In__c}"/></apex:outputText>-->
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Check Out" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Check_Out__c}">
+                                                                            <apex:outputField value="{!i.Check_Out__c}"/>
+                                                                            <!-- <apex:outputText value="{0,date,dd-MMM-yy}"><apex:param value="{!i.Check_Out__c}"/></apex:outputText>-->
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Room Type" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Room_Type__c}">{!i.Room_Type__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Meal Type" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Meal_Type__c}">{!i.Meal_Type__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Price" style="display:{!IF(i.Type__c == 'Hotel', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.dtme_price__c}">{!recCurrency} {!i.dtme_price__c}</div>
+                                                                    </td>
+                                                                </tr>
+                                                                
+                                                            </apex:repeat>
+                                                        </tbody>
+                                                    </table>
+                                                </apex:outputPanel>
+                                            </div>
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/><br/></div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Hotel City<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!hotel.Hotel_Location__c}" styleClass="slds-input" id="hotel-city" onkeyup="getHotelCityName('remoteCity')" />
+                                                        <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" id="remoteCity">
+                                                            
+                                                        </ul>
+                                                        <div id="responseErrors">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Hotel Name<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!hotel.Hotel_Name__c}" styleClass="slds-input" id="hotel-name" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+<div class="slds-form-element right-cell right-cell-label">
+<label class="slds-form-element__label" for="input-id-01">Hotel Location</label>
+<div class="slds-form-element__control">
+
+<!--     <apex:inputField value="{!hotel.Hotel_Location__c}" styleClass="slds-input" id="hotel-location"/>
+</div>
+</div>
+</div> -->
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Check In<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!-- <input type="date" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!hotel.Check_In__c}" styleClass="slds-input" id="hotel-check-in"  />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Check Out<abbr class="slds-required" ><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="date" id="input-id-01" class="slds-input"  />-->
+                                                        <apex:inputField value="{!hotel.Check_Out__c}" styleClass="slds-input" id="hotel-check-out"/>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Room Type</label>
+                                                    <div class="slds-form-element__control">
+                                                        
+                                                        <apex:inputField value="{!hotel.Room_Type__c}" styleClass="slds-input" id="hotel-room-type"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Meal Type</label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:inputField value="{!hotel.Meal_Type__c}" styleClass="slds-input" id="hotel-meal-type"/> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- button code goes here --->
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Special Request</label>
+                                                    <div class="slds-form-element__control">
+                                                        
+                                                        <apex:inputField value="{!hotel.Special_Request__c}" styleClass="slds-input" id="hotel-special-request"/>
+                                                    </div>
+                                                </div>  
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Price</label>
+                                                    <div class="slds-form-element__control">
+                                                        
+                                                        <apex:inputField value="{!hotel.dtme_price__c}" styleClass="slds-input" id="hotel-amount"/>
+                                                    </div>
+                                                </div>  
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element left-cell left-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">No of Rooms</label>
+                                                    <div class="slds-form-element__control">
+                                                        
+                                                        <apex:inputField value="{!hotel.No_Of_Rooms__c}" styleClass="slds-input" id="hotel-roomtypes"/>
+                                                    </div>
+                                                </div>  
+                                            </div>
+                                            
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <apex:outputPanel rendered="{!IF(hotel.Id == null, true, false)}">
+                                                    <button onclick="disableButton('addHotelButtonId');saveHotelLineItem('Hotel','{!currentOptionId}');" type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" id="addHotelButtonId">Add</button>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!IF(hotel.Id != null, true, false)}">
+                                                    <button onclick="disableButton('updateHotelButtonId');saveHotelLineItem('Hotel','{!currentOptionId}');" type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" id="updateHotelButtonId">Update</button>
+                                                </apex:outputPanel>
+                                            </div>
+                                            <!-- button code ends here --->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Customer Section ends here -->
+                                
+                                <!-- Flights Details Section Starts here -->
+                                <div class="slds-section slds-is-open">
+                                    
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                            <!--<svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#switch')}" />
+</svg>-->
+                                            <span class="slds-truncate" title="Section Title" id='Other'>Additional Services</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1">
+                                                <apex:outputPanel rendered="true">
+                                                    <table class="slds-table slds-table_bordered slds-table_cell-buffer" style="table-layout:fixed">
+                                                        <thead>
+                                                            <tr >
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate">Action</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Service Type">Service Type</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Description">Description</div>
+                                                                </th>
+                                                                <th scope="col" class="slds-cell-shrink">
+                                                                    <div class="slds-truncate" title="Amount">Price</div>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <apex:repeat value="{!mapQuoteItems[currentOptionId]}" var="i">
+                                                                <tr >
+                                                                    <td data-label="Action" style="display:{!IF(i.Type__c == 'Other Services', 'table-cell','none')}">
+                                                                        
+                                                                        <div class="slds-truncate" title="Edit">
+                                                                            <a href="#" onclick="editLineItem('{!i.Id}','Other');return false;">Edit</a> | 
+                                                                            <a href="#" onclick="deleteLineItem('{!i.Id}');return false;">Delete</a>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Service Type" style="display:{!IF(i.Type__c == 'Other Services', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Other_Service_Type__c}">{!i.Other_Service_Type__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Description" style="display:{!IF(i.Type__c == 'Other Services', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.Other_Service_Description__c}">{!i.Other_Service_Description__c}</div>
+                                                                    </td>
+                                                                    <td data-label="Price" style="display:{!IF(i.Type__c == 'Other Services', 'table-cell','none')}">
+                                                                        <div class="slds-truncate" title="{!i.dtme_price__c}">{!recCurrency} {!i.dtme_price__c}</div>
+                                                                    </td>
+                                                                </tr>
+                                                            </apex:repeat>
+                                                        </tbody>
+                                                    </table>
+                                                </apex:outputPanel>
+                                            </div>
+                                            <div class="slds-size_2-of-2 slds-max-small-size_1-of-1"><br/><br/></div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Type<!--<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr>--></label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:inputField id="add-serv-type" value="{!other.Other_Service_Type__c}" styleClass="slds-input"/>
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Description</label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:inputHidden id="ih-other-serv-desc" value="{!other.Other_Service_Description__c}"/>
+                                                        <!--<apex:inputTextarea id="service-desc-textarea" value="{!other.Other_Service_Description__c}" styleClass="slds-input"/>-->
+                                                        <textarea id="additional-desc" name="editor1" rows="4" class="slds-input" />
+                                                        <!-- <textarea rows="6" cols="80" id="input-id-01" class="slds-input" />-->
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <!-- button code goes here --->
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1" style="position: relative;bottom: 65px;" >
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Price</label>
+                                                    <div class="slds-form-element__control">
+                                                        
+                                                        <apex:inputField value="{!other.dtme_price__c}" styleClass="slds-input" id="other-amount"/> 
+                                                    </div>
+                                                </div>  
+                                            </div>
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <apex:outputPanel rendered="{!IF(other.Id == null, true, false)}">
+                                                    <button onclick="disableButton('addOtherButtonId');setAdditionalDescBeforeQuoteUpdate('Other','{!currentOptionId}');" type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" id="addOtherButtonId">Add</button>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!IF(other.Id != null, true, false)}">
+                                                    <button onclick="disableButton('updateOtherButtonId');setAdditionalDescBeforeQuoteUpdate('Other','{!currentOptionId}');" type="button" class="slds-button slds-button_brand" style="float: right; margin-top:24px;" id="updateOtherButtonId">Update</button>
+                                                </apex:outputPanel>
+                                            </div>
+                                            <!-- button code ends here --->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Customer Section ends here -->
+                                
+                                <!-- Flights Details Section Starts here -->
+                                <div class="slds-section slds-is-open">
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                            <span class="slds-truncate" title="Section Title">Total</span>
+                                        </button>
+                                    </h3>
+                                    <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Currency</label>
+                                                    <div class="slds-form-element__control">
+                                                        <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        <!--<apex:inputText value="{!totalPrice}" styleClass="slds-input"/>-->
+                                                        
+                                                        <apex:selectList styleClass="slds-input" value="{!recCurrency}" multiselect="false" size="1" >
+                                                            <apex:selectOptions value="{!currencyOptions}"></apex:selectOptions>
+                                                        </apex:selectList>
+                                                        <!--<apex:inputField value="{!other.Other_Service_Type__c}" styleClass="slds-input"/>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="slds-size_1-of-2 slds-max-small-size_1-of-1">
+                                                <div class="slds-form-element right-cell right-cell-label">
+                                                    <label class="slds-form-element__label" for="input-id-01">Total Price<abbr class="slds-required" title="required"><b class="bolded-asterisk">*</b></abbr></label>
+                                                    <div class="slds-form-element__control">
+                                                        <apex:outputPanel id="validprice">  
+                                                            <apex:inputText value="{!totalPriceRollup}" styleClass="slds-input" id="total-price" >
+                                                                <apex:actionSupport event="onchange" 
+                                                                                    action="{!isPriceValid}" 
+                                                                                    rerender="validprice"  />
+                                                            </apex:inputText>
+                                                            <apex:outputPanel rendered="{!(priceisvalid == false)}" id="validpricetext"><apex:outputText >* Total Price doesn't match the Running Total *</apex:outputText></apex:outputPanel>
+                                                            <!--<input type="text" id="input-id-01" class="slds-input"  />-->
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <apex:outputPanel rendered="{!caseDetails.Brand == 'trp'}">
+                                 <div class="slds-section slds-is-open">
+                                    
+                                    <h3 class="slds-section__title">
+                                        <button  type="button" aria-controls="expando-unique-id" aria-expanded="true" class="slds-button slds-section__title-action selected-option-lineitem">
+                                           
+                                            <span class="slds-truncate" title="Section Title" id='Notes'>Notes</span>
+                                        </button>
+                                    </h3>
+                                      <div aria-hidden="false" class="slds-section__content" id="expando-unique-id">
+                                        <div class="slds-grid slds-wrap">
+                                     
+                                                <div class="slds-form-element  left-cell">
+                                                    <label class="slds-form-element__label" for="input-id-01">Notes</label>
+                                             
+                                                    <div class="slds-size_2-of-2 slds-max-small-size_1-of-1" >
+                                                        <div class="slds-form-element__control">
+                                                            <!--<apex:inputHidden id="ih-other-serv-notes" value="{!notes}"/>-->
+                                                        <apex:inputTextarea id="service-desc-textarea" value="{!notes}" styleClass="slds-input" style="height:200px"/>
+                                                          <!-- <textarea rows="6" cols="80" id="input-id-01" class="slds-input" />-->
+                                                              </div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                         </div>
+                                     </div>
+                                     </div>
+                                    
+                                </apex:outputPanel>
+                                <!-- Customer Section ends here -->
+                            </apex:outputPanel>
+                        </div>
+                        
+                    </div>
+                    <div class="slds-modal__footer">
+                        
+                        <!--<apex:commandButton onclick="deleteQuoteOpt();"  value="Delete" styleClass="slds-button slds-button_destructive" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>-->
+                        <!--<apex:commandButton onclick="cloneQuoteOption();" value="Clone" styleClass="slds-button slds-button--neutral" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>-->
+                        <!--<apex:commandButton onclick="cloneQuoteOption();" value="Clone" styleClass="slds-button slds-button--neutral" rendered="{!IF(currentOptionId != null, true,false)}" reRender="most-outer-panel"/>-->
+                        <apex:outputPanel rendered="{!IF(currentOptionId != 'QuoteInformation', true,false)}">
+                            <apex:outputPanel rendered="{!IF(mymapsize > 1, true,false)}">
+                                <button type="button" onclick="deleteQuoteOpt();" class="slds-button slds-button_destructive deletebutton">Delete</button>
+                                <!--<apex:commandButton onclick="deleteQuoteOpt();return 0;" styleClass="slds-button slds-button_destructive" title="Delete" status="pleasewaitbuttons" />-->
+                            </apex:outputPanel>
+                            <button type="button" onclick="cloneQuoteOption();hideclonebutton();" class="slds-button slds-button--neutral clonebutton">Clone</button>
+                            <button type="button" onclick="finalizeQuoteOption('{!currentOptionId}');" class="slds-button slds-button--neutral">Confirm Option</button> 
+                        </apex:outputPanel>
+                        
+                        <!--<apex:commandButton value="Previous" styleClass="slds-button slds-button--neutral" reRender="most-outer-panel"/>-->
+                        
+                        <apex:actionFunction name="cloneQuoteOption" action="{!cloneQuoteOption}" oncomplete="scrollWin('{!currentOptionId}');javascript:window.alert('Option has been cloned');showclonebutton();" reRender="most-outer-panel"/>
+                        <apex:actionFunction action="{!deleteQuoteOption}" reRender="most-outer-panel" name="deleteQuoteOption" oncomplete="reloadPage('DeleteQuote');scrollWin('{!currentOptionId}');showdeletebutton();"> <!--highlightTab('{!currentOptionId}')-->
+                            <!--<apex:param assignTo="{!currentOptionId}" name="currentOptionId" value=""/>-->
+                        </apex:actionFunction>
+                        
+                        <apex:actionFunction action="{!saveQuoteDetails}" name="saveQuoteDetails" reRender="most-outer-panel,modal-content-id-1" oncomplete="scrollWin('{!currentOptionId}');">
+                            <apex:param assignTo="{!childAges}" name="childAges" value=""/>
+                            <apex:param assignTo="{!caseDetails.DateFrom}" name="dateFrom" value=""/>
+                            <apex:param assignTo="{!caseDetails.DateTo}" name="DateTo" value=""/>
+                            <!--<apex:param assignTo="{!optionOperation}" name="optionOperation" value=""/>-->
+                            <apex:param assignTo="{!disclaimer}" name="disclaimer" value=""/>
+                            
+                        </apex:actionFunction>
+                        
+                        <apex:actionFunction action="{!updateQuoteDetails}" name="updateQuoteDetails" reRender="most-outer-panel,modal-content-id-1" oncomplete="scrollWin('{!currentOptionId}');">
+                            <apex:param assignTo="{!childAges}" name="childAges" value=""/>
+                            <apex:param assignTo="{!caseDetails.DateFrom}" name="dateFrom" value=""/>
+                            <apex:param assignTo="{!caseDetails.DateTo}" name="DateTo" value=""/>
+                            <!--<apex:param assignTo="{!optionOperation}" name="optionOperation" value=""/>-->
+                            <apex:param assignTo="{!disclaimer}" name="disclaimer" value=""/>
+                            
+                        </apex:actionFunction>
+                        
+                        <apex:actionFunction action="{!setCurrentOption}" name="setCurrentOption" reRender="most-outer-panel" oncomplete="highlightTab('{!currentOptionId}')">
+                            <apex:param assignTo="{!currentOptionId}" name="currentOptionId" value=""/>
+                        </apex:actionFunction>
+                        <apex:actionFunction action="{!sendQuote}" name="send" reRender="most-outer-panel" status="pleasewait" oncomplete="emailsendalert();" >
+                            <apex:param assignTo="{!emailText}" name="emailText" value=""/>
+                        </apex:actionFunction>
+                        <apex:actionFunction action="{!setMail}" name="setMail" reRender="modal-content-id-1" /> 
+                        <apex:actionFunction action="{!finalizeQuoteOption}" name="finalizeQuoteOption" reRender="most-outer-panel" oncomplete="finalize('{!currentOptionId}')">
+                            <apex:param assignTo="{!currentOptionId}" name="currentOptionId" value=""/>
+                        </apex:actionFunction>
+                        <apex:actionFunction action="{!saveQuoteLineItem}" name="saveQuoteLineItem" reRender="most-outer-panel"  oncomplete="highlightTab('{!currentOptionId}');scrollwindow('{!lineItemName}')">
+                            <apex:param assignTo="{!lineItemName}" name="lineItemName" value=""/>
+                            <apex:param assignTo="{!currentOptionId}" name="currentOptionId" value=""/>
+                            <apex:param assignTo="{!otherDesc}" name="otherDesc" value=""/>
+                            <apex:param assignTo="{!tailormadeItinerary}" name="tailormadeOption" value=""/>
+                        </apex:actionFunction>
+                        
+                        <apex:actionFunction action="{!toggleContent}" name="toggleContent" reRender="most-outer-panel" oncomplete="setTailormadeItinerary(CKEDITOR.instances['tailormadeoption-text']);"/>
+                        <apex:actionFunction action="{!updatePriceforFlightPackageCost}" name="updatePriceforFlightPackageCost" reRender="most-outer-panel" oncomplete="setTailormadeItinerary(CKEDITOR.instances['tailormadeoption-text']);"/>
+                        <apex:actionFunction action="{!removePriceforFlightPackageCost}" name="removePriceforFlightPackageCost" reRender="most-outer-panel" oncomplete="setTailormadeItinerary(CKEDITOR.instances['tailormadeoption-text']);"/>
+                        <apex:actionFunction action="{!showEdit}" name="showEdit" reRender="most-outer-panel" oncomplete="setTailormadeItinerary(CKEDITOR.instances['tailormadeoption-text']);"/>
+                        <apex:actionFunction action="{!removePriceforFlightPackageCost}" name="removePriceforFlightPackageCost" reRender="most-outer-panel" oncomplete="setTailormadeItinerary(CKEDITOR.instances['tailormadeoption-text']);"/>                        
+                        
+                        <apex:actionFunction action="{!setDisclaimer}" name="setDisclaimerAF" reRender="" />
+                        <apex:actionStatus id="pleasewait">                          
+                            <apex:facet name="start">
+                                <div class="waitingSearchDiv" id="el_loading" style="z-index:10000000;background-color: #DCD6D6; height: 100%;opacity:0.65;width:100%;">
+                                    <div class="waitingHolder" style="top: 274.2px; width: 91px;">
+                                        <img class="waitingImage" src="/img/loading.gif"     title="Please Wait..." />
+                                        <span class="waitingDescription">Sending...</span>
+                                    </div>
+                                </div>
+                            </apex:facet> 
+                        </apex:actionStatus>
+                        
+                        <apex:actionStatus id="pleasewaitbuttons">                          
+                            <apex:facet name="start">
+                                <div class="waitingSearchDiv" id="el_loading" style="z-index:10000000;background-color: #DCD6D6; height: 100%;opacity:0.65;width:100%;">
+                                    <div class="waitingHolder" style="top: 274.2px; width: 91px;">
+                                        <img class="waitingImage" src="/img/loading.gif"     title="Please Wait..." />
+                                        <span class="waitingDescription">Please Wait...</span>
+                                    </div>
+                                </div>
+                            </apex:facet> 
+                        </apex:actionStatus>
+                        
+                        <apex:actionFunction name="rerendermainpanel" reRender="most-outer-panel" />
+                        
+                        <apex:actionFunction action="{!deleteLineItem}" name="deleteLineItemAF" reRender="most-outer-panel"  oncomplete="highlightTab('{!currentOptionId}');"><!--deletererender();-->
+                            <apex:param assignTo="{!lineItemRecordId}" name="lineItemRecordId" value=""/>
+                        </apex:actionFunction>
+                        
+                        <apex:actionFunction action="{!editLineItem}" name="editLineItemAF" reRender="most-outer-panel" oncomplete="highlightTab('{!currentOptionId}');setdescrip();">
+                            <apex:param assignTo="{!lineItemRecordId}" name="lineItemRecordId" value=""/>
+                            <apex:param assignTo="{!lineItemRecordType}" name="lineItemRecordType" value=""/>
+                        </apex:actionFunction>
+                        <apex:actionFunction action="{!returnLineItem}" name="returnLineItemAF" reRender="most-outer-panel" oncomplete="highlightTab('{!currentOptionId}')">
+                            <apex:param assignTo="{!lineItemRecordId}" name="lineItemRecordId" value=""/>
+                            
+                        </apex:actionFunction>
+                        <apex:actionFunction action="{!saveQuoteOption}" name="updateQuoteOption" reRender="most-outer-panel" oncomplete="scrollWin('{!currentOptionId}');"/>
+                        <apex:actionFunction action="{!saveQuoteOption}" name="updateAndPreviewQuoteOption" reRender="most-outer-panel" oncomplete="preview('{!header.Id}','{!currentOptionId}');">
+                        	<apex:param assignTo="{!tailormadeItinerary}" name="tailormadeOption" value=""/>
+                        </apex:actionFunction>
+                        
+                        <apex:outputPanel rendered="{!IF(header.Id == null, true,false)}">
+                            <button type="button" onclick="disableButton('bottomNextButtonId');return setParameters();" class="slds-button slds-button--neutral" id="bottomNextButtonId">Next</button>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(totalOptions != currentOpt &&  header.Id != null && currentoptionid != 'QuoteInformation'  , true,false)}">
+                            <button type="button" onclick="return updateQuoteOption();" class="slds-button slds-button--neutral">Next</button>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(currentoptionid == 'QuoteInformation' &&  header.Id != null, true,false)}">
+                            <button type="button" onclick="return updateParameters();" class="slds-button slds-button--neutral">Save</button>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(totalOptions == currentOpt && header.Id != null && currentoptionid != 'QuoteInformation' , true,false)}">
+                            <button type="button" onclick="saveAndPreview()" class="slds-button slds-button--neutral">Save &amp; Preview</button>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+            </apex:outputPanel>
+            <input id="hiddenElement" type="hidden" />
+        </apex:form>
+        </div>
+
+        <!--T-00555 - MPamintuan-->   
+        <div id="divEmailQuote" style="display: none;">
+            <section style="width: 50%; margin-left: auto; margin-right: auto">
+                <div >
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                            <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close" />
+                            </svg>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Email Quotation</h2>
+                    </header>
+                    <apex:outputPanel layout="block" styleClass="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <textarea id="email-text" name="editor4" rows="4" class="editor slds-input">{!emailHTML}</textarea>
+                    </apex:outputPanel>
+                    <div style="width:100%; height:2px; background:#DDDBDA;"></div><br/>
+                    <div align="right">
+                    <!--<footer class="slds-modal__footer" style="margin-top: 0 !important;" >-->
+                        <button class="slds-button slds-button_neutral" onclick="cancelEmailQuote()">Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick="sendQuote(); cancelEmailQuote();">Send</button>
+                    <!--</footer>-->
+                </div>
+                </div>
+            </section>
+        </div>
+        <!--T-00555-->
+        
+        <!--commented out for T-00555 changes-->
+        <!-- modal popup -->
+        <!--
+        <apex:outputPanel id="outerEmailPopupId" >
+            <apex:outputPanel id="emailPopupId" rendered="{!showHideEmailPopup}">
+                <div class="demo-only" id="email-text-popup" style="display:none;height: 640px;margin-top: 0 !important;">
+                    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                        <div class="slds-modal__container">
+                            <header class="slds-modal__header">
+                                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close" />
+                                    </svg>
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Email Quotation</h2>
+                            </header>
+                            <apex:outputPanel layout="block" styleClass="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                                <textarea id="email-text" name="editor4" rows="4" class="editor slds-input">{!emailHTML}</textarea>
+                            </apex:outputPanel>
+                            <footer class="slds-modal__footer" style="margin-top: 0 !important;" >
+                                <button class="slds-button slds-button_neutral" onclick="closeModal()">Cancel</button>
+                                <button class="slds-button slds-button_brand" onclick="sendQuote()">Send</button>
+                            </footer>
+                        </div>
+                    </section>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </div>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        -->
+        <!-- end -->
+        <!--T-00555-->
+        
+    </div>
+    
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"/>
+    <script type="text/javascript">
+        function getRemoteAccountFrom(id) {
+            var flightname = document.getElementById('j_id0:frm:air_from').value;
+            var resultlist = '';
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.QuotesController.getFromFlights}',
+                flightname, 
+                function(result, event){
+                    if (event.status) {
+                        
+                        resultlist = '';
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        console.log(result);
+                        console.log(result.length);
+                        for(i=0;i<result.length;i++){
+                            resultlist  += '<li class="liItem" id="liItem'+i+'">'+ result[i]+' </li>';
+                        }
+                        if(result.length == 0){
+                            hidelistfrom(id);
+                        }else{
+                            showlistfrom(id);
+                            document.getElementById('remoteFrom').innerHTML = resultlist;
+                            
+                        }
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById("responseErrorsFrom").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("responseErrorsFrom").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+        
+        function getRemoteAccountTo(id) {
+            var flightname = document.getElementById('j_id0:frm:air_to').value;
+            var resultlist = '';
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.QuotesController.getToFlights}',
+                flightname, 
+                function(result, event){
+                    if (event.status) {
+                        
+                        resultlist = '';
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        console.log(result);
+                        console.log(result.length);
+                        for(i=0;i<result.length;i++){
+                            resultlist  += '<li class="liItem" id="liItem'+i+'">'+ result[i]+' </li>';
+                        }
+                        if(result.length == 0){
+                            hidelistto(id);
+                        }else{
+                            showlistto(id);
+                            document.getElementById('remoteTo').innerHTML = resultlist;
+                        }
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById("responseErrorsTo").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("responseErrorsTo").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+        
+        function getHotelCityName(id) {
+            var hotelName = document.getElementById('j_id0:frm:hotel-city').value;
+            var resultlist = '';
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.QuotesController.getHotelName}',
+                hotelName, 
+                function(result, event){
+                    if (event.status) {
+                        
+                        resultlist = '';
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        console.log(result);
+                        console.log(result.length);
+                        for(i=0;i<result.length;i++){
+                            resultlist  += '<li class="liItem" id="liItem'+i+'">'+ result[i]+' </li>';
+                        }
+                        if(result.length == 0){
+                            hidelistto(id);
+                        }else{
+                            showlistCity(id);
+                            document.getElementById('remoteCity').innerHTML = resultlist;
+                        }
+                        
+                    } else if (event.type === 'exception') {
+                        document.getElementById("responseErrorsTo").innerHTML = 
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>";
+                    } else {
+                        document.getElementById("responseErrorsTo").innerHTML = event.message;
+                    }
+                }, 
+                {escape: true}
+            );
+        }
+        
+        </script>
+        <script>
+        window.setInterval(function(){
+            $('.cke_bottom').remove();
+        }, 1000);
+    
+    </script>
+    
+    <script>
+    
+        function showlistCity(id){
+            var currentitem='';
+            $('#'+id).removeClass('slds-lookup__menu');
+            document.getElementById("remoteCity").addEventListener("click",function(e) {
+                
+                console.log(e.target);
+                console.log(e.target.id + " was clicked in from");
+                //currentitem = document.getElementById(e.target.id).innerHTML;
+                currentitem = e.target.innerText;
+                console.log(currentitem);
+                
+                document.getElementById('j_id0:frm:hotel-city').value = currentitem;
+                console.log('it works from ' + currentitem);
+                hidelistfrom(id);
+                
+            }   );
+            
+        }
+
+        function showlistfrom(id){
+            var currentitem='';
+            $('#'+id).removeClass('slds-lookup__menu');
+            document.getElementById("remoteFrom").addEventListener("click",function(e) {
+                
+                console.log(e.target);
+                console.log(e.target.id + " was clicked in from");
+                //currentitem = document.getElementById(e.target.id).innerHTML;
+                currentitem = e.target.innerText;
+                console.log(currentitem);
+                
+                document.getElementById('j_id0:frm:air_from').value = currentitem;
+                console.log('it works from ' + currentitem);
+                hidelistfrom(id);
+                
+            }   );
+            
+        }
+
+        function hidelistfrom(id){
+            $('#'+id).addClass('slds-lookup__menu');
+            
+        }
+        
+        function showlistto(id){
+            var currentitem='';
+            $('#'+id).removeClass('slds-lookup__menu');
+            document.getElementById("remoteTo").addEventListener("click",function(f) {
+                
+                console.log(f.target);
+                console.log(f.target.id + " was clicked in to");
+                //currentitem = document.getElementById(f.target.id).innerHTML;
+                currentitem = f.target.innerText;
+                console.log(currentitem);
+                
+                document.getElementById('j_id0:frm:air_to').value = currentitem;
+                console.log('it works to' + currentitem);
+                hidelistto(id);
+                
+            });
+            
+        }
+        function hidelistto(id){
+            $('#'+id).addClass('slds-lookup__menu');
+        }
+    
+    
+    </script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <!--<script src="https://cdn.ckeditor.com/4.9.2/standard/ckeditor.js"></script>-->
+    <!--<script src="https://cdn.ckeditor.com/ckeditor5/10.1.0/inline/ckeditor.js"></script>-->
+    <apex:includeScript value="{!URLFOR($Resource.ckeditor, 'ckeditor/ckeditor.js')}"/>
+    <script>
+        setMail();
+
+        window.onload = setFocus
+
+        function setFocus() {
+            //setMail();
+            document.getElementById("hiddenElement").focus();
+            CKEDITOR.replace('editor2');
+            if({!editQuote}){
+                setDisclaimerAF();
+                
+                CKEDITOR.instances['disclaimer-text'].setData(`{!getDisclaimer}`);
+            }else{
+                
+                CKEDITOR.instances['disclaimer-text'].setData(discHTMLContent);
+            }
+        }
+        var discHTMLContent = '<ul style="list-style-type: square; color: #83c551 !important;"><li><span style="color: black;">No Reservations have been made.</span></li><li><span style="color: black;">Prices are subject to availability and may change without prior notice.</span></li><li><span style="color: black;">Prices are guaranteed only upon full payment of all services and issuance of the tickets.</span></li><li><span style="color: black;">You are responsible for verifying the travel documents requirement with the respective Consulate/Embassy.</span></li><li><span style="color: black;">We recommend that you travel with a comprehensive travel insurance policy.</span></li></ul>';
+        // $(window).on('load', initialiseCKEditor);
+        $( document ).ready(function() {
+            //alert('setting mail');
+            setMail();
+            //alert('finished setting');
+            //CKEDITOR.replace('editor1');
+            CKEDITOR.replace('editor2');
+            $( "input[id$='no-of-adults']" ).focus();
+            
+            
+            if({!editQuote}){
+                
+                setDisclaimerAF();
+                CKEDITOR.instances['disclaimer-text'].setData(`{!getDisclaimer}`);
+            }else{
+                
+                CKEDITOR.instances['disclaimer-text'].setData(discHTMLContent);
+            }
+            /**/
+            $('#cke_71_bottom').remove();
+            
+            setAddServDesc();
+            setTailorMadeOption();
+        });
+
+        function reloadPage(param){
+            if(param == "DeleteQuote"){
+                var caseId = "{!caseId}";
+                window.location.href = "/apex/Quotes?Id="+caseId+"&headerId="+headerId;
+            }
+        }
+
+
+        function updateParameters(){
+            var childcount = "{!ageDetails.size}";
+            var temp = "";
+            var dateFrom = null, dateTo = null;
+            
+            $( ".child-age" ).each(function( index ) {
+                console.log( index + ": " + $( this ).val() );
+                temp += $( this ).val() + ";";
+            });
+            
+            $('#ih-childages').val(temp);
+            console.log($('#ih-childages').val());
+            
+            var disclaimerText = CKEDITOR.instances['disclaimer-text'].getData();
+            //var disclaimerText = 'a';
+            $('#ih-disclaimer').val(disclaimerText);
+
+			//T-00413
+			var itineraryOption = CKEDITOR.instances['tailormadeoption-text'].getData();
+			console.log(itineraryOption);
+			//$('#j_id0:frm:ih-tailormadeoption').val(itineraryOption);
+			document.getElementById('j_id0:frm:ih-tailormadeoption').value = itineraryOption;
+			//             
+            
+            updateQuoteDetails(temp, dateFrom, dateTo,disclaimerText);
+            discHTMLContent = disclaimerText;
+            
+            $('#cke_71_bottom').remove();
+            
+            setdate('1');
+        }
+
+        function setParameters(){
+            //debugger;
+            var childcount = "{!ageDetails.size}";
+            var temp = "";
+            var dateFrom = null, dateTo = null;
+            
+            $( ".child-age" ).each(function( index ) {
+                console.log( index + ": " + $( this ).val() );
+                temp += $( this ).val() + ";";
+            });
+            
+            /*for(i = 1; i <= childcount; i++){
+                    temp += document.getElementById("date-child-"+i).value + ";";
+                    console.log(temp);
+                }*/
+                //document.getElementById("ih-childages").value = temp;
+                //dateFrom = document.getElementById("input-id-datefrom").value;
+                //dateTo = document.getElementById("input-id-dateto").value;
+                $('#ih-childages').val(temp);
+                console.log($('#ih-childages').val());
+                
+                var disclaimerText = CKEDITOR.instances['disclaimer-text'].getData();
+                //var disclaimerText = "a";
+                $('#ih-disclaimer').val(disclaimerText);
+                
+                
+                saveQuoteDetails(temp, dateFrom, dateTo,disclaimerText);
+                $('#cke_71_bottom').remove();
+                discHTMLContent = disclaimerText;
+                setdate('1');
+            }
+
+        function setdate(tabId){
+            var currentpage = tabId;
+            var cYear = new Date().getFullYear() ;     
+            if(currentpage=='QuoteInformation'){
+                
+                var startYear=(cYear - 12);          
+                var endYear=(cYear);  
+            } else {
+                
+                var startYear=(cYear);          
+                var endYear=(cYear + 4);     
+            }
+            
+            var htmlStr='';         
+            if(startYear<endYear){
+                for(i=startYear;i<endYear+1;i++){
+                    htmlStr += "<option value=\""+i+"\">"+i+"</option>";
+                }
+                $('#calYearPicker').html(htmlStr);
+            }
+            $('#sidebarDiv #hideThisHomePageComp').parent().parent().hide();
+        }
+
+        function validateLineItems(recType) {
+            //saveQuoteLineItem(recType, null);
+            var valid = false;
+            if(valid) {
+                saveQuoteLineItem(recType);
+            } else {
+                
+            }
+        }
+
+        function returnLineItemnew(airline,fno,from,to,datefrom,dateto,airlinetext,fnotext,fromtext,totext,datefromtext,datetotext){
+            document.getElementById(airlinetext).value = airline;
+            document.getElementById(fnotext).value = fno;
+            document.getElementById(fromtext).value = to;
+            document.getElementById(totext).value = from;
+            
+            // var dateto = new Date(dateto);
+            // console.log(dateto)
+            // var datetomonth = dateto.getMonth()+1;
+            // var datetoformatteddate = dateto.toLocaleDateString('en-US') + " " + dateto.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            // document.getElementById(datetotext).value = datetoformatteddate;
+            // console.log(datetoformatteddate);
+            //var datefrom = new Date(datefrom);
+            //var datefrommonth = datefrom.getMonth()+1;
+            // var datefromformatteddate = datefrom.toLocaleDateString('en-US') + " " + datefrom.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });  
+            // document.getElementById(datefromtext).value = datefromformatteddate;
+            
+        }
+
+        function validateHotel(){
+            /*hotel-meal-type
+                hotel-room-type
+                hotel-check-out
+                hotel-check-in
+                hotel-location
+                hotel-name
+                */
+                
+                /*if( $( "input[id$='hotel-name']" ).val() == undefined || $( "input[id$='hotel-name']" ).val() == "" ){
+                    $( "input[id$='hotel-name']" ).attr('style', "border-radius: 5px; border:#FF0000 1px solid;");
+                   $( "input[id$='hotel-name']" ).focus();
+                    return false;
+                } 
+                
+                if( $( "textarea[id$='hotel-location']" ).val() == undefined || $( "textarea[id$='hotel-location']" ).val() == "" ){
+                    $( "textarea[id$='hotel-location']" ).attr('style', "border-radius: 5px; border:#FF0000 1px solid;");
+                    $( "textarea[id$='hotel-location']" ).focus();
+                    return false;
+                } 
+                
+                if( $( "input[id$='hotel-check-in']" ).val() == undefined || $( "input[id$='hotel-check-in']" ).val() == "" ){
+                    $( "input[id$='hotel-check-in']" ).attr('style', "border-radius: 5px; border:#FF0000 1px solid;");
+                    $( "input[id$='hotel-check-in']" ).focus();
+                    return false;
+                } 
+                
+                if( $( "input[id$='hotel-check-out']" ).val() == undefined || $( "input[id$='hotel-check-out']" ).val() == "" ){
+                    $( "input[id$='hotel-check-out']" ).attr('style', "border-radius: 5px; border:#FF0000 1px solid;");
+                    $( "input[id$='hotel-check-out']" ).focus();
+                    return false;
+                } */
+                return true;
+            }
+
+        function saveHotelLineItem(recType, currOpt){
+            if(validateHotel()) {
+				if(CKEDITOR.instances['tailormadeoption-text'] != undefined){
+					var tailormadeItinerary = CKEDITOR.instances['tailormadeoption-text'].getData();
+			    	saveQuoteLineItem(recType, currOpt,'',tailormadeItinerary);
+			    } else {
+			    	saveQuoteLineItem(recType, currOpt,'','');
+			    }
+            }
+        }
+
+
+        function validateAdditionalServices(){
+            /*if($("select[id$='add-serv-type'] :selected").text() == "--None--"){
+                    $( "select[id$='add-serv-type']" ).prop('required',true);
+                    $( "select[id$='add-serv-type']").attr('style', "border-radius: 5px; border:#FF0000 1px solid;");
+                    $( "select[id$='add-serv-type']" ).focus();
+                    return false;
+                } else {
+                    $( "select[id$='add-serv-type']").attr('style', "border-radius: auto; border:auto 1px solid;");
+                }*/
+                return true;
+            }
+
+        function setAdditionalDescBeforeQuoteUpdate(recType,opt){
+            // add valiation here
+            if(validateAdditionalServices()){
+                // var additionalText = jQuery(CKEDITOR.instances['additional-desc'].getData()).text().replace();
+                var additionalText = CKEDITOR.instances['additional-desc'].getData();
+                // $('#ih-other-serv-desc').val(additionalText);
+                //var additionalText = $('#additional-desc').val();
+			    if(CKEDITOR.instances['tailormadeoption-text'] != undefined){
+			    	var itineraryOption = CKEDITOR.instances['tailormadeoption-text'].getData();
+			    	if(recType == "Other"){
+			    		saveQuoteLineItem(recType,opt,additionalText,itineraryOption);
+			    	} else {
+			    		saveQuoteLineItem(recType,opt,null,itineraryOption);
+			    	}
+	
+			    } else {
+			    	if(recType == "Other"){
+			    		saveQuoteLineItem(recType,opt,additionalText,'');
+			    	} else {
+			    		saveQuoteLineItem(recType,opt,null,'');
+			    	}		    
+			    }
+            }
+        }
+
+        function setQuoteOption(k){
+            //debugger;
+            //alert(k);
+            setCurrentOption(k);
+            setAddServDesc();
+			setTailorMadeOption();//T-00413		
+		}
+	
+		//T-00413	
+		function setTailorMadeOption(){
+			var tailormadeoptionText = document.getElementById('tailormadeOption').value;
+			CKEDITOR.replace('tailormadeoptioneditor');
+			CKEDITOR.instances['tailormadeoption-text'].setData(tailormadeoptionText);
+		}
+		
+		function saveAndPreview(){
+			if(CKEDITOR.instances['tailormadeoption-text'] != undefined){
+				var itineraryOption = CKEDITOR.instances['tailormadeoption-text'].getData();
+				updateAndPreviewQuoteOption(itineraryOption);			
+			} else {
+				updateAndPreviewQuoteOption('');				
+			}
+		}
+		//
+
+		function addFlightDetails(type,optionId){
+		
+			if(CKEDITOR.instances['tailormadeoption-text'] != undefined){
+				var tailormadeItinerary = CKEDITOR.instances['tailormadeoption-text'].getData();
+				saveQuoteLineItem(type,optionId,'',tailormadeItinerary);
+			} else {
+				saveQuoteLineItem(type,optionId,'','');
+			}
+		
+		}
+
+		function disableButton(buttonId){
+    		document.getElementById(buttonId).disabled = true;
+    		setTimeout(function(){document.getElementById(buttonId).disabled = false;},3000);		
+		}
+		
+		function setTailormadeItinerary(tailormadeItineraryContent){
+			if(tailormadeItineraryContent != undefined){
+				var itinerary = tailormadeItineraryContent.getData();
+				CKEDITOR.replace('tailormadeoptioneditor');
+				CKEDITOR.instances['tailormadeoption-text'].setData(itinerary);				
+			}
+		}	
+
+        function finalize(tabId){
+            highlightTab(tabId);
+            
+        }
+
+        function refreshprice(){
+            
+            refreshvalidprice();
+        }
+
+        function highlightTab(tabId){
+            debugger;
+            setdate(tabId);
+            if(tabId == 'QuoteInformation'){
+                $("#QuoteInformation").addClass(" slds-button selected-option ");
+                if(document.getElementsByName("editor2").length == 1){
+                    CKEDITOR.replace('editor2');
+                    setDisclaimerAF();
+                    // alert('');
+                    if({!IF(header.id!=null,true,false)}){
+                        
+                        // alert('setting saved disclaimer');
+                        CKEDITOR.instances['disclaimer-text'].setData(discHTMLContent);
+                    }else{
+                        //   alert('setting default disclaimer');
+                        CKEDITOR.instances['disclaimer-text'].setData(discHTMLContent);
+                    }
+                    setAddServDesc();
+                }
+                
+            }else {
+                $( ".selected-option" ).each(function( index, value ) {
+                    console.log( index + ": " + $( this ).text() );
+                    $(value).removeClass("selected-option");
+                });
+                
+                $("."+tabId).addClass(" slds-button selected-option ");
+                // if(document.getElementsByName("editor2").length == 1){
+                //alert('replacing');
+                CKEDITOR.replace('editor1');
+                //}
+                setAddServDesc();
+            }
+            //$(event.currentTarget).removeClass(" unselected-option");
+            setTailorMadeOption();
+            
+        }
+        function showclonebutton(){
+            $('.clonebutton').prop('disabled',false);
+            $('.deletebutton').prop('disabled',false);
+        }
+        function hideclonebutton(){
+            $('.clonebutton').prop('disabled',true);
+            $('.deletebutton').prop('disabled',false);
+        }
+        function deletererender(){
+            rerendermainpanel();
+        }
+
+        function deleteQuoteOpt(){
+            $('.deletebutton').prop('disabled',true);
+            $('.clonebutton').prop('disabled',true);
+            
+            deleteQuoteOption();
+        }
+
+        function showdeletebutton(){
+            $('.deletebutton').prop('disabled',false);
+            $('.clonebutton').prop('disabled',false);
+        }
+
+        function saveQuoteLineItem(lineItemType){
+            saveQuoteLineItem(lineItemName);
+        }
+
+        function preview(headerId, tabId){
+            
+            var brand = '{!parentRecord.Org_Brand__c}';
+            // scrollWin(tabId);
+            //alert(headerId);
+            if( headerId != undefined && headerId != null && headerId != "" && brand != 'trp' ){
+                window.open("/apex/Quote?Id="+headerId, "_blank");
+            } 
+            else if( headerId != undefined && headerId != null && headerId != "" && brand == 'trp'){
+                 window.open("/apex/TRP_Quote_PDF?Id="+headerId, "_blank");
+                }
+            else {
+                alert("No data available");
+            }
+        }
+
+        function scrollwindow(elementname){
+            var elmnt = document.getElementById(elementname);
+            elmnt.scrollIntoView();
+            setTailorMadeOption();
+        }
+
+        function editLineItem(lineItemId, lineItemType){
+            
+            editLineItemAF(lineItemId,lineItemType);
+        }
+
+        function returnLineItem(lineItemId){
+            
+            returnLineItemAF(lineItemId);
+        }
+
+        function deleteLineItem(lineItemId){
+            debugger;
+            if(confirm("Are you sure to delete this option")){
+                
+                deleteLineItemAF(lineItemId);
+            }
+        }
+
+        function closeModal(){
+            closeEmailPopup();
+            setTimeout(function(){
+                $( "#email-text-popup" ).hide();
+            }, 1000);
+        }
+
+        //Start - changes ticket T-00555 - MPamintuan
+        function cancelEmailQuote(){
+            setTimeout(function(){
+                $( "#divQuoteDetails" ).show();
+                $( "#divEmailQuote" ).hide();
+            }, 1000);
+        }
+        //End - T-00555
+
+        function sendQuote(){
+            window.scroll(0,0);
+            var emailText = CKEDITOR.instances['email-text'].getData();
+            $('#emailText').val(emailText);
+            
+            send(emailText);
+            
+        }
+
+        function sendQuoteJS(headerId){
+            window.scroll(0,0);
+            if(headerId != undefined && headerId != "" && headerId != null){
+                // 
+                validateCase();
+                setTimeout(function(){
+                    $( "#email-text-popup" ).show();
+                    CKEDITOR.replace('editor4');
+                    $('#cke_71_bottom').remove();
+                }, 1000);
+                //send(null);
+                //sendQuote();
+            } else {
+                alert("There is no quote to send, please create one to send");
+            }
+        }
+
+        //Start - changes ticket T-00555 - MPamintuan
+        function emailQuote(headerId){
+            window.scroll(0,0);
+            if(headerId != undefined && headerId != "" && headerId != null){
+                validateCase();
+                setTimeout(function(){            
+                    $( "#divQuoteDetails" ).hide();
+                    $( "#divEmailQuote" ).show();
+
+                    CKEDITOR.replace('editor4');
+                    $('#cke_71_bottom').remove();
+                }, 1000);     
+
+            } else {
+                alert("There is no quote to send, please create one to send");
+            }
+        }
+        //End - T-00555
+
+        function emailsendalert(){
+            window.scroll(0,0);
+            closeModal();
+            //if({!sentmail}){            
+            //       alert(" true is {!sentmail}");
+            //  alert('Quotation email sent successfully!');
+            //}
+            //else {
+            //     alert(" false is {!sentmail}");
+            //  alert('Quotation email failed to send');
+            //}
+        }
+
+        function scrollWin(tabId) {
+            window.scroll(0,0);
+            //window.scrollTo(0, 0);
+            $( "#add-serv-type" ).change(function() {
+                alert( "Handler for .change() called." );
+            });
+            if(tabId != "QuoteInformation" && tabId != ""){
+                
+                $( ".selected-option" ).each(function( index, value ) {
+                    console.log( index + ": " + $( this ).text() );
+                    $(value).removeClass("selected-option");
+                });
+                
+                $("."+tabId).addClass(" slds-button selected-option ");
+                if(document.getElementsByName("editor1").length == 1){
+                    CKEDITOR.replace('editor1');
+                }
+                setAddServDesc();
+                
+            }else {
+                $("#QuoteInformation").addClass(" slds-button selected-option ");
+                if(document.getElementsByName("editor1").length == 1){
+                    CKEDITOR.replace('editor2');
+                    CKEDITOR.instances['disclaimer-text'].setData(discHTMLContent);
+                }
+            }
+            setTailorMadeOption();
+        }
+
+        function setdescrip(){
+            var value =document.getElementById('j_id0:frm:ih-other-serv-desc').value;
+            var Notesvalue =document.getElementById('j_id0:frm:ih-other-serv-notes').value;
+            CKEDITOR.instances['additional-desc'].setData(value);       
+            CKEDITOR.instances['additional-notes'].setData(Notesvalue); 
+        }
+
+        function setAddServDesc(){
+            $( "select[id$='add-serv-type']" ).change(function() {
+                //alert( "Handler for .change() called." );
+                $( "select option:selected" ).each(function() {
+                    if($( this ).text() == "Car Rental"){
+                        //$('#additional-desc').text("Basic (VW Polo Hatch or Similar)");
+                        //  CKEDITOR.instances['additional-desc'].setData('Basic (VW Polo Hatch or Similar)');
+                    } else if($( this ).text() == "Marhaba") {
+                        //$('#additional-desc').text("VIP Meet and Greet (Dubai Airport - Terminal 3) (Arrival)");
+                        //  CKEDITOR.instances['additional-desc'].setData('VIP Meet and Greet (Dubai Airport - Terminal 3) (Arrival)');
+                    } else if($( this ).text() == "Transfers") {
+                        //$('#additional-desc').text("Private Minivan-Transfer (RETURN), Dubai - Palm Jumeirah");
+                        // CKEDITOR.instances['additional-desc'].setData('Private Minivan-Transfer (RETURN), Dubai - Palm Jumeirah');
+                    } else if($( this ).text() == "Tours") {
+                        //$('#additional-desc').text("2 Day / 2 Park Universal Ticket");
+                        //  CKEDITOR.instances['additional-desc'].setData('2 Day / 2 Park Universal Ticket');
+                    } 
+                });
+            });
+        }
+
+
+
+        setInterval(function(){ $('li:contains("element value must resolve to a String type!")').remove();},1);
+
+
+    </script>
+
+</apex:page>

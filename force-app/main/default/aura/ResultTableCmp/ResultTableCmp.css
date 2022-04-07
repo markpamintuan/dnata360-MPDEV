@@ -1,0 +1,31 @@
+.THIS {
+}
+.THIS .bgColor{
+    border-radius:0px 0px 7px 7px;
+}
+
+.THIS .bgColor1{
+    border-radius:0px 0px 7px 7px;
+}
+
+.THIS .childcard{
+    margin-left:20px;
+    margin-right:20px;
+    border:1px solid #cacaca;
+  
+}
+
+.THIS.headingbox{
+    padding:10px;
+    background:#d9d7d7; 
+    border-radius:7px 7px 0px 0px;
+}
+
+.THIS .anchorColor{
+    color:Red !important;
+}
+
+/* for view all modal */
+.THIS.viewAllOpacity{
+    opacity : 0.5 !important;
+}

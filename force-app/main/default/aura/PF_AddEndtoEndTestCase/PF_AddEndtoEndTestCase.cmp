@@ -1,0 +1,141 @@
+<aura:component controller="PF_CreateTestCase" implements="force:appHostable,force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="recordId" type="string"/>
+    <aura:attribute name="recordName" type="string"/>
+    <aura:attribute name="invoked" type="string"/>
+    <aura:attribute name="recordTypeName" type="string"/>
+    <aura:attribute name="Status" type="string[]" default="New,Ready for Execution,In Progress,Passed,Failed"/>
+    <aura:attribute name="Type" type="string[]" default="Unit Test,SIT,UAT,Smoke Test,Regression"/>
+	<aura:attribute name="searchstrp" type="String"/>
+    <aura:attribute name="searchtext" type="String"/>
+    <aura:attribute name="Storysearchtext" type="String"/>
+    <aura:attribute name="Storysearchstrp" type="String" default=""/>
+    <aura:attribute name="Tasksearchtext" type="String"/>
+    <aura:attribute name="Tasksearchstrp" type="String"/>
+    <aura:attribute name="newtestcase" type="PF_TestCases__c" default="{ 'sobjectType': 'PF_TestCases__c'}"/>
+    <aura:attribute name="isLookup" type="Boolean" default="true"/>
+	<aura:attribute name="notHavingAccess" type="boolean" default="false"/>
+    <aura:attribute name="icon" type="String" default="utility:info" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="PF_LookupEvent" event="c:PF_LookupEvent" action="{!c.setValues}" />
+    
+    <aura:if isTrue="{!v.notHavingAccess}">
+    You do not have sufficient permission to Access the page, Please contact your System Administrator.
+    <aura:set attribute="else">
+        <aura:if isTrue="{!equals(v.invoked,'worktask')}">
+            <header class="slds-modal__header">
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create Test Case: Unit Test Case</h2>
+            </header>
+        <aura:set attribute="else">
+          	<header class="slds-modal__header">
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create Test Case: End to End Test Case</h2>
+            </header>
+        </aura:set>
+      </aura:if>
+    
+    <div class="slds-grid slds-wrap slds-grid--pull-padded slds-m-top--medium">
+    <div class="slds-page-header slds-p-horizontal--medium slds-size--1-of-1 slds-large-size--8-of-8">
+    	<div class="slds-page-header__title">
+        Information
+        </div>
+    </div>
+        <div class="slds-p-horizontal--small slds-size--2-of-1 slds-large-size--4-of-8">
+            <label class="inlineText" for="TestCaseName">Test Case Number </label>
+            <lightning:buttonIcon aura:id="TestCaseNumber" name="testcaseNum" iconName="{!v.icon}" size="small" title="This is the auto-generated identifier." disabled="false"/>
+        </div>
+		<div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+			<label style ="color:red;">*</label> <label class="inlineText" for="type">Status </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Contains the status of the Test case."/>
+            <lightning:select aura:id="dStatus" value="{!v.newtestcase.PF_Status__c}"> 
+                <aura:iteration items="{!v.Status}" var="item">
+                    <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        <div class="slds-p-horizontal--small slds-size--2-of-1 slds-large-size--4-of-8">
+            <label style ="color:red;">*</label><label class="inlineText" for="TestCaseName">Test Case Name </label><br/>
+            <ui:inputText aura:id="tName" class="inlineText slds-input" maxlength="80" size="15" value="{!v.newtestcase.Name}" required="true"/>
+        </div>
+    <div class="slds-page-header slds-grid slds-p-horizontal--medium slds-size--1-of-1 slds-large-size--8-of-8">
+    	<div class="slds-page-header__title ">
+        Test Case Description
+        </div>
+    </div>
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <label style ="color:red;">*</label> <label class="inlineText" for="type">Type </label>
+            <lightning:buttonIcon aura:id="Type" name="type" iconName="{!v.icon}" size="small" title="Provide Type for the Test case (QA/SIT/UAT etc.)"/>
+            <lightning:select aura:id="dType" value="{!v.newtestcase.PF_Type__c}"> 
+                <aura:iteration items="{!v.Type}" var="item">
+                    <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        <div class="slds-p-horizontal--small slds-size--2-of-1 slds-large-size--4-of-8">
+            <label class="inlineText" for="PredecessorTestCase">Predecessor Test Case </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Preceding test case that needs to be executed before this test case in order to follow the logical order of execution in an end to end testing scenario"/><br/>
+            <ui:inputText aura:id="PredecessorTestCase" value="{!v.searchtext}" keyup="{!c.searchstring}" updateOn="keyup" class="inlineText slds-input" maxlength="80" size="15" required="true"/>
+        	<div id="LookupEdit"> 
+            <aura:if isTrue="{!and(v.searchstrp.length>1,v.isLookup)}">
+            	<c:PF_Lookup objName="PF_TestCases__c" searchstr="{!v.searchstrp}"/>
+        	</aura:if>
+            </div>
+        </div>
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--8-of-8">
+            <label style ="color:red;">*</label><label class="inlineText" for="Description">Description </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Provide the description of the Test case"/><br/>
+            <lightning:textarea aura:id="dDescription"  value="{!v.newtestcase.PF_Description__c}"/>
+        </div> 
+        
+     <div class="slds-page-header slds-p-horizontal--medium slds-size--1-of-1 slds-large-size--8-of-8">
+         <div class="slds-page-header__title">Related To</div>
+    </div>   
+    	 <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <label class="inlineText" for="Story">Story </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Select the Story against which this test case is written"/><br/>
+            <ui:inputText aura:id="Story" value="{!v.Storysearchtext}" keyup="{!c.storySearch}" updateOn="keyup" class="inlineText slds-input" maxlength="80" size="15" required="true"/>
+        	<div id="LookupEdit"> 
+            <aura:if isTrue="{!and(v.Storysearchstrp.length>1,v.isLookup)}">
+            	<c:PF_Lookup objName="PF_Stories__c" searchstr="{!v.Storysearchstrp}"/>
+        	</aura:if>
+            </div>
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--2-of-1 slds-large-size--4-of-8">
+            <label class="inlineText" for="Task">Work Task </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Select the Work Task against which this test case is written"/><br/>
+            <ui:inputText aura:id="Task" value="{!v.Tasksearchtext}" keyup="{!c.workTaskSearch}" updateOn="keyup" class="inlineText slds-input" maxlength="80" size="15" required="true"/>
+        	<div id="LookupEdit"> 
+            <aura:if isTrue="{!and(v.Tasksearchstrp.length>1,v.isLookup)}">
+            	<c:PF_Lookup objName="PF_Tasks__c" searchstr="{!v.Tasksearchstrp}"/>
+        	</aura:if>
+            </div>
+        </div>
+
+    <div class="slds-page-header slds-p-horizontal--medium slds-size--1-of-1 slds-large-size--8-of-8">
+        <div class="slds-page-header__title">Plan and Effort</div>
+    </div>
+    	<div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--8-of-8">
+            <label class="inlineText" for="TCCreationEffort">TC Creation Effort </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Provide effort which is required to create Test case (In Hours)"/><br/>
+            <ui:inputNumber aura:id="TCCreationEffort" class="inlineText slds-input"  value="{!v.newtestcase.PF_TC_Creation_Effort__c}" />
+        </div>
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--8-of-8">
+            <label class="inlineText" for="TCExecutionEffort">TC Execution Effort </label>
+            <lightning:buttonIcon aura:id="Status" name="status" iconName="{!v.icon}" size="small" title="Provide effort which is required to Execute Test case (In Hours)"/><br/>
+            <ui:inputNumber aura:id="TCExecutionEffort" class="inlineText slds-input"  value="{!v.newtestcase.PF_TC_Execution_Effort__c}" />
+        </div>
+    <div class="slds-page-header slds-p-horizontal--medium slds-size--1-of-1 slds-large-size--8-of-8">
+        <div class="slds-page-header__title">System Information
+        </div><br/>
+        <label class="inlineText" for="RecordType">Record Type </label><br/>
+        {!v.recordTypeName}
+    </div> 
+
+    </div>
+    <div style="text-align:center;">
+    <lightning:button label="Save" variant="brand" onclick="{!c.Save}"/>
+    <lightning:button label="Cancel" variant="brand" onclick="{!c.Cancel}"/>
+    </div>
+    </aura:set>
+    </aura:if>
+</aura:component>

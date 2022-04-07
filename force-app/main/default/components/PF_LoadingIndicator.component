@@ -1,0 +1,108 @@
+<apex:component >
+<apex:actionStatus onstart="startLoading();" onstop="endLoading();" id="loadStatus"/>
+<style>
+ .overlay {
+        display: none;
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        opacity: 0.3;
+        -moz-opacity: 0.3;
+        width: 100%;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+        filter: alpha(opacity=30);
+        background: #000;
+        -khtml-opacity: 0.3;
+        z-index: 1000;
+    }
+    .loader {
+        z-index: 1;
+        position: absolute;
+        top:0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        width: 1.5em;
+        height: 1.5em;
+        border-radius: 50%;
+        text-indent: -9999em;
+        -webkit-animation: load4 1.3s infinite linear;
+        animation: load4 1.3s infinite linear;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    @-webkit-keyframes load4 {
+    0%,
+    100% {
+    box-shadow: 0 -3em 0 0.2em #3586d1, 2em -2em 0 0em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0 0 -1em #3586d1, -2em -2em 0 0 #3586d1;
+    }
+    12.5% {
+    box-shadow: 0 -3em 0 0 #3586d1, 2em -2em 0 0.2em #3586d1, 3em 0 0 0 #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    25% {
+    box-shadow: 0 -3em 0 -0.5em #3586d1, 2em -2em 0 0 #3586d1, 3em 0 0 0.2em #3586d1, 2em 2em 0 0 #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    37.5% {
+    box-shadow: 0 -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0em 0 0 #3586d1, 2em 2em 0 0.2em #3586d1, 0 3em 0 0em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0em 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    50% {
+    box-shadow: 0 -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 0em #3586d1, 0 3em 0 0.2em #3586d1, -2em 2em 0 0 #3586d1, -3em 0em 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    62.5% {
+    box-shadow: 0 -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 0 #3586d1, -2em 2em 0 0.2em #3586d1, -3em 0 0 0 #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    75% {
+    box-shadow: 0em -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0em 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 0 #3586d1, -3em 0em 0 0.2em #3586d1, -2em -2em 0 0 #3586d1;
+    }
+    87.5% {
+    box-shadow: 0em -3em 0 0 #3586d1, 2em -2em 0 -1em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 0 #3586d1, -3em 0em 0 0 #3586d1, -2em -2em 0 0.2em #3586d1;
+    }
+    }
+    @keyframes load4 {
+    0%,
+    100% {
+    box-shadow: 0 -3em 0 0.2em #3586d1, 2em -2em 0 0em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0 0 -1em #3586d1, -2em -2em 0 0 #3586d1;
+    }
+    12.5% {
+    box-shadow: 0 -3em 0 0 #3586d1, 2em -2em 0 0.2em #3586d1, 3em 0 0 0 #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    25% {
+    box-shadow: 0 -3em 0 -0.5em #3586d1, 2em -2em 0 0 #3586d1, 3em 0 0 0.2em #3586d1, 2em 2em 0 0 #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    37.5% {
+    box-shadow: 0 -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0em 0 0 #3586d1, 2em 2em 0 0.2em #3586d1, 0 3em 0 0em #3586d1, -2em 2em 0 -1em #3586d1, -3em 0em 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    50% {
+    box-shadow: 0 -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 0em #3586d1, 0 3em 0 0.2em #3586d1, -2em 2em 0 0 #3586d1, -3em 0em 0 -1em #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    62.5% {
+    box-shadow: 0 -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 0 #3586d1, -2em 2em 0 0.2em #3586d1, -3em 0 0 0 #3586d1, -2em -2em 0 -1em #3586d1;
+    }
+    75% {
+    box-shadow: 0em -3em 0 -1em #3586d1, 2em -2em 0 -1em #3586d1, 3em 0em 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 0 #3586d1, -3em 0em 0 0.2em #3586d1, -2em -2em 0 0 #3586d1;
+    }
+    87.5% {
+    box-shadow: 0em -3em 0 0 #3586d1, 2em -2em 0 -1em #3586d1, 3em 0 0 -1em #3586d1, 2em 2em 0 -1em #3586d1, 0 3em 0 -1em #3586d1, -2em 2em 0 0 #3586d1, -3em 0em 0 0 #3586d1, -2em -2em 0 0.2em #3586d1;
+    }
+    }
+
+    
+</style>
+
+<div id="load_scrl" class="loadingBox loader" style="display:none"> </div>
+<div class="loadingBox overlay"> </div>
+<script type="text/javascript">
+    function startLoading(){
+        $('#load_scrl').css('top', $(document).scrollTop() + 10);
+        $('.loadingBox').show();
+        //this.disabled = true;
+    }
+    function endLoading(){
+         $('.loadingBox').hide();
+         //this.disabled = false;
+    }
+</script>
+</apex:component>

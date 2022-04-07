@@ -1,0 +1,12 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId">
+    
+    <aura:attribute type="String" name="hiddenAttrib" default="{!$Label.c.New_Enquiry_Record_Type_ID}" />
+    <aura:attribute type="String" name="hiddenAttrib1" default="{!$Label.c.CSR_Record_Type_Id}" />
+    <lightning:workspaceAPI aura:id="workspace"/>
+
+    <aura:attribute name="recordInfo" type="Object" access="private"/>
+    <lightning:button label="get tab infor" onclick="{! c.getAllTabInfo }" />
+    <force:recordData aura:id="recordHandler"  recordId="{!v.recordId}"  layoutType="FULL" 
+                      targetFields="{!v.recordInfo}" targetError="{!v.recordError}" recordUpdated="{!c.handleRecordUpdated}"/>
+    
+</aura:component>

@@ -1,0 +1,24 @@
+<aura:component >
+    
+    <!-- Step Number used to update Progress Indicator & Content of Body -->
+    <aura:attribute name="stepNumber" type="Integer" default="1" /> 
+    <div style="padding-top:1%"></div>
+    <aura:if isTrue="{!v.stepNumber == 1}">
+        <div class="slds-text-title_caps"><h1>Enter search criteria</h1></div>
+    </aura:if>
+    
+    
+     <aura:if isTrue="{!v.stepNumber == 2}">
+        <div class="slds-text-title_caps"><h1>Search results</h1></div>
+    </aura:if>
+    
+    
+     <aura:if isTrue="{!v.stepNumber == 3}">
+        <div class="slds-text-title_caps"><h1>Review selected Records</h1></div>
+    </aura:if>
+    
+    
+     <aura:if isTrue="{!v.stepNumber == 4}">
+        <div class="slds-text-title_caps"><h1>Records that are being processed</h1></div>
+    </aura:if>
+</aura:component>

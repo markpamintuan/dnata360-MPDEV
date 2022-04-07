@@ -1,0 +1,57 @@
+<aura:component controller="ConsolidatedReportCtrl">
+    
+    <!-- this will have the folder name for which report has to pulled -->
+    <aura:attribute name="ConsolidatedReportFolder" type="String" />
+    
+    <!-- this will have the Id of current record -->
+    <aura:attribute name="recordId" type="string"/>
+    
+    <!-- This will save the list of reports which has to be displayed -->
+    <aura:attribute name="ReportList" type="Report[]" />  
+    
+    <!-- handlers for component load -->
+    <aura:handler name="init" value="{!this}" action="{!c.getReports}" />
+    
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="selectedRecord" type="sobject" />    
+    
+    <!-- this will check if selected record is changed -->
+    <aura:handler name="change" value="{!v.selectedRecord}" action="{!c.handleAction}"/>     
+
+    <!-- this will store the linked Field API Name -->
+    <aura:attribute name="linkedFieldValue" type="string" />  
+    
+    <aura:attribute name="record" type="Object"/>
+    <aura:attribute name="simpleRecord" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>    
+    
+        <div class="slds-p-around_medium" style="position:relative"> 
+            <div class="slds-card__header">
+                <div class="slds-form--compound">                
+                    <div>                
+                        <div class="slds-text-heading_medium headingstyle"><b>Customer 360 View Reports</b></div>
+                        <div class="slds-grid slds-wrap">
+                            <aura:iteration items="{!v.ReportList}" var="report">
+                                <div class="slds-col slds-size_1-of-4 slds-p-around_medium slds-box">
+                                  
+	<c:ConsolidatedReportRowCmp report="{!report}" reportParameter0 ="{!v.linkedFieldValue}"/>
+
+<!--
+                            <c:Row360View isActionCol="true" 
+                                          selectedRecord="{!v.selectedRecord}" 
+                                          actionColText="{!report.Name}"                                          
+                                          record="{!report}"/>
+-->
+                                </div>            
+                            </aura:iteration>
+                        </div>
+                        
+                    </div>
+                    <c:SpinnerCmp displaySpinner="{!v.Spinner}"></c:SpinnerCmp>
+                </div>
+            </div>
+        </div>
+    </aura:component>

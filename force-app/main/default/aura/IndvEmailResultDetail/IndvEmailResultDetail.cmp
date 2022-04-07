@@ -1,0 +1,59 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:isUrlAddressable" access="global" controller="IndvEmailResultDetailController" >
+	<aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute type="Object" name="emailResultObj" />
+    <aura:attribute type="List" name="emailResWrapLst" />
+    <!--aura:attribute name="mergeId" type="String" /-->
+    <aura:attribute name="attachmentUrl" type="String"/>
+  
+    <!--aura:attribute type="Map" name="emailArchivefieldsMap" /-->
+     <aura:attribute name="MergeID" type="String" />
+     <aura:attribute name="RelObjID" type="String" />
+     <aura:attribute name="RelSendID" type="String" />
+    
+     <lightning:card variant="Narrow" title="Individual Email Result " iconName="standard:custom">
+		
+         
+         <div class="slds-border_top"></div>
+         <footer class="slds-card__body slds-card__body_inner ">
+             
+             <div class="slds-grid slds-wrap">
+                 <aura:iteration items="{!v.emailResWrapLst}" indexVar="key" var="item">
+                      <div class="slds-col slds-size_6-of-12">
+                        <span>
+                            <div >
+                                <div class="slds-form-element slds-hint-parent slds-has-divider--bottom  hasDiv">
+                                    <label class="slds-form-element__label"> {!item.label} </label>
+                                    
+                                    <aura:if isTrue="{!item.referenceId != NULL}">
+                                        <!--Lookup-->
+                                        <span class="slds-output uiOutputText">
+                                   			<a href="{!'/one/one.app?#/sObject/'+ item.referenceId + '/view'}" target="_blank">{!item.value}</a>
+										</span>
+                                        <aura:set attribute="else">
+                                            <ui:outputtext class="slds-output" value="{!item.value}" />
+                                        </aura:set>
+                                    </aura:if> 
+                                    
+                                </div>
+                            </div>  
+                        </span>
+                      </div>
+                 </aura:iteration> 
+                 
+             </div>       
+                         
+        </footer>
+         
+         <!--Thumbnail here-->
+        
+         <aura:if isTrue="{!v.emailResultObj.Send_Definition__c != NULL}">
+         	<iframe style="border: 1px solid" width="100%" height="700px" src="{!$Label.c.BaseURLVFClassic+'/apex/emailThumbnailMobile?sd='+v.emailResultObj.Send_Definition__c}" />
+         </aura:if>
+         
+         <aura:if isTrue="{!v.MergeID != NULL}">
+        	 <c:IndvLinkTable mergeId = "{!v.MergeID}"/>
+        </aura:if>  
+        
+         
+    </lightning:card>
+</aura:component>

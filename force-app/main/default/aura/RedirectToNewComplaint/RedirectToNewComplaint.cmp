@@ -1,0 +1,9 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" >
+    
+    <aura:attribute type="String" name="hiddenAttrib" default="{!$Label.c.Complaints_Record_Type_ID}" />
+    
+    <aura:attribute name="recordInfo" type="Object" access="private"/>
+    <force:recordData aura:id="recordHandler"  recordId="{!v.recordId}"  layoutType="FULL" 
+                      targetFields="{!v.recordInfo}" targetError="{!v.recordError}" recordUpdated="{!c.handleRecordUpdated}"/>
+    loading....
+</aura:component>

@@ -1,0 +1,50 @@
+<aura:component controller="AccountAuraExtensionControllerCC" implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" >   
+    
+    <!--on component load call doInit javaScript function and fetch records from server-->  
+    <lightning:workspaceAPI aura:id="workspace" />
+
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="caseList" type="List"/>
+    
+    <lightning:accordion class="slds-accordion">
+        <aura:iteration items="{!v.caseList}" var="cs" indexVar="iVar">
+
+            <lightning:accordionSection name="{!cs.Case__c.Name}" label="{!'Order Number' + ' - '+ if(cs.SFCC_Order_Number__c == null,cs.OrderNumber,cs.SFCC_Order_Number__c)}" class="section-title-bg">
+
+                <aura:set attribute="body">
+                    <div class="slds-grid slds-wrap">
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Order Number : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">{!if(cs.SFCC_Order_Number__c == null,cs.OrderNumber,cs.SFCC_Order_Number__c)}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Brand : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">{!cs.SFCC_Brand__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Order Status : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">{!cs.Status__c}</div>
+
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Order Date : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.EffectiveDate}" />
+                        </div>
+						
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Service Start Date : </div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3">
+                            <lightning:formattedDateTime value="{!cs.Service_Start_Date__c}" />
+                        </div>
+                        
+                        <div style="padding-left: 9px" class="slds-size_1-of-3">Details :</div>
+                        <div style="padding-left: 30px" class="slds-size_2-of-3" 
+                                onclick="{!c.openTabWithSubtab}" 
+                                data-value="{!cs.Id}"><a href="#" >View Record</a></div>
+                </div>
+                </aura:set>
+            </lightning:accordionSection>
+
+        </aura:iteration>
+    </lightning:accordion>
+	<aura:if isTrue="{!empty(v.caseList)}">
+        <div style="padding-left:10px"><i>No Records</i></div>
+    </aura:if>
+</aura:component>

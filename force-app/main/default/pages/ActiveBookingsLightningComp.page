@@ -1,0 +1,28 @@
+<apex:page standardController="Account" standardStylesheets="false" applyBodyTag="false">
+    <style>
+        .slds-scope .slds-m-around_x-large, .slds-scope .slds-m-around--x-large {
+        margin: 0rem !important; 
+        }
+        body {
+        margin: 0px !important;
+        text-decoration: none;
+        }
+         .slds-scope .slds-truncate {
+        white-space: normal !important;
+        }
+    </style>
+    
+    <apex:includeLightning />
+    
+    <div id="lightning" />
+    <script>
+    var accId = "{!Account.Id}";
+    $Lightning.use("c:ActiveBookingsLightningOutApp", function() {
+        $Lightning.createComponent("c:ActiveBookingsLightningComponent",{"recordId":accId},
+                                   "lightning",
+                                   function(cmp) {
+                                       // do some stuff
+                                   });
+    });
+    </script>
+</apex:page>

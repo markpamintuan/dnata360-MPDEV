@@ -1,0 +1,20 @@
+<apex:page standardController="PF_Tasks__c">
+
+            <apex:includeLightning />
+            <script>
+            var recordId = "{!$CurrentPage.parameters.parentId}";
+            var recordName = "{!$CurrentPage.parameters.parentName}"
+            $Lightning.use("c:PF_AddEndtoEndTestCaseApp", function() {
+                $Lightning.createComponent(
+                    "c:PF_AddEndtoEndTestCase",
+                    {"recordId" : recordId,
+                    "recordName" : recordName,
+                    "invoked"    :"worktask"
+                    },
+                    "lightning"
+                );
+                
+            });
+            </script>
+           <div class="slds-box"  id="lightning" />                        
+</apex:page>

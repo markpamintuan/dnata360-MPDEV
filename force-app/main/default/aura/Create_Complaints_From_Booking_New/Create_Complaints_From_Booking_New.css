@@ -1,0 +1,78 @@
+.THIS.slds-modal{
+    position:fixed !important;
+}
+
+.THIS .slds-modal__content{
+    min-height:fit-content;
+}
+
+.THIS.slds-backdrop{
+    position:fixed !important;
+}
+
+
+.THIS .lookuptypeselect{
+   width: 25%;
+    display: inline-block;
+    padding-left: 2px;
+}
+
+.THIS .leftPaddingClass{
+   	padding-left:30px;
+}
+
+.THIS .slds-notify_toast{
+    position:absolute!important;
+    left:0px!important;
+    top:calc(0.25rem + 30px);
+    background:none!important;
+    padding : 0px!important;
+    font-size:12px!important;
+    font-family:Salesforce Sans !important;
+    font-weight:500;
+}
+
+.THIS .slds-theme_error{
+    color : #C23934!important;
+}
+
+.THIS .slds-text-longform ul {
+    margin-left: 0px;
+}
+
+.THIS .greenadd{
+    height:30px !important;
+   
+}
+
+.THIS .cIssuePillContainer p{
+    margin-bottom:0px;
+}
+
+.THIS .cIssuePillContainer ul{
+    margin-bottom:0px;
+}
+
+.THIS .cIssuePillContainer{
+    padding-left:2%;
+}
+
+.THIS .lookuptypeselect{
+    font-size:12px;
+}
+
+.THIS .allowoverflow{
+    overflow: visible;
+}
+
+.THIS .slds-text-longform ul {
+    margin-left: 0px;
+}
+
+.THIS select{
+    height:32px !important;
+}
+
+.THIS .checkbox{
+    margin-top:0px !important;
+}

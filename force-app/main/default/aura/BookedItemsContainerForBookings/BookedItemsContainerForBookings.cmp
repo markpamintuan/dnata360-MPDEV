@@ -1,0 +1,18 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+				access="global">
+
+	<div style="background-color: white !important; width:100%">
+		<div class="slds-card__header slds-grid">
+			<header class="slds-media slds-media--center slds-has-flexi-truncate">
+				<div class="slds-media__body">
+					<h2 class="header-title-container">
+						<span class="slds-text-heading--small slds-truncate" title="Active Bookings">
+							<b>Booked Items</b>
+						</span>
+					</h2>
+				</div>
+			</header>
+		</div>
+		<c:ActiveBundleBookings recordId="{!v.recordId}"/>
+	</div>
+</aura:component>

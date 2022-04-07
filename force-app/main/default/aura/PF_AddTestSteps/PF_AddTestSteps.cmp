@@ -1,0 +1,129 @@
+<aura:component controller="PF_AddEditTCSteps"  implements="force:appHostable,force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="TCSteps" type="PF_Test_Case_Step__c[]" />
+    <aura:attribute name="delAssId" type="String[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="selectAllChk" type="boolean" default="true"/>
+    <aura:attribute name="valueEntered" type="boolean" default="false"/>
+    <aura:attribute name="disableMoveup" type="boolean" default="false"/>
+    <aura:attribute name="disableMovedown" type="boolean" default="false"/>
+    <aura:attribute name="notHavingAccess" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="c:TestAssignRowEventApp" action="{!c.closePopup}"/>
+    <aura:if isTrue="{!v.notHavingAccess}">
+    You donot have sufficient permission to Access the page, Please contact your System Administrator.
+    <aura:set attribute="else">
+    <div>
+        <header class="slds-modal__header">
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add/Edit Test Case Steps</h2>
+        </header>    
+        <div class="slds-grid slds-wrap slds-m-top_large">
+            <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">         
+                <div><label  class="inlineText" >  Select All </label></div>
+                <ui:inputCheckbox aura:id="all" change="{!c.allSelect}" disabled="{!v.selectAllChk}"/>
+            </div>
+            <!--<div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small"> 
+                <label class="inlineText" > </label>            
+            </div>-->
+            <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small"> 
+                <label class="inlineText" > # </label>            
+            </div>
+            <div class="slds-large-size_2-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small "> 
+                <label class="inlineText" > Description </label>            
+            </div>
+            <div class="slds-large-size_2-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">    
+                <label class="inlineText" > Expected Result </label>            
+            </div>
+            <!--<div class="slds-large-size_2-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">         
+                <label class="inlineText" > Actual Result </label>            
+            </div> -->   
+        </div>
+    </div>
+    <div>
+        {!v.body}
+    </div>
+    
+    <div>
+        <aura:iteration items="{!v.TCSteps}" var="step" indexVar="i">
+            <div class="slds-grid slds-wrap slds-m-top_large">
+                <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small " >
+                    <div class="slds-form-element__control"  data-selected-Index="{!i}"  data-id="{!step.Id}" onclick="{!c.checkboxSelect}">
+                        <ui:inputCheckbox aura:id="boxPack" text="{!step.Id}" value="" disabled="{!v.selectAllChk}">
+                        </ui:inputCheckbox>
+                    </div> 
+                </div>
+                <!--<div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small" > 
+                    <div class="slds-form-element__control" data-selected-Index="{!i}" onclick="{!c.addRecordPos}">
+                        <lightning:icon iconName="utility:new" size="small"/>
+                        <lightning:button variant="brand" label="Add"/>
+                    </div>
+                </div> -->  
+                <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small ">         
+                    <ui:outputText value="{!i+1}"/>
+                </div>
+                <div class="slds-large-size_2-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+                    <div class="slds-form-element slds-is-relative assigned_to_date">             
+                        <div class="slds-form-element__control">                    
+                            <ui:inputTextArea class="slds-input" maxlength="80" value="{!step.PF_Step_Description__c}" required="true"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slds-large-size_2-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+                    <div class="slds-form-element slds-is-relative assigned_to_date">             
+                        <div class="slds-form-element__control">                  
+                            <ui:inputTextArea class="slds-input" maxlength="80" value="{!step.PF_Expected_Result__c}" required="true"/>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="slds-large-size_2-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small">
+                    <div class="slds-form-element slds-is-relative assigned_to_date">             
+                        <div class="slds-form-element__control">                    
+                            <ui:inputTextArea class="slds-input"  value="{!step.PF_Actual_Result__c}"/>
+                        </div>
+                    </div>
+                </div>-->
+                <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small " >          
+                    <div class="slds-form-element__control" data-selected-Index="{!i}" onclick="{!c.swapUp}">
+                        <aura:if isTrue="{!i != 0}">
+                            <lightning:icon iconName="utility:up" size="small"/>
+                        </aura:if>	
+                        <!--<lightning:button variant="brand" label="Up" disabled="{!(i == 0) ? 'true' : 'false'}"/> -->                
+                    </div>
+                </div>
+                <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small " >          
+                    <div class="slds-form-element__control" data-selected-Index="{!i}" onclick="{!c.swapDown}">
+                        <aura:if isTrue="{!(i+1 == v.TCSteps.length)}">
+                            <aura:set attribute="else">
+                                <lightning:icon iconName="utility:down" size="small"/>
+                            </aura:set>
+                        </aura:if>
+                        <!--<lightning:button variant="brand" label="Down" disabled="{!(i+1 == v.TCSteps.length) ? 'true' : 'false'}"/>-->
+                    </div>
+                </div>
+                <div class="slds-large-size_1-of-12 slds-medium-size_6-of-12 slds-size_12-of-12 slds-p-horizontal_small ">
+                    <div class="slds-form-element slds-is-relative assigned_to_date">             
+                        <div class="slds-form-element__control" data-selected-Index="{!i}" onclick="{!c.removeTestStep}" data-id="{!step.Id}">
+                            <lightning:icon iconName="utility:delete" size="x-small"/>
+                            <!--<ui:button label="Delete" />-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:iteration>    
+    </div>
+    <div class="slds-m-top--large slds-p-horizontal_small slds-button__icon_right">
+        <lightning:button variant="brand" label="Add Step" onclick="{!c.addRecord}" />
+        <lightning:button variant="brand" label="Save" onclick="{!c.upsertRecord}" />
+        <lightning:button variant="brand" label="Cancel" onclick="{!c.Cancel}"  />
+        <lightning:button variant="brand" label="Mass Delete" onclick="{!c.deleteSlctd}" disabled="{!v.selectAllChk}"/>
+    	<!--<lightning:button variant="brand" label="Move Up" onclick="{!c.MoveUp}" disabled="{!v.disableMoveup}"/>
+        <lightning:button variant="brand" label="Move Down" onclick="{!c.MoveDown}" disabled="{!v.disableMovedown}" />-->
+    </div> 
+    
+    <aura:If isTrue="{!v.valueEntered}">
+        <c:TestAssignModalPopUp headerMsg="Error" errorMsg="Please populate mandatory fields such as Description and Expected Result."/>
+   </aura:If>
+        </aura:set>
+    </aura:if>
+</aura:component>

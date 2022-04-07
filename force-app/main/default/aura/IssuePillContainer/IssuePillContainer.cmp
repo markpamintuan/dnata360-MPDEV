@@ -1,0 +1,19 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="IssuePillController">
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:attribute name="recordId" type="String" default=""/>
+    <aura:attribute name="items" type="List" default="[]"/> 
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.init}"/>
+    <aura:method name="refreshIssue" action="{!c.init}" access="PUBLIC"/> 
+    <aura:attribute name="displayCross" type="String" default="none"/>
+    <aura:html tag="style">
+       :root {
+           --displayCross: {!v.displayCross};
+       }
+   </aura:html>
+    <aura:iteration items="{!v.items}" indexVar="key" var="col">
+        <p>
+            <span style="display:inline-block">{!col.key}</span> &nbsp;
+            <p style="display:inline-block"><lightning:pillContainer items="{!col.value}" onitemremove="{!c.handleItemRemove}"></lightning:pillContainer></p>
+        </p>
+    </aura:iteration>
+</aura:component>

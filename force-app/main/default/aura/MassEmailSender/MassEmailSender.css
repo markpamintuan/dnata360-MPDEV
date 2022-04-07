@@ -1,0 +1,181 @@
+.THIS {
+    background:white;
+}
+
+.THIS .sendemailbutton{
+    background: blue;color: white;
+}
+
+.THIS table,.THIS tr,.THIS td,.THIS th{
+    border:1px solid black;
+    width:25%;
+}
+
+.THIS .mergetable{
+    width:100% !important;
+}
+
+.THIS .mergetable,.THIS .mergetable tr,.THIS .mergetable td,.THIS .mergetable th{
+    border:0px !important;
+    
+}
+
+.THIS .reportName{
+    padding-left: 20%;
+    margin-right: 10px;
+    width: 80%;
+    
+}
+
+.THIS .textarea{
+    height:285px
+}
+
+.THIS .uiInput--checkbox input,.THIS input.uiInput--checkbox{
+    width:1rem;
+    min-height:1rem;
+}
+
+.THIS .supplierList{
+    padding-left:20%;
+    padding-right:20%;
+}
+
+.THIS .buttonholder{
+    padding-bottom:10px;
+}
+
+.THIS .bookingList,.THIS .supplierList{
+    display:none;	
+}
+
+.THIS .descriptionholder_m,.THIS .descriptionholder_r{
+    display:none;
+}
+
+.THIS .reportContent{
+    display:block;
+}
+
+.THIS .viewReportButton{
+    padding-left: 10px;
+    padding-top: 10px;
+    display: inline-block;
+}
+
+.THIS .bookingIdTextArea{
+    height:80px;
+}
+
+.THIS .categoryRequired:before{
+ content:"* " ;
+color:red    
+}
+
+.THIS .container{
+    padding-left:20%;
+    padding-right:20%;
+}
+
+.THIS .colorBlue{
+    background:#1b5297;
+    color:white;
+}
+
+.THIS .successGreen{
+        background: #4bca81;
+    color: white;
+    margin-bottom:10px;
+}
+.THIS .errorRed{
+        background: #ff5656;
+    color: white;
+    margin-bottom:10px;
+}
+
+.THIS .uiInput--select.select:not([multiple]),.THIS .uiInput--select .select:not([multiple]),.THIS .uiInput--select .uiPopupTrigger a {
+    background-position: 99.9% 50% !important;
+    background-size: 1.8125rem .8125rem,100% 100% !important;
+}
+
+.THIS .container2{
+    padding-left:20%;
+    padding-right:20%;
+}
+
+.THIS .usebookings{
+    margin-left:45%;
+    margin-bottom:10px;
+}
+
+.THIS .filterFields{
+       margin-left: 12px;
+    display: inline-block;
+    width: 80%;
+}
+
+.THIS .helptext{
+       position: absolute;
+    top: -4%;
+    left: 7.6%;
+}
+
+.THIS .filterLabels{
+    display: inline-block;
+    width: 18%;
+}
+
+.THIS .lookuptypeselect{
+    display:inline-block;
+    width:20%;
+}
+
+.THIS .leftPaddingClass{
+    padding-left:30px;
+}
+
+.THIS .tableStyle{
+    width:60%
+}
+.THIS .tempText .slds-textarea{
+    height:180px;
+    resize:none!important;
+}
+
+.THIS textarea{
+    height:77px;
+   
+}
+.THIS .sendButton{
+    float:right;
+    width:165px;
+}
+
+.THIS .sperator{
+    margin:0px;
+}
+
+.THIS .sendSMS{
+    float:right;
+    padding-top:1%;
+    display:inline-flex;
+}
+
+.THIS .sendButton{
+    float:right;
+    width:165px;
+}
+
+
+.THIS .checkbox{
+    display:inline-block;
+}
+
+.THIS .slds-modal__content{
+        height: 414px!important;
+}
+
+.THIS .helptextclass{
+    position:absolute;
+    left:133px;
+}

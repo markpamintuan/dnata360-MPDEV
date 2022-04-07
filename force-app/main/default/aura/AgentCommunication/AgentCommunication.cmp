@@ -1,0 +1,178 @@
+<aura:component controller="AgentCommunication" implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:attribute name="SendSMS" type="Boolean" default='false'/> 
+    <aura:attribute name="isChanged" type="Boolean" default='false'/> 
+    
+    <aura:attribute name="caseRecord" type="Object"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    <aura:attribute name="testconversation" type="String[]" />
+    <aura:attribute name="ResponseRequired" type="Boolean" default="false" />
+    <aura:attribute name="displayLoading" type="Boolean" default="true" />
+    <aura:attribute name="ReplyText" type="String" default="" />
+    <aura:attribute name="spinner" type="boolean" default="true"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="TempText" type="String" default=""/>
+    <aura:attribute name="CSRFolder" type="String" default=""/>
+    <aura:attribute name="CSRTemplate" type="String" default=""/>
+    <aura:attribute name="options" type="List" default=""/>
+    <aura:attribute name="templateoptions" type="List" default=""/>
+    <aura:attribute name="recordId" type="ID"/> 
+    <aura:attribute name="lstObj" type="Object[]" />
+    <aura:attribute name="textMessage" type="String" />
+    <aura:attribute name="currentStep" type="String" default='0' />
+    <aura:attribute name="userInfo" type="String"/> 
+    
+    
+    
+    <force:recordData aura:id="recordLoader"
+    recordId="{!v.recordId}"
+    fields="Id,Status,Org_Case_Status__c,Agent_Name__c,Contact.FirstName,Receive_Text_Messages__c"
+    targetFields="{!v.caseRecord}"
+    targetError="{!v.recordLoadError}"
+    />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.myAction}"/>
+    <!--
+    <div class="container opacityclass">
+        <p class="headingtxt">
+            <lightning:icon class="chat" iconName="utility:chat" alternativeText="Chat" />
+            Chat  Started by {!v.testconversation[0].CreatedBy} : {!v.testconversation[0].CreatedTime}             
+        </p>
+        <hr class="sperator"/>
+    </div>   
+    -->    
+    <div class="Name" style="padding:15px;background:white;font-size:1rem;border-bottom:1px solid #c0c0c0"><b>MYB Customer Communication</b></div>
+    
+    <!--<div style="">
+    <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" />	
+    </div>-->
+    <ui:scrollerWrapper class="scrollerSize opacityclass" aura:id="scrollerTop">
+        
+        <!--Spinner-->
+        
+        <aura:if isTrue="{!v.spinner}">
+            <div class="exampleHolder">
+                <lightning:spinner alternativeText="Loading" size="medium" />
+            </div> 
+        </aura:if>        
+        
+        <aura:iteration items="{!v.testconversation}" var="item">
+            <aura:if isTrue="{!item.Created_by_Customer}">
+                <aura:set attribute="else">
+                    <p class="customerChat"><ui:outputText value='{!item.Message}'/></p>
+                   <!-- <lightning:TextArea  style="overflow:auto" value="{!item.Message}"  class="customerChat wordbreak" readonly="true" /> -->
+                    <aura:if isTrue="{!item.Follow_Up_Date == '' || item.Follow_Up_Date == null}">
+                        <p class="rightMargin" style="clear:both"> {!item.CreatedBy}&nbsp; {!item.CreatedDate}.&nbsp;{!item.CreatedTime}</p>
+                        <aura:set attribute="else">
+                        	<p class="rightMargin" style="clear:both"> {!item.CreatedBy}&nbsp; {!item.Follow_Up_Date}</p>
+                        </aura:set>
+                    </aura:if>
+                    
+                </aura:set>
+                <p class="agentChat wordbreak"><ui:outputText value='{!item.Message}'/></p>
+                <!--<lightning:TextArea  style="overflow:auto" value="{!item.Message}"  class="agentChat wordbreak" readonly="true" /> -->
+                <p class="LeftMargin" style="clear:both">  Customer.&nbsp;{!item.CreatedDate}.{!item.CreatedTime}. </p>  
+            </aura:if>            
+        </aura:iteration>
+    </ui:scrollerWrapper>
+    
+    
+    <div class="replystyle opacityclass" style="border-top:1px solid #c0c0c0;background:#f3f3f3">
+        <div class="slds-grid slds-grid_vertical-align-center">            
+            <div class="slds-col slds-size_12-of-12">                
+                <!--<textarea id="textarea-id-01" class="slds-textarea" value="{!v.ReplyText}" placeholder="Enter Reply" />-->
+                <lightning:textarea  aura:id="AccName" value="{!v.ReplyText}" style="height:100px;resize:none; display:contents" disabled="{!v.caseRecord.Status == 'Closed'}"/> 
+                
+            </div>
+            
+            
+            
+        </div>
+        <div>
+           	                                        
+             <ui:button   
+                       class="slds-button slds-button--neutral"
+                        
+                        press="{!c.openModal}" disabled="{!v.caseRecord.Status == 'Closed'}">Use Template</ui:button>
+            
+            
+            <lightning:button aura:id="sendButton" variant="brand" disabled="{!empty(v.ReplyText)}" label="Send" title="Send" onclick="{! c.SendMessage }" class="sendButton" />
+            <p class="sendSMS"><ui:inputCheckbox aura:id="taskCheckBox" label="Send SMS " change="{!c.handleCheckTask}" class="checkbox" value="{!v.caseRecord.Receive_Text_Messages__c}" /> </p>
+            <!-- <lightning:buttonIcon class="icn" disabled="{!empty(v.ReplyText)}" iconName="utility:send" variant="bare" onclick="{! c.SendMessage }" alternativeText="Send" size="large" /> -->
+        </div>      
+    </div>
+      <aura:if isTrue="{!v.isOpen}">
+        <div style="height:640px">
+          <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Select Template</h2>
+              </header>
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1" style="min-height:400px !important">
+                  <aura:if isTrue="{!v.currentStep == '0'}">
+                  <lightning:combobox aura:id="folder" name="CSRFolder" label="Folder:" value="" placeholder="Select Folder" 
+                        options="{! v.options }" onchange="{! c.handlefolderChange }"/>
+              
+                  <lightning:combobox aura:id="template" name="CSRTemplate" label="Template:" value="" placeholder="Select Template" 
+                            options="{! v.templateoptions }" onchange="{! c.handletemplatechange }"/>
+                  
+                  <lightning:textarea  aura:id="tempText" value="{!v.TempText}" class="tempText" style="height:200px" disabled='true' /> 
+                  </aura:if>
+                   <aura:if isTrue="{!v.currentStep == '1'}">
+                                	Add Merging Fields
+                                <br/><br/>
+                            		<aura:if isTrue="{!v.lstObj.length > 0}">
+                                        <table>
+                                        <aura:iteration items="{!v.lstObj}" var="item">
+                                        <tr>
+                                            <td>{!item.Label}</td>
+                                            <td><lightning:input aura:id="valField" value="{!item.Value}" required="true" /></td>
+                                        </tr>
+                                        </aura:iteration>
+                                    </table>
+                                        <aura:set attribute="else">
+                                            No Merging Fields Found.
+                                        </aura:set>
+                                    </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!v.currentStep == '2'}">
+                            	<div class="slds-form-element">
+                                     <div class="slds-form-element__control">
+                                          <ui:inputTextArea aura:id="description" label="Description:"
+                                                        class="slds-input inputtextarea"
+                                                        labelClass="slds-form-element__label"
+                                                        value="{!v.textMessage}"
+                        								
+                                                        />
+                                     </div> 
+                                 </div>
+                            </aura:if>
+              </div>
+              <div class="slds-modal__footer" style="padding-bottom:0px">
+                            <button class="slds-button slds-button--neutral" onclick="{!c.closeModal}" style="float:left" >Cancel</button>
+                            <lightning:progressIndicator currentStep="{!v.currentStep}" type="base" variant="base">
+                                <lightning:progressStep label="Step 1" value="0"/>
+                                <lightning:progressStep label="Step 2" value="1"/>
+                                <lightning:progressStep label="Step 3" value="2"/>
+                                
+                            </lightning:progressIndicator>
+                            <div style="display: inline-block; position: relative; bottom: 24px;">
+                                <aura:if isTrue="{! v.currentStep != '0'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveBack}" >Back</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep != '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveNext}" >Next</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep == '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.saveText}" style="color:white;background:#1b5297" >Save</button>
+                                </aura:if>
+                            </div>
+                        </div>
+            </div>
+          </section>
+          <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+   
+    
+</aura:component>

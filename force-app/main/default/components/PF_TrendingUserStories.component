@@ -1,0 +1,28 @@
+<apex:component controller="PF_Story_Trending"  >
+    <div id="tab-11" class="tab-content1">
+        <div class="slds-feed">
+            <ul class="slds-feed__list">
+                <apex:repeat value="{!myResults}" var="pf">
+                    <li class="slds-feed__item">
+                        <div class="slds-media slds-comment slds-hint-parent">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-new-task">
+                                    <svg aria-hidden="true" class="slds-icon slds-icon-custom-30  slds-p-around--x-small" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        
+                                        <use xlink:href="{!URLFOR($Resource.SLDS100,
+                                                         '/assets/icons/custom-sprite/svg/symbols.svg#custom30')}"></use>
+                                    </svg>
+                                    <a href="{!$Site.Domain}/{!pf.ParentID}" target="_blank" title="Design Systems"> {!IF(LEN(pf.ParentName)>25, LEFT(pf.ParentName, 25)+"...", LEFT(pf.ParentName, 25))} - {!pf.CountVotes} Comments</a>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    
+                </apex:repeat>       
+            </ul>
+            
+        </div>
+    </div>
+    
+    <!--{!pf.ParentID} {!pf.ParentName} - {!pf.CountVotes} Comments-->
+</apex:component>

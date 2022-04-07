@@ -1,0 +1,31 @@
+<aura:component>        
+    <aura:attribute name="searchInput" type="object" description = "This will be save all Values to a object which will passed to apex when search is pressed"/>
+    <aura:attribute name="Recordval" type="object" description="This will save the values for each field in search section"/>    
+    <aura:attribute name="currentFieldDetails" type="ContainerWrapperClass.HeaderWrapper" />  
+    
+    <!-- change handler -->
+    <aura:handler name="change" value="{!v.Recordval}" action="{!c.valueChanged}"/>
+    
+    <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+        <!-- the value of object record -->
+        <aura:if isTrue="{!v.currentFieldDetails.fTypes.isDateTime || v.currentFieldDetails.fTypes.isDate}">
+            
+            <!-- date Type Field -->            
+            <!-- <ui:inputDate aura:Id="SearchField" displayDatePicker="true" label="{!v.currentFieldDetails.displayValue}" format="MM/dd/yyyy" value="{!v.Recordval}"/> -->
+            <lightning:input aura:id="SearchField"  type="date" label="{!v.currentFieldDetails.displayValue}"  value="{!v.Recordval}" format="MM/dd/yyyy"/>
+            
+            <aura:set attribute="else">
+                
+                <!-- boolean Type Field -->
+                <aura:if isTrue="{!v.currentFieldDetails.fTypes.isBoolean}">
+                    <lightning:input class="checkboxmargin" aura:Id="SearchField" label="{!v.currentFieldDetails.displayValue}" type="checkbox"  value="{!v.Recordval}"/>
+                    
+                    <!-- any type except date and boolean -->
+                    <aura:set attribute="else">
+                        <lightning:input aura:Id="SearchField" label="{!v.currentFieldDetails.displayValue}" type="text" value="{!v.Recordval}"/>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

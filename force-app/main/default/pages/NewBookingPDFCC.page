@@ -1,0 +1,570 @@
+<apex:page renderAs="pdf" applyBodyTag="false" controller="NewBookingPDFControllerCC">
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" />
+        <style type="text/css"> 
+            
+            @page :first{
+            margin-top: 0cm !important;
+            }
+
+            @page{
+            margin-top: 2cm !important;
+            margin-bottom: 4cm !important; 
+            margin-left: 2cm !important;
+            margin-right: 2cm !important;
+                @bottom-center {
+                content: element(footer);
+                }
+            }
+            
+     
+            #footer {
+            position: running(footer);
+            
+            } 
+            
+           
+            
+            .innerDetail{
+              margin-top:0in;
+              margin-right:0in;
+              margin-bottom:.0001pt;
+              margin-left:0in;
+              line-height:15px;
+              font-size:12px;
+              
+          }
+          
+          .innerDetailSpan{
+             font-size:12px; 
+          }
+            
+            .header{
+            color: grey;
+            
+            }
+            body {
+                font-family:Arial, Helvetica, sans-serif;
+                color:#333333;
+            }
+                        
+        </style>
+    </head>
+    <body class="em_body" style="margin:0px; padding:0px;">
+        
+        
+        
+        
+        <div class="header">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="em_full_wrap" style="width: 650px;line-height: 15px;">
+                <tr>
+                    <td align="center" valign="top" class="em_aside10">
+                        <table align="center" width="650" border="0" cellspacing="0" cellpadding="0" class="em_main_table" style="width:650px;">
+                            
+                            <!--Header section-->
+                            <tr>
+                                <td align="center" valign="top" bgcolor="#ffffff">
+                                    <table width="700" border="0" cellspacing="0" cellpadding="0" align="center" style="width:700px;" class="em_wrapper">
+                                    <tr>
+                                        <td align="center" valign="top" style="border-bottom:1px solid #eaeaea;" colspan="8">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                            <tr>
+                                                <td width="25" style="width:25px;" class="em_side10">&nbsp;</td>
+                                                <td align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                                    <tr>
+                                                        <td height="30" style="height:30px; line-height:0px; font-size:0px;" class="em_h20">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                                            <tr>
+                                                                <td align="center" valign="top">
+                                                                    <table border="0" cellspacing="0" cellpadding="0" align="left" class="em_wrapper" width="153" style="width:153px;">
+                                                                        <tr>
+                                                                            <td align="center" valign="top">
+                                                                                <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'marhaba'}">
+                                                                                    
+                                                                                    <a href="https://www.marhabaservices.com/" target="_blank" style="text-decoration:none; color:#000000;">
+                                                                                        <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/MarhabaImages/MH-logo.png')}" width="153" height="30" alt="marhaba" border="0" style="display:block; max-width:153px; color:#e65053; text-align:center; font-family:Arial, Helvetica, sans-serif; font-weight:bold;" />
+                                                                                    </a>
+                                                                                </apex:outputPanel>
+                                                                                
+                                                                                <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'Arabian Adventures'}">
+                                                                                    
+                                                                                    <a href="https://www.arabian-adventures.com/" target="_blank" style="text-decoration:none; color:#000000;">
+                                                                                        <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/AAImages/logo_img.png')}" width="150" height="90" alt="Arabian Adventure" border="0" style="display:block; max-width:153px; color:#e65053; text-align:center; font-family:Arial, Helvetica, sans-serif; font-weight:bold;" />
+                                                                                    </a>
+                                                                                </apex:outputPanel>
+                                                                                <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'City Sightseeing Dubai'}">
+                                                                                    
+                                                                                    <a href="https://www.marhabaservices.com/" target="_blank" style="text-decoration:none; color:#000000;">
+                                                                                        <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/CSDImages/logo.jpg')}" width="160" height="70" alt="City Sightseeing Dubai" border="0" style="display:block; max-width:153px; color:#e65053; text-align:center; font-family:Arial, Helvetica, sans-serif; font-weight:bold;" />
+                                                                                    </a>
+                                                                                </apex:outputPanel>
+                                                                            
+                                                                                
+                                                                            </td>
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table width="200" border="0" cellspacing="0" cellpadding="0" align="right" style="width:200px;" class="em_wrapper">
+                                                                        <tr>
+                                                                            <td align="center" valign="top"><table width="200" border="0" cellspacing="0" cellpadding="0" align="center" style="width:200px;">
+                                                                                <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'marhaba'}">
+                                                                                    <!--tr>
+                                                                                        <td align="right" valign="top" class="em_ptop25 em_defaultlink" style="color:#464547; font-size:15px; line-height:18px; font-family:Helvetica, Arial, sans-serif;padding-bottom:3px;">marhaba Dubai Call Centre</td>
+                                                                                    </tr-->
+                                                                                    <tr>
+                                                                                        <td align="center" valign="top"><table width="200" border="0" cellspacing="0" cellpadding="0" align="right" style="width:200px;">
+                                                                                            <tr>
+                                                                                                <td align="right" valign="middle" width="25" style="width:25px; line-height:0px; font-size:0px;"><img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/PageIcons/phone-mh.png')}" width="18" height="18" alt="" /></td>
+                                                                                                <td align="right" valign="middle" style=" font-size:18px; color:#eeaf00; line-height:21px; font-weight:bold;font-family:Helvetica, Arial, sans-serif;"><a href="tel:+9718006274222" style="text-decoration:none;color:#eeaf00;">(+971) 800 627 4222</a></td>
+                                                                                            </tr>
+                                                                                            </table></td>
+                                                                                    </tr>
+                                                                                </apex:outputPanel>
+                                                                                
+                                                                                <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'City Sightseeing Dubai'}">
+                                                                                    <!--tr>
+                                                                                        <td align="right" valign="top" class="em_ptop25 em_defaultlink" style="color:#464547; font-size:15px; line-height:18px; font-family:Helvetica, Arial, sans-serif;padding-bottom:3px;">marhaba Dubai Call Centre</td>
+                                                                                    </tr-->
+                                                                                    <tr>
+                                                                                        <td align="center" valign="bottom"><table width="200" border="0" cellspacing="0" cellpadding="0" align="right" style="width:200px;">
+                                                                                            <tr><td><br/><br/></td></tr>
+                                                                                            <tr>
+                                                                                                <td align="right" valign="bottom" width="25" style="width:25px; line-height:0px; font-size:0px;"><img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/PageIcons/phone-mh.png')}" width="18" height="18" alt="" /></td>
+                                                                                                <td align="right" valign="bottom" style=" font-size:18px; color:#eeaf00; line-height:21px; font-weight:bold;font-family:Helvetica, Arial, sans-serif;"><a href="tel:+9718002738224" style="text-decoration:none;color:#eeaf00;">(+971) 800 273 8224</a></td>
+                                                                                            </tr>
+                                                                                            </table></td>
+                                                                                    </tr>
+                                                                                </apex:outputPanel>
+                                                                                
+                                                                                
+                                                                                <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'Arabian Adventures'}">
+                                                                                    <tr>
+                                                                                      <td align="left" style="font-family:Helvetica, Arial, sans-serif; font-size:15px; line-height:18px; color:#464547; padding-bottom:5px;padding-top:20px;padding-left:30px;" valign="bottom">WhatsApp us on</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        
+                                                                                        <td align="left" style="font-family:Helvetica, Arial, sans-serif; font-size:20px; line-height:22px; font-weight:bold; color:#0e7a3e;" valign="bottom"> 
+                                                                                            <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/PageIcons/phone.png')}" width="18" height="18" alt="" />
+                                                                                            <a href="tel:+971569994901" style="text-decoration:none; color:#0e7a3e;">+971 56 999 4901</a>
+                                                                                      </td>
+                                                                                    </tr>
+                                                                                </apex:outputPanel>
+                                                                                
+                                                                                
+                                                                                </table></td>
+                                                                        </tr>
+                                                                    </table></td>
+                                                            </tr>
+                                                            </table></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="30" style="height:30px; line-height:0px; font-size:0px;" class="em_h20">&nbsp;</td>
+                                                    </tr>
+                                                    </table></td>
+                                                <td width="25" style="width:25px;" class="em_side10">&nbsp;</td>
+                                            </tr>
+                                            </table></td>
+                                    </tr>
+                                    
+                                    <!--Navigation Section-->
+                                    <tr>
+                                        <td valign="top" align="center" style="padding:10px;" class="em_pad2">
+                                            <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0"> 
+                                                <tr>
+                                                    <td class="em_text1 em_defaultlink" align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:14px; line-height:20px; color:#464547;">
+                                                        <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'marhaba'}">
+                                                            
+                                                                <a href="https://www.marhabaservices.com/english/our-services/index" target="_blank" style="text-decoration:none; color:#333333;">Our Services</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <a href="https://www.marhabaservices.com/Location/OurLocations/" target="_blank" style="text-decoration:none; color:#333333;">Our Locations</a><span class="em_br"></span><span class="em_hide1">&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                                <a href="https://www.marhabaservices.com/home/search" target="_blank" style="text-decoration:none; color:#333333;">Make &amp; Manage Booking</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                <a href="https://www.marhabaservices.com/english/about/our-story" target="_blank" style="text-decoration:none; color:#333333;">About marhaba</a>
+                                                            
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'Arabian Adventures'}">
+                                                            
+                                                            <a href="https://www.arabian-adventures.com/experiences/?category=desertSafari" style="text-decoration:none; color:#333333;" target="_blank">Desert Safari</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <a href="https://www.arabian-adventures.com/experiences/?category=sightseeingTour" style="text-decoration:none; color:#333333;" target="_blank">Sightseeing Tours</a><span class="em_hide1">&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                            <a href="https://www.arabian-adventures.com/experiences/?category=Attractions" style="text-decoration:none; color:#333333;" target="_blank">Attractions &amp; Experiences</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <a href="https://www.arabian-adventures.com/helpful-links/contact-us/" style="text-decoration:none; color:#333333;" target="_blank">Contact Us</a>
+                                                            
+                                                         </apex:outputPanel>
+                                                        
+                                                        <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'City Sightseeing Dubai'}">
+                                                            <a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.arabian-2Dadventures.com_experiences_-3Fcategory-3DdesertSafari&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=aPLf0fnGEI5pleN20y7ekmRDatIWVEEqO31S68XjtP8&amp;e=" target="_blank" style="text-decoration:none; color:#333333;">Bus Tours</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            <a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english_bus-2Dtours&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=OM6WHkI0hip54f0nWSR7V81Rqfm8QMlN9VFZtRU_pHA&amp;e=" target="_blank" style="text-decoration:none; color:#333333;">Super Savers</a><span class="em_br"></span><span class="em_hide1">&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                            <a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english_super-2Dsavers&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=G1hKwcl9zVfOG7z0gSQIetnpPn1xMTK6Vo3yIQmXEng&amp;e=" target="_blank" style="text-decoration:none; color:#333333;">Attractions</a>
+                                                        </apex:outputPanel>
+                                                    
+                      
+                                                    </td>
+                                                </tr>
+                                            </table></td>
+                                    </tr>
+                                    <!--//Navigation Section-->
+                                    </table></td>
+                            </tr>
+                        </table></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="content" >
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="em_full_wrap" style="width: 650px;line-height: 14px;font-size: 14px" align="center">
+                
+                
+                <tr><td colspan="6"><br/><br/></td></tr>
+                <tr>
+                    <td align="left" valign="top" colspan="1" style="color:#333333;">Order Status: {!o.Status__c}</td> 
+                </tr>
+                <tr>
+                    <td align="left" valign="top" colspan="1" style="color:#333333;">Order Number: {!o.OrderReferenceNumber}</td>
+                </tr>
+                <tr>
+                    <td align="left" valign="top" colspan="1">
+                        <apex:outputText value="Date Ordered: {0,date,dd MMM yyyy}"  style="color:#333333;"> <apex:param value="{!o.CreatedDate}" /> </apex:outputText> 
+                    </td>
+                </tr>
+                <!--tr>
+                    <td align="left" valign="top" colspan="1" style="color:#333333;">Service Date:  <apex:outputText value="{0,date,dd MMM yyyy}"  style="color:#333333;"> <apex:param value="{!o.EffectiveDate}" /> </apex:outputText>  -   <apex:outputText value="{0,date,dd MMM yyyy}"  style="color:#333333;"> <apex:param value="{!o.EndDate}" /> </apex:outputText> </td>
+                </tr-->
+                <tr><td colspan="7"><br/><br/></td></tr>
+                <tr>
+                    <td align="left" valign="top" colspan="4" style="color:#333333;">Services</td>
+                    
+                        <td align="right" valign="top" colspan="4" style="color:#333333;">Total Price</td>      
+                    
+                    
+                </tr>
+                <tr><td colspan="7"><br/><br/></td></tr>
+            </table>
+            
+            
+            
+            <table  cellpadding="0" cellspacing="0">
+              <tbody>
+                  
+                  <apex:repeat value="{!objList}" var="obj" id="objTable" >  
+                  
+                    <tr style="page-break-inside: avoid;">
+                    
+                      <td style="width: 116.15pt;border-top: 1px solid gray;padding: 0in 5.4pt;height: 131.8pt;vertical-align: top;" valign="top" width="24.294670846394986%">
+                          
+                          
+                        <span style="font-size:12px;">{!IF(obj.prod.brand__c == 'City Sightseeing Dubai','City Sightseeing Dubai', obj.prod.brand__c)}</span>
+                          <p class="innerDetail">&nbsp;</p>
+                            <p class="innerDetail">
+                                <span style="margin-left:3px;margin-top:26px;width:140px;height:140px;">
+                                    <apex:image url="{!obj.prod.DisplayUrl}" height="140px" width="140px" rendered="{!!ISNULL(obj.prod.DisplayUrl)}"/>       
+                                </span>
+                            </p>
+                      </td>
+                      <td style="width: 241.35pt;border-top: 1px solid gray;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0in 5.4pt;height: 131.8pt;vertical-align: top;" valign="top" width="46.23824451410658%">
+                        <p class="innerDetail">&nbsp;</p>
+                        <p class="innerDetail"><span style="font-size:13px;text-decoration: underline;"><strong>{!obj.prod.name}</strong></span></p>
+                        <p class="innerDetail">&nbsp;</p>
+                        <apex:outputPanel rendered="{!obj.prod.Brand__c == 'marhaba'}">
+                            <p class="innerDetail"><span class="innerDetailSpan">Arrival: {!obj.obj.Flight_Origin__c} <img width="12px" height="6px" src="{!URLFOR($Resource.eCommerceResourcesDnata, '/MarhabaImages/arrow.png')}"/> {!obj.obj.Flight_Destination__c}  {!obj.arrivalDetails}</span></p>
+                        </apex:outputPanel>
+                        <p class="innerDetail"><span class="innerDetailSpan">{!obj.passengerAge}</span></p>
+                        <apex:outputPanel rendered="{!OR(obj.prod.Brand__c == 'City Sightseeing Dubai',obj.prod.Brand__c == 'Arabian Adventures')}">
+                            <p class="innerDetail"><span class="innerDetailSpan">Service Start Date: {!obj.serviceStartDateTime}</span></p>
+                        </apex:outputPanel>
+                          <apex:outputPanel rendered="{!obj.prod.Brand__c == 'Arabian Adventures'}">
+                            <p class="innerDetail"><span class="innerDetailSpan">Pickup Location: {!obj.obj.Pick_up_Location__c}</span></p>
+                            <p class="innerDetail"><span class="innerDetailSpan">Drop-off Location: {!obj.obj.Drop_off_Location__c}</span></p>
+                        </apex:outputPanel>
+                        
+                        <p class="innerDetail"><span class="innerDetailSpan">&nbsp;</span></p>
+                        <p class="innerDetail"><span class="innerDetailSpan">Passengers:</span></p>
+                        <p class="innerDetail"><span class="innerDetailSpan">{!obj.passengerNames}</span></p>
+                        <p class="innerDetail"><span class="innerDetailSpan">&nbsp;</span></p>
+                        <apex:repeat value="{!obj.servicesList}" var="s">
+                            <p class="innerDetail"><span class="innerDetailSpan">{!s}</span></p>   
+                        </apex:repeat>
+
+                        <p class="innerDetail"><span class="innerDetailSpan">&nbsp;</span></p>
+                        <p class="innerDetail"><span class="innerDetailSpan">&nbsp;</span></p>
+                        <p class="innerDetail"><span class="innerDetailSpan">Booking Reference Number</span></p>
+                        <p class="innerDetail"><span class="innerDetailSpan">{!obj.obj.Order_Reference_Number__c}</span></p>
+                        <p class="innerDetail">&nbsp;</p>
+                      </td>
+                      <td style="width: 34.9pt;border-top: 1px solid gray;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0in 5.4pt;height: 131.8pt;vertical-align: top;" valign="top" width="11.442006269592477%">
+                        <p class="innerDetail">&nbsp;</p>
+                      </td>
+                      <td align="right" style="width: 1.2in;border-top: 1px solid gray;border-right: 1pt solid windowtext;border-bottom: 1pt solid windowtext;border-image: initial;border-left: none;padding: 0in 5.4pt;height: 131.8pt;vertical-align: top;" valign="top" width="18.025078369905955%">
+                        <p class="innerDetail">&nbsp;</p>
+                          <p class="innerDetail"><strong>AED {!obj.objTotal}</strong></p>
+                        <p class="innerDetail">&nbsp;</p>
+                        <p class="innerDetail">&nbsp;</p>
+                        <p class="innerDetail">
+                            <apex:outputPanel rendered="{!obj.att.size > 0}">
+                                <span style="margin-left:3px;margin-top:26px;width:140px;height:140px;" align="right">
+                                <img id="blah2" src="{!IF(obj.att.size > 0,'/servlet/servlet.FileDownload?file='+ obj.att[0].Id +'&operationContext=S1','')}" alt="Upload QR Code" style="width:100px;height:100px;"/>
+                                       
+                                </span>
+                            </apex:outputPanel>
+                        </p>
+                      </td>
+                    </tr>
+                </apex:repeat>
+              </tbody>
+            </table>
+            <p style="margin-top:0in;margin-right:0in;margin-bottom:10.0pt;margin-left:0in;line-height:115%;font-size:15px;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;">&nbsp;</p>
+            
+            
+            
+            
+            
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width: 650px;" align="center" >
+                
+                <!--tr style="page-break-inside: avoid">
+                    <td valign="top" align="left" style="padding-top:15px;border-top:1px solid #ccc;" colspan="2">
+                        Billing Address<br/><br/><br/>                         
+                         
+                          
+                        {!acc.Name}<br/>
+                        {!acc.BillingStreet} {!acc.BillingCity} {!acc.BillingState}<br/>
+                        {!acc.BillingCountry} {!acc.BillingPostalCode}<br/>
+                        {!acc.PersonEmail}<br/>    
+                        {!acc.PersonMobilePhone}<br/>  
+                        
+                        <br/> <br/> 
+                            <apex:outputPanel rendered="{!piList.size>0}">
+                                Payment Information No: {!piList[0].Name} <br/> 
+                                ************{!piList[0].Card_Number__c}<br/> 
+                                Ending: {!piList[0].Expiration__c}
+                            </apex:outputPanel>
+                        <br/> <br/> 
+                    
+                    </td>
+                </tr-->
+                <tr>
+                    <td valign="top" align="left" style="padding-top:15px;border-top:1px solid #ccc;" colspan="2"><br/></td>
+                </tr>
+                
+                <tr>
+                    <td align="left">
+                        <strong>Subtotal</strong>
+                    </td>
+                    <td align="right">
+                        <strong>AED {!o.SFCC_Order_Total__c}</strong>
+                    </td>
+                
+                </tr>
+                <tr>
+                    <td align="left">
+                        Tax (VAT)
+                    </td>
+                    <td align="right">
+                        AED {!o.SFCC_Order_Total_Tax__c}
+                    </td>
+                
+                </tr>
+                
+                <tr>
+                    <td colspan="2">
+                        <br/>
+                    </td>
+                
+                </tr>
+                
+                <tr>
+                    <td align="left">
+                        <strong>Total (VAT Included)</strong>
+                    </td>
+                    <td align="right">
+                        <strong>AED {!(o.SFCC_Order_Total__c+o.SFCC_Order_Total_Tax__c)}</strong>
+                    </td>
+                
+                </tr>
+                
+            </table>
+        </div>
+        
+        <div id="footer">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" valign="bottom" style="width: 650px;">
+                <tr style="page-break-inside: avoid;">
+                    <td align="center" valign="bottom" class="em_aside10">
+                        <table align="center" width="650" border="0" cellspacing="0" cellpadding="0" class="em_main_table" style="width:650px; table-layout:fixed;" bgcolor="#ffffff">
+                            <!--Social Icon Section-->
+                            <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'marhaba'}">
+                                <tr style="page-break-inside: avoid;">
+                                    <td valign="top" align="center" style="padding:5px; border-bottom:1px solid #dadada;" class="em_padd5"><table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr style="page-break-inside: avoid;">
+                                            <td valign="top" align="center">
+                                                <table align="left" width="460" border="0" cellspacing="0" cellpadding="0" style="width:460px;" class="em_wrapper">
+                                                    <tr style="page-break-inside: avoid;">
+                                                        <td class="em_defaultlink em_pbottom em_center" align="left" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:16px; line-height:19px; color:#cb0044; font-weight:700; padding-top:8px;">Connect with us</td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                
+                                                
+                                                <table align="right" width="140" border="0" cellspacing="0" cellpadding="0" style="width:140px;">
+                                                    <tr style="page-break-inside: avoid;">
+                                                        <td align="center" valign="top">
+                                                            
+                                                            <table align="center" border="0" cellspacing="0" cellpadding="0">
+                                                                <tr style="page-break-inside: avoid;">
+                                                                    <td align="center" valign="middle" style="padding-right: 20px" >
+                                                                        <a href="https://www.facebook.com/marhabaservicesofficial/" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                            <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/MarhabaImages/mh-fb.png')}" alt="fb" style="display:inline-block; font-family:Arial, sans-serif; font-size:100%; line-height:30px;  max-width:30px;" border="0" width="30" height="30" />
+                                                                        </a>
+                                                                    </td> 
+                                                                    
+                                                                    <td align="center" valign="middle" style="padding-right: 20px">
+                                                                        
+                                                                        <a href="https://twitter.com/marhaba" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                            <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/MarhabaImages/mh-tw.png')}" alt="tw" style="display:block; font-size:30px; line-height:30px;  max-width:30px;" border="0" width="30" height="30" />
+                                                                        </a>
+                                                                        
+                                                                    </td>
+                                                                    
+                                                                    <td align="center" valign="middle">
+                                                                        <a href="https://www.youtube.com/channel/UCd6rjsQ-p0YGvFfGwCDBEww" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                            <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/MarhabaImages/mh-yt.png')}" alt="insta" style="display:block; font-family:Arial, sans-serif; font-size:30px; line-height:30px; max-width:30px;" border="0" width="30" height="30" />
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table></td>
+                                                    </tr>
+                                                </table>
+                                            </td> 
+                                        </tr>
+                                        </table></td> 
+                                </tr>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'Arabian Adventures'}">
+                                <tr style="page-break-inside: avoid;">
+                                    <td valign="top" align="center" style="padding:5px; border-bottom:1px solid #dadada;" class="em_padd5"><table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr style="page-break-inside: avoid;">
+                                            <td valign="top" align="center">
+                                                <table align="left" width="460" border="0" cellspacing="0" cellpadding="0" style="width:460px;" class="em_wrapper">
+                                                    <tr style="page-break-inside: avoid;">
+                                                        <td align="left" class="em_defaultlink em_pbottom em_center " style="font-family:Helvetica, Arial, sans-serif; font-size:16px; line-height:19px; color:#0039a6; font-weight:700; padding-top:8px;" valign="top">For exclusive competitions and tour inspirations!</td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                
+                                                
+                                                <table align="right" width="140" border="0" cellspacing="0" cellpadding="0" style="width:140px;">
+                                                    <tr style="page-break-inside: avoid;">
+                                                        <td align="center" valign="top">
+                                                            
+                                                            <table align="center" border="0" cellspacing="0" cellpadding="0">
+                                                                <tr style="page-break-inside: avoid;">
+                                                                            <td align="center" valign="middle" style="padding-right: 20px" >
+                                                                                <a href="https://www.facebook.com/arabianadventuresofficial/" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                                    <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/AAImages/fb_img.jpg')}" alt="fb" style="display:inline-block; font-family:Arial, sans-serif; font-size:100%; line-height:30px;  max-width:30px;" border="0" width="30" height="30" />
+                                                                                </a>
+                                                                            </td> 
+                                                                            <td align="center" valign="middle" style="padding-right: 20px" >
+                                                                                <a href="https://twitter.com/arabian_adv" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                                    <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/AAImages/tw_img.jpg')}" alt="fb" style="display:inline-block; font-family:Arial, sans-serif; font-size:100%; line-height:30px;  max-width:30px;" border="0" width="30" height="30" />
+                                                                                </a>
+                                                                            </td> 
+                                                                            <td align="center" valign="middle" style="padding-right: 20px">
+                                                                                
+                                                                                <a href="https://www.instagram.com/arabianadventures/" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                                    <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/AAImages/insta_img.jpg')}" alt="tw" style="display:block; font-size:30px; line-height:30px;  max-width:30px;" border="0" width="30" height="30" />
+                                                                                </a>
+                                                                                
+                                                                            </td>
+                                                                            
+                                                                            <td align="center" valign="middle">
+                                                                                <a href="https://www.youtube.com/channel/UCRbErXCVHctfFuN_Mel_ojA" target="_blank" style="text-decoration:none;display:inline-block;">
+                                                                                    <img src="{!URLFOR($Resource.eCommerceResourcesDnata, '/AAImages/yt_img.jpg')}" alt="insta" style="display:block; font-family:Arial, sans-serif; font-size:30px; line-height:30px; max-width:30px;" border="0" width="30" height="30" />
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                            </table></td>
+                                                    </tr>
+                                                </table>
+                                            </td> 
+                                        </tr>
+                                        </table></td> 
+                                </tr>
+
+                            </apex:outputPanel>
+                            
+                            
+                            
+                            <!--//Social Icon Section-->
+                            
+                            <tr style="page-break-inside: avoid;">
+                                <td valign="top" align="center" bgcolor="#333333" style="padding:10px" class="em_padd">
+                                    <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'marhaba'}">
+                                        <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr style="page-break-inside: avoid;">
+                                                <td align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:10px; line-height:0px; color:#ffffff; font-weight:400; padding-bottom:10px;">
+                                                    <a href="https://www.marhabaservices.com/english/general/privacy-policy" target="_blank" style="text-decoration:underline; color:#ffffff;">Privacy Policy</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://www.marhabaservices.com/english/general/terms-conditions" target="_blank" style="text-decoration:underline; color:#ffffff;">Terms &amp; Conditions</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://www.marhabaservices.com/english/general/conditions-contract" target="_blank" style="text-decoration:underline; color:#ffffff;">Conditions of Contract</a></td>
+                                            </tr>
+                                            <tr style="page-break-inside: avoid;">
+                                                <td align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:10px; line-height:12px; color:#ffffff; font-weight:400; padding-bottom:3px;">You have received this email message from <a href="https://www.marhabaservices.com/" target="_blank" style="text-decoration:underline; color:#ffffff; white-space:nowrap;">www.marhabaservices.com</a>. Should you wish to<br class="em_hide" />
+                                                    remove your email address from the mailing list, please <a href="%%unsub_center_url%%" target="_blank" style="text-decoration:underline; color:#ffffff; white-space:nowrap;">unsubscribe</a>. To update your email<br class="em_hide" />
+                                                    address, please <a href="https://www.marhabaservices.com/contact/" target="_blank" style="text-decoration:underline; color:#ffffff; white-space:nowrap;">contact us</a>.</td>
+                                            </tr>
+                                            <tr style="page-break-inside: avoid;">
+                                                <td class="em_defaultlink" align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:11px; line-height:18px; color:#ffffff; font-weight:400;">&copy; 2018 marhabaservices</td>
+                                            </tr>
+                                        </table>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'Arabian Adventures'}">
+                                        <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr style="page-break-inside: avoid;">
+                                                <td align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:10px; line-height:0px; color:#ffffff; font-weight:400; padding-bottom:10px;">
+                                                    <a href="https://www.arabian-adventures.com/legal/guidelines/" style="text-decoration:underline; color:#ffffff;" target="_blank">Legal</a> &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                                                    <a href="https://www.arabian-adventures.com/legal/privacy-policy/" style="text-decoration:underline; color:#ffffff;" target="_blank">Privacy Policy</a> &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                                                    <a href="https://www.arabian-adventures.com/legal/terms/" style="text-decoration:underline; color:#ffffff;" target="_blank">Terms &amp; Conditions</a>
+                                              </td>
+                                            </tr>
+                                            <tr style="page-break-inside: avoid;">
+                                                <td align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:10px; line-height:12px; color:#ffffff; font-weight:400; padding-bottom:3px;">You have received this email message from 
+                                                    <a href="https://www.arabian-adventures.com/" style="text-decoration:underline; color:#ffffff; white-space:nowrap;" target="_blank">www.arabian-adventures.com</a>. Should you wish to
+                                                    <br class="em_hide"/>remove your email address from the mailing list, please 
+                                                    <a href="%%unsub_center_url%%" style="text-decoration:underline; color:#ffffff; white-space:nowrap;" target="_blank">unsubscribe</a>. To update your email
+                                                    <br class="em_hide"/>address, please 
+                                                    <a href="https://www.arabian-adventures.com/helpful-links/contact-us/" style="text-decoration:underline; color:#ffffff; white-space:nowrap;" target="_blank">contact us</a>.
+                                              </td>
+                                            </tr>
+                                            <tr style="page-break-inside: avoid;">
+                                                <td class="em_defaultlink" align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:11px; line-height:18px; color:#ffffff; font-weight:400;">&copy; 2018 Arabian Adventures</td>
+                                            </tr>
+                                        </table>
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!o.SFCC_Brand__c == 'City Sightseeing Dubai'}">
+                                        <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr style="page-break-inside: avoid;">
+                                                <td align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:10px; line-height:0px; color:#ffffff; font-weight:400; padding-bottom:10px;">
+                                                    <a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english_contact-2Dus-5Fcss.html&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=Iqoreul40DvS4sASnIL2YXrTm9Cn2i_RHG9brg6i9WM&amp;e=" target="_blank" style="text-decoration:underline; color:#ffffff;">Contact Us</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english_terms-2Dconditions.html&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=KYFKYNV1W6h2Cgx0JEFYwalbJUK5w1nSR4TRCWXtOXk&amp;e="  target="_blank" style="text-decoration:underline; color:#ffffff;">Terms &amp; Conditions</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english_privacy-2Dpolicy.html&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=0Af06r-2sozhOC7FMV0w2KEEL66pLoJc3L1F717Ry-8&amp;e=t" target="_blank" style="text-decoration:underline; color:#ffffff;">Privacy Policy</a></td>
+                                            </tr>
+                                            <tr style="page-break-inside: avoid;">
+                                                <td align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:10px; line-height:12px; color:#ffffff; font-weight:400; padding-bottom:3px;">You have received this email message from <a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english&d=DwMG-g&c=asCACUKXffk7st5ltqEURQ&r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&s=jOo61ra_799n6W392aSboXnUTE4DqgdTuIDzUJfJrmk&e=" target="_blank" style="text-decoration:underline; color:#ffffff; white-space:nowrap;">www.citysightseeing-dubai</a>. Should you wish to<br class="em_hide" />
+                                                    remove your email address from the mailing list, please <a href="%%unsub_center_url%%" target="_blank" style="text-decoration:underline; color:#ffffff; white-space:nowrap;">unsubscribe</a>. To update your email<br class="em_hide" />
+                                                    address, please <a href="https://urldefense.proofpoint.com/v2/url?u=https-3A__www.citysightseeing-2Ddubai.com_ae_english_contact-2Dus-5Fcss.html&amp;d=DwMG-g&amp;c=asCACUKXffk7st5ltqEURQ&amp;r=sH_B_zV4-gRzk55sip6yLGR8Y5jyAL7C8C2XlGQ-_EA&amp;m=wxl3MGNOBf5VDFj0zrqvIOUAKKDPAXDLjsSVs1qFNlM&amp;s=Iqoreul40DvS4sASnIL2YXrTm9Cn2i_RHG9brg6i9WM&amp;e=" target="_blank" style="text-decoration:underline; color:#ffffff; white-space:nowrap;">contact us</a>.</td>
+                                            </tr>
+                                            <tr style="page-break-inside: avoid;">
+                                                <td class="em_defaultlink" align="center" valign="top" style="font-family:Helvetica, Arial, sans-serif; font-size:11px; line-height:18px; color:#ffffff; font-weight:400;">&copy; 2019 City Sightseeing Dubai</td>
+                                            </tr>
+                                        </table>
+                                    </apex:outputPanel>
+                                </td>
+                            </tr>
+                            <tr style="page-break-inside: avoid;">
+                                <td class="em_hide" style="line-height:1px;min-width:650px;background-color:#eaeaea;"><img alt="" src="images/spacer.gif" height="1"  width="650" style="max-height:1px; min-height:1px; display:block; width:650px; min-width:650px;" border="0" /></td>
+                            </tr>
+                        </table></td>
+                </tr>
+            </table>
+            
+            
+        </div>
+    </body>
+    
+   
+</apex:page>

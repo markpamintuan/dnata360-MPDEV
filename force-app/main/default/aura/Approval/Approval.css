@@ -1,0 +1,22 @@
+/**
+ * Created by gkumarappan001 on 10/25/18.
+ */
+.THIS {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    border-top-style: none;
+}
+
+.THIS button
+{
+    	background-color:white;
+  	color : rgba(27, 82, 151, 1);
+    border-color:rgb(221, 219, 218);
+}
+
+.THIS button:hover{
+    background-color:rgb(244, 246, 249);
+  	color : rgba(27, 82, 151, 1);
+    border-color:rgb(221, 219, 218);
+}

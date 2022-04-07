@@ -1,0 +1,257 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global">
+    
+    <!-- List of Wrapper Objects that have Object name and list of records -->
+    <aura:attribute name="resultWrapList" type="Object[]"/>
+    
+    <!-- used for saving the first Name -->
+    <aura:attribute name="SearchKeyWord_FirstName" type="string"/> 
+    
+    <!-- this will be used to save the pop-up hove for email -->
+    <aura:attribute name="emailpop" type="boolean" default="false"/> 
+    
+    <!-- this will be used to save the pop-up hove for email -->
+    <aura:attribute name="phonepop" type="boolean" default="false"/> 
+    
+    <!-- saving the pop up for the key word -->
+    <aura:attribute name="keywordpop" type="boolean" default="false"/> 
+    
+    <!-- used for saving the last name -->
+    <aura:attribute name="SearchKeyWord_LastName" type="string"/>
+    
+    <!-- used for saving the email -->
+    <aura:attribute name="lstSelectedRecords_Email" type="sObject[]" default="[]" description="Use,for store Email Records"/>    
+    <aura:attribute name="SearchKeyWord_Email" type="string"/>
+    
+    
+    <!-- used for saving the Mobile -->
+    <aura:attribute name="lstSelectedRecords_Mobile" type="sObject[]" default="[]" description="Use,for store Mobile Records"/>    
+    <aura:attribute name="SearchKeyWord_Mobile" type="string"/>
+    
+    <!-- Step Number used to update Progress Indicator & Content of Body -->
+    <aura:attribute name="stepNumber" type="Integer" />
+    <aura:handler name="change" value="{!v.stepNumber}" action="{!c.validateField}"/>
+    
+    
+    <!-- this will save the seach form inputs -->
+    <aura:attribute name="SearchKeyWord" type="object"/>
+    <aura:attribute name="lstSelectedRecords_Keywords" type="sObject[]" default="[]" description="Use,for store Keyword Records"/>    
+    
+    
+    <div aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" >
+        <div class="slds-form-element__control ">
+            <div class="slds-input-has-icon slds-input-has-icon--right ">
+                <!-- This markup is for when an record is selected -->
+                <div aura:id="lookup-pill" class="slds-pill-container maindiv" >
+                    <div aura:id="lookupField" class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right searchdiv"  >
+                        <center>
+                            <table class="Table">
+                                <tbody>
+                                    <!-- first name  -->
+
+                                    
+                                    <!-- last name  -->
+                                    <tr>
+                                        <td>
+                                            <span onkeypress="{!c.keyPressNameController}" class="slds-size--11-of-12">
+                                                <lightning:input label="Name"
+                                                                 value="{!v.SearchKeyWord_LastName}"
+                                                                 class="textboxwidth" 
+                                                                 onchange="{!c.keyPressNameController}"
+                                                                 placeholder="e.g Joe Smith"
+                                                                 aura:id="last"/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Email  -->
+                                    <tr>
+                                        <td>
+                                            <span onkeypress="{!c.keyEmailCheck}" class="slds-size--11-of-12">
+                                                <table>
+                                                    <tr>
+                                                        <td style="width:53%">
+                                                            <lightning:input label="Email"
+                                                                             style="width:95%"
+                                                                             type="email"
+                                                                             onblur = "{!c.handleEmailBlur}"
+                                                                             value="{!v.SearchKeyWord_Email}"
+                                                                             aura:id = "searchEmail"
+                                                                             messageWhenBadInput="Email or Phone is Required"
+                                                                             placeholder="e.g. test@gmail.com"/>                                               
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <aura:if isTrue="{!v.emailpop}">
+                                                                <section aria-describedby="dialog-body-id-97" aria-label="Dialog Title" class="slds-popover slds-nubbin_left" role="dialog">
+                                                                    <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close" title="Close dialog">                                                        
+                                                                        <span class="slds-assistive-text">Close dialog</span>
+                                                                    </button>
+                                                                    <div class="slds-popover__body" id="dialog-body-id-97">
+                                                                        <p>Please click Enter</p>
+                                                                    </div>
+                                                                </section>
+                                                            </aura:if>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                            </span>
+                                            <!--Selected Records Pills Section-->
+                                            <div class="slds-grid slds-wrap" style="margin-top:2px;padding:2px;">
+                                                <aura:iteration items="{!v.lstSelectedRecords_Email}" var="sr">    
+                                                    <div class="slds-col slds-size_12-of-12">
+                                                        <lightning:pill label="{!sr}" name="{!sr}" onremove="{! c.clearEmail }">
+                                                            <aura:set attribute="media">
+                                                                <lightning:icon iconName="utility:email" size="x-small" alternativeText="icon"/>
+                                                            </aura:set>
+
+                                                        </lightning:pill>
+                                                    </div>                                                    
+                                                </aura:iteration>                                                
+                                            </div>
+                                            <!--
+                                            <div class="pillcontainer pilldiv">
+                                                <aura:iteration items="{!v.lstSelectedRecords_Email}" var="sr">                                                    
+                                                    <lightning:pill class="slds-m-around_xx-small" label="{!sr}" name="{!sr}" onremove="{! c.clearEmail }">
+                                                        <aura:set attribute="media">
+                                                            <lightning:icon iconName="utility:email" size="x-small" alternativeText="icon"/>
+                                                        </aura:set>
+                                                    </lightning:pill>
+                                                </aura:iteration>
+                                            </div>     
+											-->                                   
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Mobile  -->
+                                    <tr>
+                                        <td>
+                                            <span onkeypress="{!c.keyPhoneCheck}" class="slds-size--11-of-12">
+                                                <table>
+                                                    <tr>
+                                                        <td style="width:53%">
+                                                            <lightning:input label="Phone Number"
+                                                                 style="width:95%"
+                                                                 value="{!v.SearchKeyWord_Mobile}"
+                                                                 aura:id = "searchPhone"
+                                                                 type="number"
+                                                                 onblur = "{!c.handlePhoneBlur}"
+                                                                 minlength="8"
+                                                                 
+                                                                 messageWhenTooShort = "A minimum of 9 digits are required"
+                                                                 placeholder="e.g 049574435"
+                                                                 />
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <aura:if isTrue="{!v.phonepop}">
+                                                                <section aria-describedby="dialog-body-id-97" aria-label="Dialog Title" class="slds-popover slds-nubbin_left" role="dialog">
+                                                                    <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close" title="Close dialog">                                                        
+                                                                        <span class="slds-assistive-text">Close dialog</span>
+                                                                    </button>
+                                                                    <div class="slds-popover__body" id="dialog-body-id-97">
+                                                                        <p>Please click Enter</p>
+                                                                    </div>
+                                                                </section>
+                                                            </aura:if>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                            </span>
+                                            
+                                            <!--Selected Records Pills Section-->
+                                            <div class="slds-grid slds-wrap" style="margin-top:2px;padding:2px;">
+                                                <aura:iteration items="{!v.lstSelectedRecords_Mobile}" var="sr">    
+                                                    <div class="slds-col slds-size_12-of-12">
+                                                        <lightning:pill label="{!sr}" name="{!sr}" onremove="{! c.clearMobile }">
+                                                            <aura:set attribute="media">
+                                                                <lightning:icon iconName="utility:phone_portrait" size="x-small" alternativeText="icon"/>
+                                                            </aura:set>
+                                                        </lightning:pill>
+                                                    </div>                                                    
+                                                </aura:iteration>
+                                            </div>
+                                            <!--
+                                            <div class="pillcontainer pilldiv">
+                                                <aura:iteration items="{!v.lstSelectedRecords_Mobile}" var="sr">
+                                                    <lightning:pill class="slds-m-around_xx-small" label="{!sr}" name="{!sr}" onremove="{! c.clearMobile }">
+                                                        <aura:set attribute="media">
+                                                            <lightning:icon iconName="utility:phone_portrait" size="x-small" alternativeText="icon"/>
+                                                        </aura:set>
+                                                    </lightning:pill>
+                                                </aura:iteration>
+                                            </div>
+											-->
+                                        </td>                                    
+                                    </tr>
+                                    
+                                    <!-- key words -->
+                                    <tr>
+                                        <td>
+                                            <span onkeypress="{!c.keywordPressed}" class="slds-size--11-of-12">
+                                                <table>
+                                                    <tr>
+                                                        <td style="width:53%">
+                                                            <lightning:input label="Keyword"
+                                                                 style="width:95%"
+                                                                 value="{!v.SearchKeyWord}"
+                                                                 aura:id = "searchKeyword"
+                                                                 onblur = "{!c.handleKeywordBlur}"                                                                                                             
+                                                                 placeholder="e.g enter staff ids, etc"
+                                                                 />
+                                                        </td>
+                                                        
+                                                        <td>
+                                                            <aura:if isTrue="{!v.keywordpop}">
+                                                                <section aria-describedby="dialog-body-id-97" aria-label="Dialog Title" class="slds-popover slds-nubbin_left" role="dialog">
+                                                                    <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close" title="Close dialog">                                                        
+                                                                        <span class="slds-assistive-text">Close dialog</span>
+                                                                    </button>
+                                                                    <div class="slds-popover__body" id="dialog-body-id-97">
+                                                                        <p>Please click Enter</p>
+                                                                    </div>
+                                                                </section>
+                                                            </aura:if>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                            </span>
+                                            
+                                            <!--Selected Records Pills Section-->
+                                            <div class="slds-grid slds-wrap" style="margin-top:2px;padding:2px;">
+                                                <aura:iteration items="{!v.lstSelectedRecords_Keywords}" var="sr">    
+                                                    <div class="slds-col slds-size_12-of-12">
+                                                        <lightning:pill label="{!sr}" name="{!sr}" onremove="{! c.clearKeyWord }">
+                                                            <aura:set attribute="media">
+                                                                <lightning:icon iconName="utility:display_text" size="x-small" alternativeText="icon"/>
+                                                            </aura:set>
+                                                        </lightning:pill>
+                                                    </div>                                                    
+                                                </aura:iteration>
+                                            </div>
+                                            <!--
+                                            <div class="pillcontainer pilldiv">
+                                                <aura:iteration items="{!v.lstSelectedRecords_Mobile}" var="sr">
+                                                    <lightning:pill class="slds-m-around_xx-small" label="{!sr}" name="{!sr}" onremove="{! c.clearMobile }">
+                                                        <aura:set attribute="media">
+                                                            <lightning:icon iconName="utility:phone_portrait" size="x-small" alternativeText="icon"/>
+                                                        </aura:set>
+                                                    </lightning:pill>
+                                                </aura:iteration>
+                                            </div>
+											-->
+                                        </td>                                    
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+</aura:component>

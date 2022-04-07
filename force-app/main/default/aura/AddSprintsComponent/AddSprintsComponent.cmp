@@ -1,0 +1,34 @@
+<!--
+/**
+ * @author: Mark Anthony Pamintuan
+ * @date: 2 June 2020
+ * @description: lightning component to create Sprint records
+*/
+-->
+<aura:component controller="AddSprintController" implements="force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable">
+	
+    <aura:attribute name="sprintCount" type="integer" />
+
+	<lightning:layout horizontalAlign="space">
+        <lightning:layoutItem flexibility="auto" padding="around-small">
+           	    <lightning:select label="Sprints to Add" value="{!v.sprintCount}"   >
+                    <option text="1" value="1"/>
+					<option text="2" value="2"/>
+					<option text="3" value="3"/>
+					<option text="4" value="4"/>
+					<option text="5" value="5"/>
+					<option text="6" value="6"/>
+					<option text="7" value="7"/>
+					<option text="8" value="8"/>
+					<option text="9" value="9"/>
+					<option text="10" value="10"/>
+                </lightning:select>
+        </lightning:layoutItem>       	
+    </lightning:layout>
+    
+    <lightning:layout horizontalAlign="space">
+            <lightning:layoutItem flexibility="auto" padding="around-small">
+                <lightning:button variant="brand" label="Add Sprints" onclick="{!c.addSprints}"/>
+            </lightning:layoutItem>
+    </lightning:layout>   
+</aura:component>

@@ -1,0 +1,41 @@
+<apex:page standardController="Case">
+    
+    <apex:includeScript value="/support/console/20.0/integration.js"/>
+    
+    <script src="/soap/ajax/40.0/connection.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        sforce.connection.sessionId='{!GETSESSIONID()}';    
+    //debugger;
+    function CloseTab() { 
+        //debugger;
+        var status =   '{!Case.Org_Case_Status__c}';
+        var isFirstTime = '{!Case.Org_Is_First_Time_Case_Close__c}';
+        if(status == 'Closed' && isFirstTime == 'false'){
+            //First find the ID of the current tab to close it
+            sforce.console.getEnclosingTabId(closeSubtab);
+        }       
+    }
+    var closeSubtab = function closeSubtab(result) {
+        //Now that we have the tab ID, we can close it
+        
+        
+        var caseToUpdate = new sforce.SObject("Case");
+        
+        caseToUpdate.Id = "{!Case.Id}";
+        caseToUpdate.Org_Is_First_Time_Case_Close__c = "TRUE";
+        
+        
+        var res = sforce.connection.update([caseToUpdate]);
+        console.log(res);
+        var tabId = result.id;
+        sforce.console.closeTab(tabId);
+    }; 
+    
+    window.onload =  CloseTab(); 
+    
+    
+    
+    </script>
+    
+    
+</apex:page>

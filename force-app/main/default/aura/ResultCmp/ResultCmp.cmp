@@ -1,0 +1,64 @@
+<aura:component controller="ResultController" access="global">
+    
+    <aura:registerEvent name="showToast" type="force:showToast" />
+    
+    <!-- Step Number used to update Progress Indicator & Content of Body -->
+    <aura:attribute name="stepNumber" type="Integer" />
+    
+    <!-- Metadata Names from Design Token (Names should be separated by comma) -->
+    <aura:attribute name="metadata_Name" type="String" 
+                    default="Contact_MetaData,Opportunity_Metadata,Case_Metadata,Account_Metadata" />
+    
+    <!-- List of Wrapper Objects that have Object name and list of records -->
+    <aura:attribute name="resultWrapList" type="Object[]"/>
+    
+    <!-- this is for spinner -->
+    <aura:attribute name="showSpinner" type="Boolean" description="To handle Spinner"/>
+    
+    <!-- For show only Selected Rows, set value true otherwise false  -->
+    <aura:attribute name="isNonSelectable" type="Boolean" />
+    
+    <!-- Search Form Fields Object -->
+    <aura:attribute name="formObj" type="Object" />
+    
+     <!-- Search  field values  -->
+    <aura:attribute name="FirstName" type="string"/>
+    <aura:attribute name="LastName" type="string"/>
+    <aura:attribute name="Email" type="sObject[]"/>
+    <aura:attribute name="Mobile" type="sObject[]"/>
+    <aura:attribute name="Keyword" type="sObject[]"/>
+    
+    <!-- Spinner -->
+    <aura:if isTrue="{!v.showSpinner}" >
+        <lightning:spinner alternativeText="Loading" variant="brand" />
+    </aura:if>
+    
+    <!-- INIT Method -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   
+    <aura:if isTrue="{!v.resultWrapList != undefined}" >
+        <aura:iteration items="{!v.resultWrapList}" var="wrap">
+            
+            <!-- this will be used for each section -->
+            <c:ResultTableCmp showSpinner="{!v.showSpinner}" 
+                              isNonSelectable="{!v.isNonSelectable}" 
+                              sObjectName="{!wrap.Object_Name}" 
+                              Section_Heading="{!wrap.Section_Heading}" 
+                              Section_IconName="{!wrap.Section_Image}" 
+                              fieldSetValues="{!wrap.lstFieldSet_Details}" 
+                              tableRecordsAll="{!wrap.lstRecords}" 
+                              stepNumber="{!v.stepNumber}"/>
+            <!-- passing {!wrap.lstRecords} to tableRecordsAll for view all modal -->
+            
+        </aura:iteration>
+        
+        <!--
+        <c:RecordViewModal recId="{!v.recId}"
+                           displayChildRecordsModal = "{!v.displayChildRecordsModal}"></c:RecordViewModal>
+		-->
+    
+    
+        
+    </aura:if>
+	
+</aura:component>

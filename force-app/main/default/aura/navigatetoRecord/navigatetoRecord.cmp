@@ -1,0 +1,7 @@
+<aura:component implements="lightning:availableForFlowActions" access="global">
+    <lightning:workspaceAPI aura:id="workspace" /> <!-- KR Added This -->
+    <aura:attribute name="recordId" type="String" access="global" />
+    <aura:attribute name="derwentCustomerId" type="String" access="global" />    
+    
+    <aura:attribute name="caseId" type="String" access="global"/>
+</aura:component>

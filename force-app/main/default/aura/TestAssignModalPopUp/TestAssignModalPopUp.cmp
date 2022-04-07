@@ -1,0 +1,27 @@
+<aura:component >
+    <aura:attribute name="errorMsg" type="string"/>
+    <aura:attribute name="headerMsg" type="string"/>
+    <aura:attribute name="showbutton" type="boolean"/>
+    
+    <aura:registerEvent name="TestAssignRowEvents" type="c:TestAssignRowEventApp"/>
+    <!--<aura:registerEvent name="TestAssignRowEvent" type="c:TestAssignRowEvent"/>-->
+	<div class="demo-only" style="height: 640px;">
+  <section role="dialog" tabindex="-1" aura:id="Modalbox" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container">
+      <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{!v.headerMsg}</h2>
+      </header>
+      <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+      	{!v.errorMsg}
+      </div>
+      <footer class="slds-modal__footer">
+          <lightning:button variant="brand" label="Ok" onclick="{!c.closePopUp}"/>
+          <aura:If isTrue="{!v.showbutton}">
+          	<lightning:button variant="brand" label="Cancel" onclick="{!c.Cancel}"/>
+          </aura:If>
+      </footer>
+    </div>
+  </section>
+  <div class="slds-backdrop slds-backdrop_open" aura:id="Modalbackdrop"></div>
+</div>
+</aura:component>

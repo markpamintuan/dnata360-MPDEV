@@ -1,0 +1,304 @@
+<apex:page applyHtmlTag="true" showHeader="false" sidebar="false" id="mainPage" lightningStylesheets="true" controller="SFSupportPageController">
+    <apex:includeLightning />
+    <apex:slds />
+    <script type="text/javascript" data-app-id="g2XkH7dwu2mgAJJMou3Lw" src="https://assets.yammer.com/assets/platform_js_sdk.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script> 
+    
+    var userId;
+    var networkId;
+    var loginStatus;
+    var runOnce = {!runOnce};
+    
+    var $j = jQuery.noConflict();
+    $j( function() {
+        if(document.getElementById("Requestor Full Name") != null){
+            document.getElementById("Requestor Full Name").getElementsByTagName('input')[0].disabled = true;
+            document.getElementById("Email Address").firstElementChild.disabled = true;            
+        }        
+    });
+    
+    
+    
+    //necessary for adding event handlers after dom elements loaded
+    if(runOnce === false){
+        $j( function() {
+            yam.platform.getLoginStatus ( function ( response ) {        
+                console.log ('----------' + JSON.stringify (response));
+                if ( response.authResponse ) {                        
+                    for(var i in response) {
+                        if(response[i].hasOwnProperty("user_id")){
+                            userId = response[i].user_id;
+                        }
+                        if(response[i].hasOwnProperty("network_id")){
+                            networkId = response[i].network_id;
+                        }
+                        
+                    }                               
+                    displayAuthResult ( response.access_token );
+                    localStorage.setItem ( 1, JSON.stringify ( response.access_token.token ).replace ( /"/g, "" ) );
+                    getUserInfo();
+                    //renderForm(userId,JSON.stringify(response.access_token));
+                    
+                } else {
+                    console.log ( "Not logged in.  Going to login now." );
+                    yam.platform.login ( function ( response ) { //prompt user to login and authorize your app, as necessary
+                        console.log ('----------' + JSON.stringify (response));
+                        if ( response.authResponse ) {
+                            for(var i in response) {
+                                if(response[i].hasOwnProperty("user_id")){
+                                    userId = response[i].user_id;
+                                }
+                                if(response[i].hasOwnProperty("network_id")){
+                                    networkId = response[i].network_id;
+                                }
+                            }
+                            displayAuthResult ( response.access_token );
+                            localStorage.setItem ( 1, JSON.stringify ( response.access_token.token ).replace ( /"/g, "" ) );
+                            getUserInfo();
+                            //renderForm(userId,JSON.stringify(response.access_token));
+                        }
+                    } );
+                }
+                
+                
+                
+            } );
+            
+        })
+    };
+    
+    
+    
+    function getUserInfo() {
+        console.log('fetching groups'); 
+        console.log(userId); 
+        console.log(networkId);
+        //setTimeout(function(){
+        yam.platform.request ( {
+            //url : "users/current.json", 
+            url : "users/current.json?include_group_memberships=true", //12096708608
+            //url: "users/in_group/16675700736.json", 
+            method : "GET",
+            data : { },
+            success : function ( group ) { 
+                console.log(JSON.stringify(group));
+                var isValidUSer = '{!authenticatedUser}';
+                if(isValidUSer === 'false'){
+                    renderForm(userId,JSON.stringify(group));
+                } else {
+                    disableFields();
+                }
+                
+                /**
+                    var gMembership = lookup(group, 'group_memberships')[1];
+                    for(var i in gMembership) {
+                         if(gMembership[i].hasOwnProperty('id') && gMembership[i].id === 12096708608){
+                             loginStatus = 'OK'; 
+                             break;
+                         } 
+                     }
+                   **/
+                
+            },
+            error : function ( group ) {
+                console.error ( "There was an error with the request." );
+                setTimeout(function(){ renderForm('',''); }, 2000);
+                
+            }
+        } );
+        
+        //}, 1000);
+    }
+    
+    
+    
+    
+    function toggleLoginStatus ( loggedIn ) {
+        if ( loggedIn ) {
+            $j ( '.not-logged-in' ).hide ( );
+            $j ( '.logged-in' ).show ( 'slow' );
+        } else {
+            $j ( '.not-logged-in' ).show ( 'slow' );
+            $j ( '.logged-in' ).hide ( );
+        }
+    }
+    
+    function displayAuthResult ( authResult ) {
+        console.log ( "AuthResult", authResult ); //print user information to the console
+        
+        $j ( '#yammer-login' ).innerHTML = 'Welcome to Yammer!';
+        toggleLoginStatus ( true );
+        
+        $j ( '#authResult' ).html ( 'Auth Result:<br/>' ); 
+        for ( var field in authResult ) {
+            $j ( '#authResult' ).append ( ' ' + field + ': ' + authResult [ field ] + '<br/>' );
+        }
+        $j ( '#authOps' ).show ( 'slow' );
+    }
+    
+    function disableFields(){ 
+        if(networkId == '2242804' || networkId == '2256624'){
+            document.getElementById("Requestor Full Name").getElementsByTagName('input')[0].disabled = true;
+            document.getElementById("Email Address").firstElementChild.disabled = true;
+        }
+    }
+
+    </script>
+    
+
+    <style>
+        /*
+        {
+        box-sizing: border-box;
+        }
+        
+        .wrapper {
+        border: 2px solid #07dbf7;
+        border-radius: 5px;
+        background-color: #fff4e6;
+        }
+        
+        .wrapper>div {
+        border: 2px solid #4dff6b;
+        border-radius: 5px;
+        background-color: #a8bcff;
+        padding: 1em;
+        color: #d9480f;
+        }
+        
+        .wrapper {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); //grid-template-rows: repeat(1, auto 20%);
+        grid-gap: 8px;
+        grid-auto-rows: minmax(auto, auto);
+        }
+        */
+        .wrapper2 {
+        display: grid;
+        grid-template-columns: repeat(2, 20fr); //grid-template-rows: repeat(1, auto 20%);
+        grid-auto-columns: minmax(50px,auto);
+        grid-gap: 8px;
+        grid-column-gap: 100px;
+        grid-auto-rows: minmax(10px, auto);
+        margin-top:1%;
+        margin-left:15%;
+        margin-right:15%;       
+        }
+        .divHeader {
+        margin-top:500%;
+        font-size:150%;
+        color:#ffffff;
+        vertical-align:middle;
+        text-align: center;
+        }    
+        
+        
+        .spinnerBg{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: #000;
+        opacity: 0.2;
+        z-index: 999999;
+        }
+        .spinner{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-image: url("/img/loading32.gif");
+        background-size: 16px;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center;
+        z-index: 9999999;
+        opacity: 1;
+        }
+        
+        #divElement{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        }
+        
+    </style>
+    
+    
+    <apex:form id="frmId">
+        <apex:actionStatus id="spinnerStatus">    
+            <apex:facet name="start">
+                <div class="spinnerBg" />
+                <div class="spinner" />
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:actionFunction name="renderForm" reRender="frmId" action="{!validateUser}" oncomplete="disableFields();" status="spinnerStatus">  
+            <apex:param name="test1" value="" assignTo="{!userId}"/>
+            <apex:param name="test2" value="" assignTo="{!userObjStr}"/>
+            <apex:param name="test3" value="true" assignTo="{!runOnce}"/>
+        </apex:actionFunction>   
+        <apex:outputPanel id="errorPanelId" rendered="{!isGroupMember}">
+            <apex:image value="{!$Resource.ChangeRequestFormHeader}" height="110px" width="100%"/>
+            
+            <center style="width: 100%; margin-top: 10%">
+                <p style="text-align: center; color: #6c6f70; font-family: tahoma, arial, verdana; font-weight: normal; line-height: 19px; font-size: 20px; margin: 0 0 10px; padding: 0;" align="center">
+                    <apex:outputText escape="false" value=" {!$Label.SF_Support_Error_Message}   " />                    
+                </p>
+            </center>            
+        </apex:outputPanel>
+
+        <apex:outputPanel id="yammerPanelId" rendered="{!authenticatedUser}">
+            <apex:image value="{!$Resource.ChangeRequestFormHeader}" height="110px" width="100%"/>
+            <apex:outputPanel id="commonDetails" rendered="{!if(isSubmitted == false,true,false)}">
+                <!-- COMMON DETAILS -->
+                <div class="wrapper2">
+                    <apex:repeat value="{!$ObjectType.Case.FieldSets.SFSupportFieldsetCommon}" var="f">
+                        <div class="slds-form-element" >
+                            <label class="slds-form-element__label" for="form-element-01"><span style="color:red;display:{!if(f.Required == true,'inline','none')}">*</span>{!$ObjectType.Case.fields[f].Label}</label>
+                            <div class="slds-form-element__control" id="{!$ObjectType.Case.fields[f].Label}">
+                                <apex:inputField value="{!caseRecord[f]}" required="{!f.Required}" styleclass="slds-input"/>
+                            </div>
+                        </div>
+                    </apex:repeat>           
+                </div><br/>
+                
+                <!-- CHANGE REQUEST DETAILS -->
+                <apex:outputPanel id="changeRequestId">
+                    <div class="wrapper2">
+                        <apex:repeat value="{!$ObjectType.Case.FieldSets.SFSupportFieldsetCR}" var="f">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="form-element-01"><span style="color:red;display:{!if(f.Required == true,'inline','none')}">*</span>{!$ObjectType.Case.fields[f].Label}</label>
+                                <div class="slds-form-element__control">
+                                    <apex:inputField value="{!caseRecord[f]}" required="{!f.Required}" styleclass="slds-input"/>
+                                </div>
+                            </div>
+                        </apex:repeat>
+                    </div>
+                </apex:outputPanel>
+                <br/><br/>
+
+                <!-- ATTACHMENT -->
+                <h1 style="margin-left:15%;"><b>Attachment</b></h1><br/><br/>      
+                <apex:inputFile style="margin-left:15%;" value="{!attachment.body}" filename="{!attachment.name}"/> 
+                <br/>  
+                <br/>  <br/>  <br/>  <br/> 
+                <h1 style="margin-left:15%;"><b>{!$Label.SF_Support_Agreement} <a target="_blank" href="https://groupservices.my.salesforce.com/sfc/p/7F000005oLIk/a/2t000000fyuk/xgHyurfYDAq5MaOGfwE.gW2JlMYbp4XwogegASU7Uh8">Agreemet</a></b></h1><br/><br/>     
+                
+                <!-- SUBMIT BUTTON -->
+                <div align="center" style="margin:5%;">                    
+                    <apex:commandButton value="Submit" action="{!createCase}"  styleClass="slds-button slds-button_brand" style="height:40px;width:20%;font-size: medium;"/>                    
+                </div>                        
+            </apex:outputPanel>
+            <!-- SUCCESS PAGE -->
+            <apex:outputPanel rendered="{!if(isSubmitted == true,true,false)}">
+                <div align="center">
+                    <br/>
+                    <h1><b>Thank you. Your Case has been created. Please check your email for your Case Reference Number.</b></h1><br/>
+                    <h1><b>CASE #: {!caseNumber}</b></h1><br/>
+                    <a href="{!$Label.SF_Support_Site_URL}" class="slds-button slds-button_brand" style="height:40px;width:20%;font-size: medium;">Home</a>
+                </div>           
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form>
+    
+    
+</apex:page>

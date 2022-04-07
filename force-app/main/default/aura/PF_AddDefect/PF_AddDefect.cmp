@@ -1,0 +1,89 @@
+<aura:component controller="PF_CreateDefect" implements="force:appHostable,force:lightningQuickActionWithoutHeader,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global">
+    <aura:attribute name="Status" type="String[]" default="Not Started,In Progress,Need Help,Passed,Failed,None" />
+    <aura:attribute name="Type" type="String[]" default="Defect,Change Request,Enhancement,None" />    
+    <aura:attribute name="Severity" type="String[]" default="Critical,High, Medium,Low,None" />   
+    <aura:attribute name="newDefect" type="PF_Defects__c" default="{ 'sobjectType': 'PF_Defects__c'}"/> 
+    <aura:attribute name="ResType" type="String[]" default="Configuration,Data Migration, Development,Duplicate,Training,Working as Designed" />
+    <aura:attribute name="Priority" type="String[]" default="Critical,High, Medium,Low" />
+    <aura:attribute name="notHavingAccess" type="boolean" default="false"/>
+    <!--aura:attribute name="RecordId" type="String"  /--> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!v.notHavingAccess}">
+    You do not have sufficient permission to Access the page, Please contact your System Administrator.
+    <aura:set attribute="else">
+    <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Defect</h2>
+    </header>
+    
+    
+    
+    <div class="slds-grid slds-wrap slds-grid--pull-padded slds-m-top--medium">
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <label style ="color:red;">*</label><label class="inlineText" for="DefectName">Defect Name </label><br/>
+            <ui:inputText aura:id="dName" class="inlineText slds-input" maxlength="80" size="15" value="{!v.newDefect.Name}" required="true"/>
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <lightning:select aura:id="dSeverity" label="Severity" value="{!v.newDefect.PF_Severity__c}" required="true">                         
+                <aura:iteration items="{!v.Severity}" var="item">
+                    <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/> <!--  -->
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <lightning:select aura:id="dType" label="Type" value="{!v.newDefect.PF_Type__c}" required="true">                         
+                <aura:iteration items="{!v.Type}" var="item">
+                	<option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                    <!-- <option text="Defect" value="Defect" selected="{!item.selected}"/> -->
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <lightning:select aura:id="dStatus" label="Status" value="{!v.newDefect.PF_Status__c}" required="true" disabled="true">                         
+                <aura:iteration items="{!v.Status}" var="item">
+                    <!-- <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>-->
+                    <option text="New" value="New" selected="{!item.selected}"/>
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--4-of-8">
+            <lightning:select aura:id="Priority" label="Priority" value="{!v.newDefect.PF_Priority__c}" required="true">                         
+                <aura:iteration items="{!v.Priority}" var="item">
+                    <option text="{!item.label}" value="{!item.value}" selected="{!item.selected}"/>
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--8-of-8" style="padding-top: 12px;">
+            <label style ="color:red;">*</label><label class="inlineText" for="Description">Description </label><br/>
+            <lightning:textarea aura:id="dDescription" value="{!v.newDefect.PF_Description__c}" />
+            
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--8-of-8" style="padding-top: 12px;">
+            <label style ="color:red;">*</label><label class="inlineText" for="StepsReproduce">Steps to Reproduce </label><br/>
+            <lightning:textarea aura:id="dReproduce" value="{!v.newDefect.PF_Steps_to_Reproduce__c}" />
+            
+        </div>
+        
+        <div class="slds-p-horizontal--small slds-size--1-of-1 slds-large-size--8-of-8" style="padding-top: 12px;">
+            <label class="inlineText" for="RecordLink">Record Link</label><br/>
+            <ui:inputUrl aura:id="dName" class="inlineText slds-input" maxlength="255" size="15" value="{!v.newDefect.PF_Record_Link__c}" required="true"/>
+        </div>
+        
+        
+    </div>
+    <br/>
+    <div class="slds-text-align--right">
+        <lightning:button variant="neutral" label="Cancel"  onclick="{!c.Cancel}" />
+        <lightning:button variant="brand" label="Save"  onclick="{!c.Save}" />
+    </div>
+    </aura:set>
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,235 @@
+<aura:component description="childComponent" implements="flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,forceCommunity:layout" access="global" controller="CaseButtonsController">
+	<aura:attribute name="caseRecordTR" type="Object" 
+                    description="A simplified view record object to be displayed"/>
+    <aura:attribute name="isChanged" type="Boolean" default='false'/>
+    <aura:attribute name="newCase" type="Case"
+         default="{ 'sobjectType': 'Case' }"/>    
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:attribute name="recordSaveError" type="String" 
+                    description="An error message bound to	 force:recordData"/>
+     <aura:attribute name="case" type="Object" 
+                    description="The record object to be displayed"/>
+    <aura:attribute name="recordId" type="ID"/>
+    <aura:attribute name="recordTypeId" type="String"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+     <aura:attribute name="isDisabled" type="boolean" default="false"/>
+    <aura:attribute name="Edit" type="boolean" default="false"/>
+    <force:recordData aura:id="caseRec" 
+                      layoutType="FULL" 
+                      recordId="{!v.recordId}"  
+                      targetError="{!v.recordSaveError}"
+                      fields="Contact.FirstName,IsParentCase__c,Category__c,RecordType.Name,Subject,Is_User_Owned__c,Org_Derwent_Customer_No__c,Org_Case_Status__c,Record_Type_Name__c,RecordType.Id,Org_Booking_Id__c,Opened_In_Danube__c,AccountId,CaseNumber,Subject,ContactId,Org_Booking__c,Receive_Text_Messages__c"
+                      targetFields = "{!v.caseRecordTR}"
+                      mode="EDIT"
+                      />
+    <aura:attribute name="currentStep" type="String" default='0' />
+
+    <aura:attribute name="newCaseDescription" type="String" default=""/>
+    <aura:attribute name="options" type="List" default=""/>
+    <aura:attribute name="templateoptions" type="List" default=""/>
+    <aura:attribute name="lstObj" type="Object[]" />
+    <aura:attribute name="textMessage" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    <aura:attribute name="listOfSearchRecords" type="Object[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="listOfSearchRecords2" type="String[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="selectedRecord" type="Object" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="selectedRecord2" type="String" default="" description="Use,for store SELECTED sObject Record"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedUserRecordEvent" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="oSelectedStringEvent" event="c:selectedStringEvent" action="{!c.handleComponentEvent2}"/>
+    <aura:attribute name="showspinner" type="Boolean" default="false"/>
+    <aura:attribute name="showspinnermain" type="Boolean" default="false"/>
+    <aura:attribute name="followUpDate" type="DateTime" default=""/>
+    <aura:attribute name="existingfollowUpDate" type="DateTime" default=""/>
+    <aura:attribute name="SendSMS" type="Boolean" default='false'/> 
+    
+     <aura:attribute name="userInfo" type="String"/> 
+    
+    <aura:if isTrue="{!v.existingfollowUpDate == null}">
+    <button class="slds-button slds-button--neutral" onclick="{!c.openModal}" >Create Scheduled Customer Message</button> 
+        <aura:set attribute="else">
+            <button class="slds-button slds-button--neutral" onclick="{!c.openEditModal}" >Edit Scheduled Customer Message
+        		
+            </button> 
+        </aura:set>
+    </aura:if>
+    
+    <!--###### MODAL BOX CLOSE CASE BEGIN --> 
+    
+            <aura:if isTrue="{!v.isOpen}">
+                
+                <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open  slds-modal_medium " style="position:fixed!important">
+                    <aura:if isTrue="{!v.showspinnermain}">
+                    <lightning:spinner variant="brand"  size="large" />
+                        </aura:if>
+                    
+                    <div class="slds-modal__container">
+                        <!-- ###### MODAL BOX HEADER Part Start From Here ######-->
+                        <div class="slds-modal__header">
+                            
+                            <h2 id="header99" class="slds-text-heading--medium">Create Scheduled Customer Message </h2>
+
+                        </div>
+                        <!--###### MODAL BOX BODY Part Start From Here ######-->
+                        <div class="slds-modal__content  slds-p-around--medium allowoverflow" style="overflow:auto !important">
+                           
+                            <aura:if isTrue="{!v.currentStep == '0'}">
+                            	
+                            	 <lightning:combobox aura:id="folder" name="CSRFolder" label="Folder:" value="" placeholder="Select Folder" 
+                      							     options="{! v.options }" onchange="{! c.handleChange }"/>
+              
+             				     <lightning:combobox aura:id="template" name="CSRTemplate" label="Template:" value="" placeholder="Select Template" 
+                    							     options="{! v.templateoptions }" onchange="{! c.handletemplatechange }" disabled = "true"/>
+    
+         						 <div class="slds-form-element">
+                                     <div class="slds-form-element__control">
+                                          <ui:inputTextArea aura:id="description" label="Description:"
+                                                        class="slds-input"
+                                                        labelClass="slds-form-element__label"
+                                                        value="{!v.newCaseDescription}"
+                        								disabled = 'true'
+                                                        />
+                                     </div> 
+                                 </div>
+              					 </aura:if>
+           					    <aura:if isTrue="{!v.currentStep == '1'}">
+                                
+                            		<aura:if isTrue="{!v.lstObj.length > 0}">
+                                        <table>
+                                        <aura:iteration items="{!v.lstObj}" var="item">
+                                        <tr>
+                                            <td style="width:25%"></td>
+                                            <td><label lightning-input_input="" for="input-346" class="slds-form-element__label slds-no-flex" style="position: relative; bottom: 8px; left: 8px;"><abbr lightning-input_input="" title="required" class="slds-required">*</abbr></label>{!item.Label}</td>
+                                            <td><lightning:input aura:id="valField" value="{!item.Value}" /></td>
+                                            <td style="width:25%"></td>
+                                        </tr>
+                                        </aura:iteration>
+                                    </table>
+                                        <aura:set attribute="else">
+                                            No Merging Fields Found.
+                                        </aura:set>
+                                    </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!v.currentStep == '2'}">
+                                <div class='fielddiv'>
+                                	<ui:inputDateTime aura:id="today" label="Scheduled Date" value="{!v.followUpDate}" displayDatePicker="true" required="true"/>
+                                </div>
+                           <br/>
+                           
+                            	<div class="slds-form-element">
+                                     <div class="slds-form-element__control">
+                                          <ui:inputTextArea aura:id="description" label="Message to Customer :"
+                                                        class="slds-input"
+                                                        labelClass="slds-form-element__label"
+                                                        value="{!v.textMessage}"
+                        								required = "true"
+                                                        />
+                                     </div> 
+                                 </div>
+                               
+                            <div class="slds-form-element">
+                                    <p class="sendSMS"><b><ui:inputCheckbox aura:id="taskCheckBox" label="Send SMS " change="{!c.handleCheckTask}" class="checkbox"  value="{!v.caseRecordTR.Receive_Text_Messages__c}" /></b> </p>
+                                </div>
+                            </aura:if>
+                            
+                        </div>
+                        <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+                        <div class="slds-modal__footer" style="padding-bottom:0px">
+                            <button class="slds-button slds-button--neutral" onclick="{!c.closeModal}" style="float:left" >Cancel</button>
+                            <lightning:progressIndicator currentStep="{!v.currentStep}" type="base" variant="base">
+                                <lightning:progressStep label="Select a Template" value="0"/>
+                                <lightning:progressStep label="Fill in Merge Fields" value="1"/>
+                                <lightning:progressStep label="Edit Description" value="2"/>
+                            </lightning:progressIndicator>
+                            <div style="display: inline-block; position: relative; bottom: 24px;">
+                                <aura:if isTrue="{! v.currentStep != '0'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveBack}" >Back</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep != '2'}">
+                                    <button class="slds-button slds-button--neutral" onclick="{!c.moveNext}" >Next</button>
+                                </aura:if>
+                                <aura:if isTrue="{! v.currentStep == '2'}">
+
+                                    <lightning:button aura:id="create" variant="brand" onclick="{!c.createFollowUpDate}"  disabled="{!or(empty(v.followUpDate),empty(v.textMessage))}">Create</lightning:button>
+
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <aura:if isTrue="{!not(empty(v.recordSaveError))}">
+                        <br />
+                        <div class="error slds-box">
+                            {!v.recordSaveError}
+                        </div> 
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-backdrop slds-backdrop--open" style="position:fixed!important"></div>
+                
+                
+            </aura:if>
+    		<aura:if isTrue="{!v.Edit}">
+                
+                <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open  slds-modal_medium " style="position:fixed!important">
+                    <aura:if isTrue="{!v.showspinnermain}">
+                    <lightning:spinner variant="brand"  size="large" />
+                        </aura:if>
+                    
+                    <div class="slds-modal__container">
+                        <!-- ###### MODAL BOX HEADER Part Start From Here ######-->
+                        <div class="slds-modal__header">
+                           
+                            <h2 id="header99" class="slds-text-heading--medium">Update Scheduled Customer Message </h2>
+                                
+                        </div>
+                        <!--###### MODAL BOX BODY Part Start From Here ######-->
+                        <div class="slds-modal__content  slds-p-around--medium allowoverflow">
+                               <div class='fielddiv'>
+                                   
+                                	<ui:inputDateTime aura:id="today" label="Scheduled Date" value="{!v.followUpDate}" displayDatePicker="true" required = "true" />
+                                </div>
+                            <br/>
+                            	<div class="slds-form-element">
+                                     <div class="slds-form-element__control">
+                                          <ui:inputTextArea aura:id="description" label="Message to Customer :"
+                                                        class="slds-input "
+                                                        labelClass="slds-form-element__label"
+                                                        value="{!v.textMessage}"
+                        								required = "true"
+                                                        />
+                                     </div> 
+                                 </div>
+                            
+  
+                            
+                        </div>
+                        <!--###### MODAL BOX FOOTER Part Start From Here ######-->
+                        
+                        <div class="slds-modal__footer" style="padding-bottom:10px">
+                            <div style="display: inline-block; position: relative;float:left;">
+                            <button class="slds-button slds-button--neutral" onclick="{!c.closeModal}" style="float:left" >Cancel</button>
+                             <button class="slds-button slds-button--neutral" onclick="{!c.deleteFollowUpDate}" style="color:white;background:#B22222" >Delete</button>  
+                            </div>                         
+                             <button class="slds-button slds-button--neutral" onclick="{!c.updateFollowUpDate}" style="color:white;background:#1b5297" >Update</button>
+                            
+                          
+                        </div>
+                            
+                    </div>
+                    
+                    <aura:if isTrue="{!not(empty(v.recordSaveError))}">
+                        <br />
+                        <div class="error slds-box">
+                            {!v.recordSaveError}
+                        </div> 
+                    </aura:if>
+                    
+                    
+                </div>
+                <div class="slds-backdrop slds-backdrop--open" style="position:fixed!important"></div>
+                
+                
+            </aura:if>
+            <!--###### MODAL BOX Part CLOSE CASE END-->
+</aura:component>

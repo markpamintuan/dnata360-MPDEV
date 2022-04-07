@@ -1,0 +1,89 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="DuplicateRecordManagementCntrl">
+    
+    <!-- atributes -->
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="fieldSetName" type="string" />
+    <aura:attribute name="searchFieldSetName" type="string" />
+    <aura:attribute name="linkingfield" type="string" />
+    <aura:attribute name="ConsolidatedReportFolder" type="String" />
+    <aura:attribute name="InitalvalueToUse" type="String" />
+    
+    <!-- sacng linked record count -->    
+    <aura:attribute name="linkedRecCount" type="Integer" default="0"/>
+    
+    <!-- saving linked field values of current recrord -->
+    <aura:attribute name="linkedFieldValue" type="String" />
+    
+    <aura:attribute name="DuplicateRecords" type="ContainerWrapperClass.DuplicateWrapper" />
+    <aura:attribute name="hasRecords" type="boolean" default="false"/>
+    
+    <!--use boolean attribute for Store true/false value,
+    	make default to "false" so modal box are not 
+		display on the load of component. 
+    --> 
+    <aura:attribute name="isOpen" type="boolean" default="false"/>   
+    
+    
+    <!-- storing list of record ids possible match -->
+    <aura:attribute name="possibleRecs" type="String[]" />
+    
+     <!-- handle event -->
+    <aura:handler name="SearchEvent" event="c:SearchEvent"
+        action="{!c.refreshSection}"/>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.initializeMethod}"/>
+    
+    <div class="slds-grid slds-gutters backgroundColor">
+        <div class="slds-col">
+            <p><b>Possible Matches ({!v.DuplicateRecords.duplicaRecordCount}) &nbsp; &nbsp;  Linked Records ({!v.linkedRecCount})</b></p>
+          
+            
+            <!-- button section -->    
+            <div class="SecionSpacing">
+                <lightning:button variant="neutral" 
+                                          label="360 View"
+                                          title="360 View"
+                                          onclick="{!c.openModel}" />
+                
+            </div>
+        </div>        
+    </div>    
+    <!--Use aura:if tag to display Model Box, on the bese of conditions. [isOpen boolean attribute] -->   
+        <aura:if isTrue="{!v.isOpen}">
+            
+            <!-- MODAL BOX Start --> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- MODAL BOX HEADER Start -->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Match Criteria</h2>
+                    </header>
+                    <!-- MODAL BOX BODY Part Start -->
+                    <div class="slds-modal__content" id="modal-content-id-1">
+                        <c:Table360View duplicateRecords="{!v.DuplicateRecords.lstDuplicateRecs}" 
+                                        headers="{!v.DuplicateRecords.lstHeaders}"
+                                        searchFieldSetName = "{!v.searchFieldSetName}"
+                                        recordId="{!v.recordId}"
+                                        displayFieldSet = "{!v.fieldSetName}"
+                                        linkingfield = "{!v.linkingfield}"
+                                        ConsolidatedReportFolder = "{!v.ConsolidatedReportFolder}"
+                                        InitalvalueToUse = "{!v.InitalvalueToUse}"
+                                        possibleRecs="{!v.possibleRecs}"
+                                        linkedRecCount = "{!v.linkedRecCount}"
+                                        linkedFieldValue = "{!v.linkedFieldValue}"/>
+                    </div>
+                    <!-- MODAL BOX FOOTER Part Start -->
+                    
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!-- MODAL BOX Part END Here -->
+            
+        </aura:if>
+</aura:component>

@@ -1,0 +1,106 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global" 
+                controller="DuplicateRecordManagementCntrl">
+    
+    <!-- this will store the linked Field API Name -->
+    <aura:attribute name="linkingfield" type="string"/>
+    
+    <!-- this will set to true of search is present else false -->
+    <aura:attribute name="displaySearchTable" type="boolean" default="false"/> 
+    
+    <!-- this will store the store the value for initialization -->
+    <aura:attribute name="InitalvalueToUse" type="string"/>
+    
+    <!-- this will have the field set name for sobject -->
+    <aura:attribute name="searchFieldSetName" type="string"/>
+    <aura:attribute name="displayFieldSet" type="string"/>
+    
+    <!-- this will have the Id of current record -->
+    <aura:attribute name="recordId" type="string"/>    
+    <aura:attribute name="searchedValues" type="sobject"/>
+    
+    <!-- attributes de search result -->
+    <aura:attribute name="SearchedRecords" type="ContainerWrapperClass.SearchResultWrapper" />
+    
+    <!-- this will have the record for sobject and fields list -->
+    <aura:attribute name="searchSectionFields" type="ContainerWrapperClass.SearchWrapper"/>
+    
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <!-- storing list of record ids possible match -->
+    <aura:attribute name="possibleRecs" type="String[]" />
+    
+    <!-- set value to true if search method has to be called -->
+    <aura:attribute name="searchRecords" type="boolean" default = "false"/>
+    
+    <!-- calling search method -->
+    <aura:handler name="change" value="{!v.searchRecords}" action="{!c.callSearchmethod}"/>
+    
+    <!-- This will be used to show the tost message -->
+    <aura:attribute name="displayTostMsg" type="boolean" default="false"/>    
+    
+    <!-- to store the type -->
+    <aura:attribute name="type" type="string" default="error"/> 
+    
+    <!-- to store the messgae -->
+    <aura:attribute name="Message" type="string" default = 'Please Enter Value for searching'/> 
+    
+    <!-- to store the tile -->
+    <aura:attribute name="title" type="string" default = 'Error !'/>
+    
+    <!-- display tost component -->
+    <c:TostComponent displayTostMsg="{!v.displayTostMsg}" 
+                     Message="{!v.Message}" 
+                     title="{!v.title}"
+                     type="{!v.type}"></c:TostComponent>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.initializeMethod}"/>        
+    
+    
+    <div class="searchContainer">         
+        <div style="position:relative">
+            
+            <div class="slds-form--compound search-form">                
+                <div>
+                    <!-- Search Field Section -->
+                    <div class="slds-grid slds-wrap search-section">
+                        <aura:iteration items="{!v.searchSectionFields.lstHeaders}" var="header">
+                            <c:SearchSectionFields currentFieldDetails="{!header}"                                                                               
+                                                   searchInput = "{!v.searchedValues}"/>
+                        </aura:iteration>
+                    </div>                    
+                    
+                    <!-- Bottom Section -->
+                    <!-- <div class="slds-m-around_x-small slds-float_left"> 
+                        <div style="color:blue;">Advanced Search</div>
+                    </div> -->
+                    <div class="bottm-button-block">
+                        <div class="slds-m-around_x-small slds-float_right">                            
+                            <lightning:button variant="Neutral" label="Clear" title="Clear" onclick="{!c.clear}" />
+                            <lightning:button variant="brand" label="Search" title="Search" onclick="{!c.search}" />
+                        </div>
+                    </div>
+                </div>
+                <c:SpinnerCmp displaySpinner="{!v.Spinner}"></c:SpinnerCmp>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- table should be displayed when seached is pressed -->    
+    <aura:if isTrue="{!v.SearchedRecords.hasRecords}">   
+		<!-- Search Section -->     
+        
+        <c:SearchResultTable duplicateRecords="{!v.SearchedRecords.lstRecs}" 
+                             headers="{!v.SearchedRecords.lstHeaders}"
+                             linkingfield = "{!v.linkingfield}"
+                             InitalvalueToUse="{!v.InitalvalueToUse}"
+                             recordId="{!v.recordId}"
+                             displayFieldSet = "{!v.displayFieldSet}"
+                             searchRecords = "{!v.searchRecords}"
+                             hasRecords = "{!v.SearchedRecords.hasRecords}"/>
+        
+    </aura:if>
+</aura:component>

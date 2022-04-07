@@ -1,0 +1,14 @@
+.THIS .assigned_to_date a.datePicker-openIcon{
+    position: absolute;
+    left: 89%;
+    top: 8px;
+}
+
+.THIS.border{
+    border-style: solid;
+    border-width: 1px;
+}
+
+.THIS.test-assignment{
+    width: 74%;
+}

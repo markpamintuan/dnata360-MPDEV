@@ -1,0 +1,263 @@
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="eCommerceComponentsController">
+    <lightning:workspaceAPI aura:id="workspace" />
+    <aura:handler event="lightning:tabRefreshed" action="{!c.onTabRefreshed }"/>    
+    <aura:attribute name="recordInfo" type="Object" access="private"/>
+    <!--aura:handler name="render" value="{!this}" action="{!c.doInit}"/-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="case" type="Object" description="The record object to be displayed"/>
+    <aura:attribute name="caseRecord" type="Object" description="A simplified view record object to be displayed"/>
+    <aura:attribute name="recordSaveError" type="String" description="An error message bound to force:recordData"/>
+    <aura:attribute name="isOpen" type="boolean" default="false" />
+    <!-- list of case RT used in account object-->
+    <aura:attribute name="buttonId" type="String" />
+    <aura:attribute name="lstOfCaseComplaintRecordType" type="String[]" />
+    <aura:attribute name="lstOfCaseCommendationRecordType" type="String[]" />
+    <aura:attribute name="lstOfCaseGeneralEnquiryRecordType" type="String[]" />
+    
+    <aura:attribute name="objInfo" type="case" default="{sobjectType : 'Case'}" />
+    <aura:attribute name="acc" type="account" default="{sobjectType : 'Account'}" />
+    <aura:attribute name="obj" type="object"/>
+    <aura:attribute name="options" type="list"/>
+    <aura:attribute name="objectType" type="string"/>
+    <aura:attribute name="objectRTName" type="string"/>
+
+	<aura:attribute name="showAcceptCaseButton" type="boolean" />
+    <aura:attribute name="isCaseRTChangeBoxOpen" type="boolean" default="false"/>
+    <!-- USER LOOKUP ATTRIBUTES - BEGIN -->
+    
+    <aura:attribute name="selectedRecord" type="Object" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords" type="Object[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="objectAPIName" type="string" default=""/>
+    <aura:attribute name="IconName" type="string" default="standard:user"/>
+    <aura:attribute name="label" type="string" default=""/>
+    <aura:attribute name="Message" type="String" default=""/>
+    <aura:attribute name="lookupSearchType" type="String[]" default="Queue,User"/>
+    <aura:attribute name="selLookupType" type="String" default="Queue"/>
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedUserRecordEvent" action="{!c.handleComponentEvent}"/>
+    
+    <force:recordData aura:id="caseRec" 
+                      layoutType="FULL" 
+                      recordId = "{!v.recordId}"
+                      targetError="{!v.recordSaveError}"
+                      targetRecord="{!v.case}"
+                      fields="Org_Booking_Id__c, IsParentCase__c, Order__c, Org_Type__c, Org_Brand__c, RecordType.Name, Org_Case_Status__c, Subject, Type, Org_Derwent_Customer_No__c, Org_Business_Unit__c"
+                      targetFields="{!v.caseRecord}"/>
+                      
+	<force:recordData layoutType="FULL"
+                  		recordId="{!v.recordId}"
+                  		targetFields="{!v.caseRecord}"/>
+    
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">           
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                    <h2>
+                        <b>
+                            <span class="slds-text-heading_small">Actions</span> 
+                        </b>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body buttoncontainer slds-card__body_inner">	
+            
+            <aura:if isTrue="{!and(v.showAcceptCaseButton == true,v.objectType == 'Case')}">
+                <button class="slds-button slds-button--neutral" onclick="{!c.cownerchange}">Accept Case</button> 
+            </aura:if>
+            <aura:if isTrue="{!and(not(v.caseRecord.Org_Case_Status__c == 'Closed'),v.objectType == 'Case')}">
+                <button class="slds-button slds-button--neutral" onclick="{!c.openReassignOwnerModal}">Re-assign Owner</button> 
+            </aura:if>
+            
+            <aura:if isTrue="{!or(v.caseRecord.RecordType.Name == 'marhaba B2C - Complaint',v.caseRecord.RecordType.Name == 'AA B2C - Complaint',v.caseRecord.RecordType.Name == 'CSD B2C - Complaint')}">
+                <button class="slds-button slds-button--neutral" onclick="{!c.cloneCase}">Clone Case </button>
+            <c:New_Survey_Tag aura:id="surveyTag" recordId="{!v.recordId}"/>  
+           
+            </aura:if>
+            
+            
+            <aura:if isTrue="{!v.caseRecord.RecordType.Name == 'marhaba B2C - New Enquiry'}">		
+                <button onclick="{!c.newQuote}" class="slds-button slds-button--neutral">New Quote - Marhaba</button> 		
+            </aura:if>
+            <aura:if isTrue="{!and(v.caseRecord.RecordType.Name == 'marhaba B2C - New Enquiry',v.caseRecord.Order__c == null)}">		
+                <button onclick="{!c.newBookingPage}" class="slds-button slds-button--neutral">New Booking - Marhaba</button> 		
+            </aura:if> 
+            
+            
+            <aura:if isTrue="{!v.caseRecord.RecordType.Name == 'AA B2C - New Enquiry'}">		
+                <button onclick="{!c.newQuote}" class="slds-button slds-button--neutral">New Quote - Arabian Adventures</button> 		
+            </aura:if>
+            <aura:if isTrue="{!and(v.caseRecord.RecordType.Name == 'AA B2C - New Enquiry',v.caseRecord.Order__c == null)}">	
+                <button onclick="{!c.newBookingPage}" class="slds-button slds-button--neutral">New Booking - Arabian Adventures</button> 		
+            </aura:if> 
+            
+            <aura:if isTrue="{!v.caseRecord.RecordType.Name == 'CSD B2C - New Enquiry'}">		
+                <button onclick="{!c.newQuote}" class="slds-button slds-button--neutral">New Quote - City Sightseeing Dubai</button> 		
+            </aura:if> 
+            <aura:if isTrue="{!and(v.caseRecord.RecordType.Name == 'CSD B2C - New Enquiry',v.caseRecord.Order__c == null)}">		
+                <button onclick="{!c.newBookingPage}" class="slds-button slds-button--neutral">New Booking - City Sightseeing Dubai</button> 		
+            </aura:if> 
+            
+            <aura:if isTrue="{!and(v.objectType == 'Order',v.obj.from_SFCC__c == false)}">		
+                <button onclick="{!c.updateBookingPage}" class="slds-button slds-button--neutral">Update Booking</button> 	
+                <button onclick="{!c.viewBookingConfirmation}" class="slds-button slds-button--neutral">View Booking Confirmation</button> 	
+            </aura:if> 
+
+            <aura:if isTrue="{!v.objectType == 'Order'}">		
+                <button onclick="{!c.newAfterSales}" class="slds-button slds-button--neutral">New After Sales</button> 		
+            </aura:if> 
+            <aura:if isTrue="{!v.objectType == 'Order'}">		
+                <button onclick="{!c.newComplaints}" class="slds-button slds-button--neutral">New Complaint</button> 		
+            </aura:if> 
+            <aura:if isTrue="{!v.objectType == 'Account'}">	 	
+                <button onclick="{!c.openModal}" class="slds-button slds-button--neutral" id="accComplaint">New Complaint</button> 		
+            </aura:if> 
+             <aura:if isTrue="{!v.objectType == 'Account'}">	 	
+                <button onclick="{!c.openModal}" class="slds-button slds-button--neutral" id="accCommendation">New Commendation</button> 		
+            </aura:if> 
+             <aura:if isTrue="{!v.objectType == 'Account'}">	 	
+                <button onclick="{!c.openModal}" class="slds-button slds-button--neutral" id="accGeneralEnquiry">New General Enquiry</button> 		
+            </aura:if> 
+            
+            
+            <aura:if isTrue="{!v.objectType == 'Quote_Header__c'}">		
+                <button onclick="{!c.updateQuotePage}" class="slds-button slds-button--neutral">Update Quotation</button> 		
+            </aura:if> 
+            <aura:if isTrue="{!v.objectType == 'Quote_Header__c'}">		
+                <button onclick="{!c.viewQuotePDF}" class="slds-button slds-button--neutral">View Quote</button> 		
+            </aura:if> 
+            <aura:if isTrue="{!v.objectType == 'Quote_Header__c'}">		
+                <button onclick="{!c.convertQuoteToBooking}" class="slds-button slds-button--neutral">Convert to Booking</button> 		
+            </aura:if>
+            
+            <!-- Model Box Start -->    
+            <aura:if isTrue="{!v.isOpen}">
+                <div role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                                X<span class="slds-assistive-text">Cancel</span>
+                            </button>
+                            <h2 id="header43" class="slds-text-heading--medium">New Case</h2>
+                        </div>
+                        
+                        <div class="slds-modal__content slds-p-around--medium">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-size--1-of-2 slds-large-size--1-of-2">
+                                     <div class="slds-align--absolute-center">Select a Record Type</div>                            
+                                </div>
+                                <div class="slds-size--1-of-2 slds-large-size--1-of-2">
+                                    <ui:inputSelect aura:id="selectid">                                       
+                                        <aura:if isTrue="{!v.buttonId == 'accComplaint'}"> 
+                                            <aura:iteration items="{!v.lstOfCaseComplaintRecordType}" var="rt">                            
+                                           	 <ui:inputSelectOption text="{!rt}" label="{!rt}"  />
+                                        	</aura:iteration>
+                                      	</aura:if>
+                                        <aura:if isTrue="{!v.buttonId == 'accCommendation'}"> 
+                                            <aura:iteration items="{!v.lstOfCaseCommendationRecordType}" var="rt">                            
+                                           	 <ui:inputSelectOption text="{!rt}" label="{!rt}"  />
+                                        	</aura:iteration>
+                                      	</aura:if>
+                                        <aura:if isTrue="{!v.buttonId == 'accGeneralEnquiry'}"> 
+                                            <aura:iteration items="{!v.lstOfCaseGeneralEnquiryRecordType}" var="rt">                            
+                                           	 <ui:inputSelectOption text="{!rt}" label="{!rt}"  />
+                                        	</aura:iteration>
+                                      	</aura:if>
+                                    </ui:inputSelect>
+                                </div>&nbsp; &nbsp;
+                            </div>                   
+                        </div>
+                        
+                        <div class="slds-modal__footer">
+                            <lightning:button class="slds-button slds-button--neutral" onclick="{!c.closeModal}">Cancel</lightning:button>                            
+                            <lightning:button class="slds-button slds-button--brand" onclick="{!c.newCaseFromAccount}">Next</lightning:button>                           
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop--open"></div>
+            </aura:if>
+            
+            <!--###### MODAL BOX CHANGE ONWER and RT BEGIN --> 
+            <aura:if isTrue="{!v.isCaseRTChangeBoxOpen}">
+                <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeChangeRTModal}">
+                                X
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="header99" class="slds-text-heading--medium">Change Owner</h2>
+                            
+                        </div>
+                        
+                        <div class="slds-modal__content allowoverflow slds-p-around--medium">
+                            
+                            <div class="slds-form-element">
+                                <!-- USER LOOKUP DIV - BEGIN -->
+                                <ui:inputSelect aura:id="lkptype" label="Lookup Type" change="{!c.onSelectChange}">
+                                    <aura:iteration items="{!v.lookupSearchType}" var="ltype">
+                                        <ui:inputSelectOption text="{!ltype}" label="{!ltype}"/>
+                                    </aura:iteration>
+                                </ui:inputSelect>
+                                
+                                <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+                                    <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+                                    <!--This part is for display search bar for lookup-->  
+                                    <div class="slds-form-element__control">
+                                        
+                                        <div class="slds-input-has-icon slds-input-has-icon--right">
+                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/> 
+                                            <!-- This markup is for when an record is selected -->
+                                            <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                                                <lightning:pill class="pillSize" label="{!v.selectedRecord.rname}" name="{!v.selectedRecord.rname}" onremove="{! c.clear }">
+                                                    <aura:set attribute="media">
+                                                        <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                    </aura:set>
+                                                </lightning:pill>
+                                            </div>
+                                            <div aura:id="lookupField" class="slds-show">
+                                                <!--<span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                <span class="slds-assistive-text"></span>
+                                            </span>-->
+                                                <ui:inputText updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord}" placeholder="search.."/>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                    <!--This part is for Display typehead lookup result List-->  
+                                    <ul style="min-height:40px;max-height:250px;overflow-x:hidden;overflow-y:auto;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                        <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                        <center> {!v.Message}</center>
+                                        <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                            <c:customUserLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                        </aura:iteration>
+                                    </ul>
+                                </div>
+                                
+                                    <!-- USER LOOKUP DIV - END -->
+                                <!--aura:if isTrue="{!v.selLookupType == 'User'}" >
+									<ui:inputCheckbox aura:id="checkbox" label="  Send Email Notification" class="myCheckbox" change="{!c.onCheck}"/>
+                               </aura:if--> 
+                            </div>
+                        </div>
+                        <div class="slds-modal__footer">
+                            <button class="slds-button slds-button--neutral" onclick="{!c.closeChangeRTModal}" >Cancel</button>
+                            
+                            
+                            <ui:button aura:id="saveCaseOwnerRT" 
+                                       buttonTitle="Save Case" class="slds-button slds-button--brand" label="Save" press="{!c.cownerRTchange}"/>
+                            
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop--open"></div>
+            </aura:if>
+            <!--###### MODAL BOX CHANGE ONWER and RT END --> 
+            
+            
+        </div>
+    </article>   
+</aura:component>

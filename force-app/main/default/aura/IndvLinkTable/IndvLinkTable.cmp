@@ -1,0 +1,94 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="IndvLinkTableController" >
+<aura:handler name="init" action="{!c.doInit}" value="{!this}" /> 
+  <aura:attribute name="wrapperList" type="object"/>
+  <aura:attribute name="checkbox" type="boolean" default ="False" />
+  
+  <lightning:navigation aura:id="navService"/>
+  <aura:attribute name="pageReference" type="Object"/>
+  <aura:attribute name="url" type="String"/>
+  <aura:attribute name="mergeId" type="String" />
+    
+  <div clss="slds">
+  	<div class="slds-card_boundary">
+  		<div class="slds-card__header slds-grid">
+    		<header class="slds-media slds-media_center slds-has-flexi-truncate">
+				<div class="slds-media__figure">
+					<span class="slds-icon_container slds-icon-standard-contact" title="contact">
+          			<lightning:icon iconName="standard:custom" size="small" />
+          			<span class="slds-assistive-text">Individual Link</span>
+        			</span>
+      			</div>
+      			<div class="slds-media__body">
+        			<h2 class="slds-card__header-title">
+          			<a href="javascript:void(0);" class="slds-card__header-link slds-truncate">
+            		<span>Individual Link</span>
+         			 </a>
+        			</h2>
+      			</div>
+      			
+    		</header>
+  		</div>
+  		<div class="slds-card__body ">
+    		<table class="slds-table slds-table_fixed-layout slds-table_bordered " role="grid" style="table-layout:fixed; width:100%">
+      		<thead>
+        		<tr class="slds-line-height_reset">
+          			<th class="" scope="col">
+            			<div class="slds-truncate" >LINK NAME</div>
+      		   		</th>
+                    <th class="" scope="col">
+            			<div class="slds-truncate" >UNIQUE LINK ID</div>
+      		   		</th>
+                    <th class="" scope="col">
+            			<div class="slds-truncate" >MARKETING CLOUD LINK ID</div>
+      		   		</th>
+                    <th class="" scope="col">
+            			<div class="slds-truncate" >LAST CLICKED</div>
+      		   		</th>
+          			
+                </tr>
+      		</thead>
+      		<tbody>
+      		<aura:iteration items="{!v.wrapperList.indvLnkList}" var="indvLnk">
+        	<tr class="slds-hint-parent">
+          		
+                    
+                      
+                    <td role="gridcell" style="overflow:hidden; width:40px;">
+                        <a href="{!'/'+indvLnk.Id}" >{!indvLnk.Name}</a>
+                    </td>
+                     <td role="gridcell">
+                        <div class="slds-truncate" title="UNIQUE LINK ID">{!indvLnk.et4ae5__Unique_Link_ID__}</div>
+                    </td> 
+                    <td role="gridcell">
+                        <div class="slds-truncate" title="MARKETING CLOUD LINK ID">{!indvLnk.et4ae5__ExactTargetLinkID__c}</div>
+                    </td>
+                     <td role="gridcell">
+                        <div class="slds-truncate" title="LAST CLICKED">
+                    	   <ui:outputDateTime aura:id="yDateTime" value="{!indvLnk.et4ae5__Last_Clicked__c}" format="dd/MM/yyyy hh:mm "/>
+                		</div>
+                     </td>
+          		
+            		
+              		<!--
+						<div class="slds-truncate" title="Email Name"  >
+						<lightning:button label="Open Lightning Component" onclick="{!c.handleClick}"/>   
+                         <a href="#" onclick="{!c.handleClick}" data-value="{!big.Related_Object_ID__c}">{!big.Related_Object_ID__c}</a>
+                            {!indvLnk.Merge_Id__c}
+                        </div>
+					 -->
+                     
+          		
+              
+          	</tr>
+       		</aura:iteration>
+                
+      		</tbody>
+    	</table>
+            
+       
+      
+  		</div>
+  	</div>
+ </div>   
+	
+</aura:component>

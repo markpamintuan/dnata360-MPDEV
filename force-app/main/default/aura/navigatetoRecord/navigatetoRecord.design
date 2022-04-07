@@ -1,0 +1,5 @@
+<design:component>
+        <design:attribute name="recordId" label="Record ID" />
+    	<design:attribute name="derwentCustomerId" label="Derwent Id" />
+    	<design:attribute name="caseId" label="Case Id" />
+</design:component>

@@ -1,0 +1,6 @@
+<aura:event type="COMPONENT" description="Event template" >
+    
+    <aura:attribute name="selectedvalue" type="String"/>
+    <aura:attribute name="selectedId" type="String"/>
+    <aura:attribute name="selectedField" type="String"/>
+</aura:event>

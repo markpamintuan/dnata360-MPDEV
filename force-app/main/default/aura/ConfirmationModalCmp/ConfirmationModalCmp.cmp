@@ -1,0 +1,22 @@
+<aura:component >
+    
+    <!-- Selected Button Action Name -->
+    <aura:attribute name="buttonAction" type="String" />
+    <!-- added z-index for view all modal -->
+    <section style="z-index: 20000;" role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Confirmation</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <p>Are You sure you want to remove this record ?</p>
+            </div>
+            <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" onclick="{!c.Close}">Cancel</button>
+                <button class="slds-button slds-button_brand" onclick="{!c.LikeAndClose}">OK</button>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+	
+</aura:component>

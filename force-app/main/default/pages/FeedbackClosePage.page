@@ -1,0 +1,5 @@
+<apex:page >
+<script type="text/javascript">
+parent.document.getElementsByClassName('closeButton')[0].click();
+</script>
+</apex:page>

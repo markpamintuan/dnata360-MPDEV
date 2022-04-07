@@ -1,0 +1,29 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+				access="global" controller="AccountButtonsController">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+    
+    <aura:attribute name="account" type="Object" description="A simplified view record object to be displayed"/>
+    <aura:attribute name="accountRecord" type="Object" description="A simplified view record object to be displayed"/>
+    <aura:attribute name="recordError" type="String" description="An error message bound to force:recordData"/>
+    
+    
+    <aura:attribute name="recordId" type="id" />
+    <aura:attribute name="caseId" type="id" />
+    
+    <force:recordData aura:id="accRecord"
+                      recordId="{!v.recordId}" 
+                      fields = "Org_Derwent_Customer_No__c"
+                      targetRecord="{!v.account}"
+                      targetFields="{!v.accountRecord}"
+                      targetError="{!v.recordError}"/>
+    
+    <div class="demo-only" style="height: 6rem;">
+  <div role="status" class="slds-spinner slds-spinner_medium">
+    <span class="slds-assistive-text">Loading</span>
+    <div class="slds-spinner__dot-a"></div>
+    <div class="slds-spinner__dot-b"></div>
+  </div>
+</div>
+    
+</aura:component>

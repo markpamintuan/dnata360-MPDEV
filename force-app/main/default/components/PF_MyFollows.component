@@ -1,0 +1,23 @@
+<apex:component controller="PF_Homepage" >
+    <div id="tab-myfollow" class="tab-content2">
+        <div class="slds-feed">
+            <ul class="slds-feed__list">
+                <apex:repeat value="{!myFollow}" var="pf">
+                    <li class="slds-feed__item">
+                        <div class="slds-media slds-comment slds-hint-parent">
+                            <div class="slds-media__figure">
+                                <span class="slds-icon_container slds-icon-standard-new-task">
+                                    <a href="{!$Site.Domain}/{!pf.ParentId}" target="_blank" title="{!pf.Parent.Name}">
+                                        Record Name: {!pf.Parent.Name}
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    
+                </apex:repeat>       
+            </ul>
+            
+        </div>
+    </div>
+</apex:component>

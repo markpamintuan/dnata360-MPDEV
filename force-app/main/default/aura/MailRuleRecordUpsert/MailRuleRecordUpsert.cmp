@@ -1,0 +1,127 @@
+<aura:component controller="MailRuleRecordUpsertController" implements="flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride" access="global" >
+	
+    <aura:attribute name="ruleObj" type="Object" />
+    <aura:attribute name="recordId" type="String" /> 
+    <aura:attribute name="mailBoxPicklist" type="Object[]" />
+    
+    <!-- It runs when component load-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div aura:id="editDialog" role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+	<div class="slds-modal__container">
+			<div class="slds-modal__header">
+				<h2 class="slds-text-heading--medium">Record Delete Rule</h2>
+		</div>
+		<div class="slds-modal__content slds-p-around--medium slds-grid slds-wrap">
+			<div class="slds-grid slds-wrap">
+            
+            <!-- Mail Box -->
+            <div class="slds-col slds-size_3-of-12">
+                Mailbox :
+            </div>
+            <div class="slds-col slds-size_9-of-12">
+                <!--<lightning:input type="email" variant="label-hidden" aura:id="field" value="{!v.ruleObj.mailBox}" messageWhenTypeMismatch="Email is not Correct." label="Mail Box" /> -->
+                <lightning:select variant="label-hidden" value="{!v.ruleObj.mailBox}" aura:id="field" disabled="{!v.ruleObj.recID}" required="true">
+                    <aura:if isTrue="{!and(v.mailBoxPicklist != null, v.mailBoxPicklist != undefined)}">
+                        <aura:iteration items="{!v.mailBoxPicklist}" var="item">
+                            <option value="{!item.value}" selected="{!v.ruleObj.mailBox == item.value}">{!item.label}</option>
+                        </aura:iteration>
+                    </aura:if>
+                </lightning:select>
+            </div>
+                
+                <!-- Name -->
+            <div class="slds-col slds-size_3-of-12">
+                <div class="slds-form-element slds-m-top_small">
+                    <lightning:helptext  content="Enter a name to describe this rule." />
+                        Name : 
+                </div>
+            </div>
+            <div class="slds-col slds-size_9-of-12">
+                <lightning:input class="slds-m-top_small" variant="label-hidden" aura:id="field" placeholder="e.g. Emirates Holidays out of office rule" value="{!v.ruleObj.Name}" required="true"/>
+            </div>
+            
+            <!-- To Address -->
+            <div class="slds-col slds-size_3-of-12">
+                <div class="slds-form-element slds-m-top_small">
+                    <lightning:helptext  content="Select where you want this rule to find the email." />
+                    To Address:
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-12">
+                <lightning:input class="slds-m-top_small"  variant="label-hidden" type="toggle"  name="input2" checked="{!v.ruleObj.toAddress}" />
+            </div>
+            <div class="slds-col slds-size_1-of-12"></div>
+            
+            <!-- Bcc Address -->
+            <div class="slds-col slds-size_2-of-12">
+                <div class="slds-form-element slds-m-top_small">
+                    <!--BCC: -->
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-12">
+                <!--
+                <lightning:input class="slds-m-top_small" variant="label-hidden" type="toggle" name="input2" checked="{!v.ruleObj.bccAddress}" />
+                -->
+            </div>
+            <div class="slds-col slds-size_1-of-12"></div> 
+            
+            <!-- CC Address -->
+            <div class="slds-col slds-size_2-of-12">
+                <div class="slds-form-element slds-m-top_small">
+                    CC: 
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-12">
+                <lightning:input class="slds-m-top_small" variant="label-hidden" type="toggle" name="input2" checked="{!v.ruleObj.ccAddress}" />
+            </div>
+           <!-- <div class="slds-col slds-size_1-of-12"></div> -->
+            
+            
+            <!-- Subject -->
+            <div class="slds-col slds-size_3-of-12">
+                <div class="slds-form-element slds-m-top_small">
+                    <lightning:helptext  content="Choose the keywords that should trigger this rule" />
+                        Subject : 
+                </div>
+            </div>
+            <div class="slds-col slds-size_9-of-12">
+                <lightning:input class="slds-m-top_small" variant="label-hidden" aura:id="field" placeholder="e.g. Out of office, Confirmation, " value="{!v.ruleObj.subject}" />
+            </div>
+            
+            
+            <!-- From Address -->
+            <div class="slds-col slds-size_3-of-12">
+                <div  class=" slds-form-element slds-m-top_small">
+                    <lightning:helptext  content="Enter an email that should be checked when this rule fires" />
+                        From Address : 
+                </div>
+            </div>
+            <div class=" slds-col slds-size_9-of-12">
+                <lightning:input class="slds-m-top_small" aura:id="field" placeholder="e.g. test@gmail.com" type="email" messageWhenTypeMismatch="Email is not Correct." variant="label-hidden" value="{!v.ruleObj.fromAddress}" required="true" />
+            </div>
+                
+                <!-- Name -->
+            <div class="slds-col slds-size_3-of-12">
+                <div class="slds-form-element slds-m-top_small">
+                    <lightning:helptext  content="Activate/Deactivate this rule" />
+                        Active : 
+                </div>
+            </div>
+            <div class="slds-col slds-size_9-of-12">
+                <lightning:input class="slds-m-top_small" type="toggle" variant="label-hidden" aura:id="field" value="{!v.ruleObj.isActive}" checked="{!v.ruleObj.isActive}"/>
+            </div>
+            
+        </div>
+    
+		</div>
+		<div class="slds-modal__footer">                
+			<lightning:button label="Cancel" title="Cancel" onclick="{! c.cancel }"/>
+			<lightning:button variant="brand" label="Save" title="Save" onclick="{! c.upsertRule }" />
+		</div>
+	</div>
+</div>
+<div aura:id="overlay" class="slds-backdrop slds-backdrop--open"></div>
+    
+    
+</aura:component>

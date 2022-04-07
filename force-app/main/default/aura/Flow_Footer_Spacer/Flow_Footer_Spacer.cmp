@@ -1,0 +1,7 @@
+<!--
+ - Created by gkumarappan001 on 10/25/18.
+ -->
+
+<aura:component description="Flow_Footer_Spacer" implements="lightning:availableForFlowScreens">
+    <div class="spacer"> </div>
+</aura:component>

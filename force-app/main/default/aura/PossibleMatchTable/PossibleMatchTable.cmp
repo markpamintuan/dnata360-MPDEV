@@ -1,0 +1,121 @@
+<aura:component controller="DuplicateRecordManagementCntrl">
+    
+    <!-- will save flag if records is present or not -->    
+    <aura:attribute name="hasRecords" type="boolean" default="false"/>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.initializeMethod}"/>
+    
+    <aura:handler name="change" value="{!v.duplicateRecords}" action="{!c.initializeMethod}"/>
+    
+    <aura:attribute name="headers" type="ContainerWrapperClass.HeaderWrapper[]" />
+    <aura:attribute name="duplicateRecords" type="ContainerWrapperClass.DuplicateDetailWrapper[]" />
+    <aura:attribute name="ActionColumn" type="string" description="the Link to be displayed on each column"/>   
+    
+    <!-- this will store the id of current record -->
+    <aura:attribute name="recordId" type="string"/>
+    
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <!-- this will store the linked Field API Name -->
+    <aura:attribute name="linkingfield" type="string"/> 
+    
+    <!-- field set which will be used to display the table headers -->
+    <aura:attribute name="displayFieldSet" type="string"/>
+    
+    <!-- this will be used to show and hide the spinner -->    
+    <aura:attribute name="selectedRecord" type="sobject" /> 
+    
+    <!-- this will store the action Name -->
+    <aura:attribute name="actionName" type="string" /> 
+    
+    <!-- this will check if selected record is changed -->
+    <aura:handler name="change" value="{!v.selectedRecord}" action="{!c.handleAction}"/>
+    
+    <!-- this will store the store the value for initialization -->
+    <aura:attribute name="InitalvalueToUse" type="string"/>
+    
+    <!-- register Event -->
+    <aura:registerEvent name="SearchEvent" type="c:SearchEvent"/>
+    
+    <!-- Aura Method -->
+    <aura:method name="refresh" action="{!c.refreshPossibleSection}">
+        <aura:attribute type="String" name="eventtype" />
+    </aura:method>
+    
+    <div class="slds-card__header slds-p-around_medium" style="position:relative">        
+        <div class="slds-form--compound">                
+            <div class="slds-card__header">                
+                <div class="slds-text-heading_medium headingstyle"><b>Possible Matches</b></div>
+                
+                <aura:if isTrue="{!v.hasRecords}">
+                    <!-- Table mark up starts -->
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-fixed-table">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <aura:iteration items="{!v.headers}" var="header">
+                                    <th class="slds-text-title_caps" scope="col">
+                                        <div class="slds-truncate" title="{!header.displayValue}">{!header.displayValue}</div>
+                                    </th>
+                                </aura:iteration>
+                                <th class="slds-text-title_caps" scope="col">
+                                    <div class="slds-truncate" title="Action">Action</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.duplicateRecords}" var="dupRec">
+                                <tr class="slds-hint-parent">
+                                    
+                                    <aura:iteration items="{!v.headers}" var="header">
+                                        <th data-label="{!header.displayValue}" scope="row">
+                                            <div class="slds-truncate" title="{!header.displayValue}">
+                                                <c:Row360View record="{!dupRec.sObj}" 
+                                                              field="{!header.fieldAPIName}"
+                                                              header="{!header}">
+                                                </c:Row360View>
+                                            </div>
+                                        </th>
+                                    </aura:iteration>
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <th data-label="Action" scope="row">
+                                        <div class="slds-truncate" title="Action">
+                                            <c:Row360View isActionCol="true" 
+                                                          actionColText="View"
+                                                          record="{!dupRec.sObj}" 
+                                                          selectedRecord="{!v.selectedRecord}"
+                                                          actionName = "{!v.actionName}"/> 
+                                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                                            
+                                            <c:Row360View isActionCol="true" 
+                                                          actionColText="Link"
+                                                          selectedRecord="{!v.selectedRecord}"
+                                                          record="{!dupRec.sObj}" 
+                                                          actionName = "{!v.actionName}"/>  
+                                            <!-- <c:Row360View isActionCol="true"
+                                                      selectedRecord="{!v.selectedRecord}"
+                                                      record="{!dupRec.sObj}" 
+                                                      actionName = "{!v.actionName}"/>  -->  
+                                        </div>
+                                    </th>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>  
+                    <!-- any type except date and boolean -->
+                    <aura:set attribute="else">
+                        No Possible Matches
+                    </aura:set>
+                </aura:if>
+            </div>
+            <c:SpinnerCmp displaySpinner="{!v.Spinner}"></c:SpinnerCmp>
+        </div>
+    </div>
+    
+    
+</aura:component>

@@ -1,0 +1,32 @@
+.THIS .inputSize {
+    width:100%; 
+}
+ 
+.THIS .pillcontainer{
+    display:flex;
+}
+
+.THIS .maindiv{
+    border-bottom:0px !important;
+    border-top:0px !important;
+}
+
+.THIS .Table{
+    width: 100%;
+}
+
+
+.THIS .containerdiv{    
+    min-width:fit-content !important;
+    display:grid !important
+}
+
+.THIS .searchdiv{
+    padding:1%;
+    width: 100%;
+    padding-left: 37%;
+}
+
+.THIS .textboxwidth{   
+    width: 50%;
+}
